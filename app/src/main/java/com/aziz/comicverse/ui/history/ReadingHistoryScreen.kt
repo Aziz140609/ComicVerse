@@ -55,51 +55,32 @@ fun ReadingHistoryScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // Top Bar with Sakura Branch Corner Silhouette
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                painter = painterResource(R.drawable.ic_sakura_branch_lush),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(118.dp)
-                    .alpha(0.82f)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Kembali",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-                Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_sakura_flower),
-                            contentDescription = null,
-                            tint = Color(0xFF8B1E32),
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(R.string.last_read),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    Text(
-                        text = "Maksimal 10 manga tersimpan (${uiState.historyItems.size}/10)",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        // Top Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onNavigateBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Kembali",
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+                Text(
+                    text = stringResource(R.string.last_read),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Text(
+                    text = "Maksimal 10 manga tersimpan (${uiState.historyItems.size}/10)",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
 

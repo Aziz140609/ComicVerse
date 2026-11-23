@@ -70,43 +70,26 @@ fun RankingsScreen(
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        // Top Bar with Sakura Branch Corner Silhouette
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Image(
-                painter = painterResource(R.drawable.ic_sakura_branch_arch),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(118.dp)
-                    .alpha(0.82f)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onNavigateBack) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Kembali",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
+        // Top Bar
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onNavigateBack) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_sakura_flower),
-                    contentDescription = null,
-                    tint = Color(0xFF8B1E32),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = stringResource(R.string.rankings_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Kembali",
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
+            Text(
+                text = stringResource(R.string.rankings_title),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
 
         // Tabs: All Time vs Weekly
