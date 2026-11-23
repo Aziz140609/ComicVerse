@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -102,22 +104,17 @@ fun SplashScreen(
                 .alpha(alphaAnim)
                 .padding(horizontal = 24.dp)
         ) {
-            // Official ComicVerse Japanese Logo
-            Box(
+            // Stylized ComicVerse Pink Manga Typography with Swoosh & Sakura Blossom
+            Image(
+                painter = painterResource(R.drawable.img_comicverse_text_pink),
+                contentDescription = "ComicVerse",
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .size(156.dp)
-                    .shadow(16.dp, RoundedCornerShape(34.dp), spotColor = Color(0xFFFF5A8D).copy(alpha = 0.35f))
-                    .clip(RoundedCornerShape(34.dp))
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.img_comicverse_logo),
-                    contentDescription = "ComicVerse Official Logo",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+                    .fillMaxWidth(0.82f)
+                    .aspectRatio(875f / 469f)
+            )
 
-            Spacer(modifier = Modifier.height(26.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Japanese Subtitle with Hanko Seal Stamp
             Row(
