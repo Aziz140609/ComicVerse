@@ -56,20 +56,7 @@ fun ReadingHistoryScreen(
         modifier = modifier.fillMaxSize()
     ) {
         // Top Bar with Sakura Branch Corner Silhouette
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            Color(0xFFFFB6C1).copy(alpha = 0.50f),
-                            Color(0xFFFFC0CB).copy(alpha = 0.25f),
-                            Color(0xFFFFD1DC).copy(alpha = 0.08f),
-                            Color.Transparent
-                        )
-                    )
-                )
-        ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             Image(
                 painter = painterResource(R.drawable.ic_sakura_branch_lush),
                 contentDescription = null,

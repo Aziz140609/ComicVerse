@@ -79,50 +79,35 @@ fun ComicDetailScreen(
 
     Scaffold(
         topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(
-                                Color(0xFFFFB6C1).copy(alpha = 0.50f),
-                                Color(0xFFFFC0CB).copy(alpha = 0.25f),
-                                Color(0xFFFFD1DC).copy(alpha = 0.08f),
-                                Color.Transparent
-                            )
-                        )
+            TopAppBar(
+                title = {
+                    Text(
+                        text = uiState.comic?.title ?: "Detail Komik",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
-            ) {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = uiState.comic?.title ?: "Detail Komik",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Kembali"
                         )
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Kembali"
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { viewModel.toggleFavorite() }) {
-                            Icon(
-                                imageVector = if (uiState.isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                                contentDescription = "Favorit",
-                                tint = if (uiState.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
-                    )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.toggleFavorite() }) {
+                        Icon(
+                            imageVector = if (uiState.isFavorite) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                            contentDescription = "Favorit",
+                            tint = if (uiState.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface
                 )
-            }
+            )
         },
         modifier = modifier
     ) { innerPadding ->
