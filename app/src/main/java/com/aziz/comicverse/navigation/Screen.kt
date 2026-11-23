@@ -55,6 +55,11 @@ sealed class Screen(
         title = "Peringkat Manga"
     )
 
+    data object ReadingHistory : Screen(
+        route = "reading_history",
+        title = "Terakhir Di baca"
+    )
+
     data object Detail : Screen(
         route = "comic_detail/{comicId}"
     ) {

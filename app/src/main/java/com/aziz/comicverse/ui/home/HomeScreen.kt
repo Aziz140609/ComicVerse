@@ -55,6 +55,7 @@ fun HomeScreen(
     onNavigateToDetail: (String) -> Unit,
     onNavigateToExplore: (String?) -> Unit,
     onNavigateToRankings: () -> Unit = {},
+    onNavigateToReadingHistory: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -127,7 +128,7 @@ fun HomeScreen(
                         SectionTitleHeader(
                             title = stringResource(R.string.last_read),
                             actionText = stringResource(R.string.see_all),
-                            onActionClick = { onNavigateToExplore(null) }
+                            onActionClick = onNavigateToReadingHistory
                         )
                     }
 

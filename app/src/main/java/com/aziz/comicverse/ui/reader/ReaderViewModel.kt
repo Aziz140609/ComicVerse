@@ -75,13 +75,16 @@ class ReaderViewModel(
             viewModelScope.launch {
                 val state = _uiState.value
                 val chapter = state.currentChapter
+                val comic = state.comic
                 repository.saveReadingProgress(
                     com.aziz.comicverse.domain.model.ReadingProgress(
                         comicId = comicId,
                         chapterId = chapter?.id ?: initialChapterId,
                         chapterTitle = chapter?.title ?: "Chapter",
                         pageIndex = pageIndex,
-                        totalPages = state.totalPages
+                        totalPages = state.totalPages,
+                        comicTitle = comic?.title ?: "",
+                        comicCoverUrl = comic?.coverUrl ?: ""
                     )
                 )
             }

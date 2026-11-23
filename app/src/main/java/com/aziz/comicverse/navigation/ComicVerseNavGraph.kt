@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.aziz.comicverse.ui.detail.ComicDetailScreen
 import com.aziz.comicverse.ui.explore.ExploreScreen
+import com.aziz.comicverse.ui.history.ReadingHistoryScreen
 import com.aziz.comicverse.ui.home.HomeScreen
 import com.aziz.comicverse.ui.library.LibraryScreen
 import com.aziz.comicverse.ui.rankings.RankingsScreen
@@ -131,6 +132,9 @@ fun ComicVerseNavGraph(
                     },
                     onNavigateToRankings = {
                         navController.navigate(Screen.Rankings.route)
+                    },
+                    onNavigateToReadingHistory = {
+                        navController.navigate(Screen.ReadingHistory.route)
                     }
                 )
             }
@@ -182,6 +186,18 @@ fun ComicVerseNavGraph(
                     onNavigateBack = { navController.popBackStack() },
                     onNavigateToDetail = { comicId ->
                         navController.navigate(Screen.Detail.createRoute(comicId))
+                    }
+                )
+            }
+
+            composable(Screen.ReadingHistory.route) {
+                ReadingHistoryScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToDetail = { comicId ->
+                        navController.navigate(Screen.Detail.createRoute(comicId))
+                    },
+                    onNavigateToReader = { comicId, chapterId ->
+                        navController.navigate(Screen.Reader.createRoute(comicId, chapterId))
                     }
                 )
             }

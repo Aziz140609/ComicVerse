@@ -16,8 +16,11 @@ interface ReadingProgressDao {
     @Query("SELECT * FROM reading_progress WHERE comicId = :comicId LIMIT 1")
     fun getProgressByComicId(comicId: String): Flow<ReadingProgressEntity?>
 
-    @Query("SELECT * FROM reading_progress ORDER BY updatedAt DESC")
+    @Query("SELECT * FROM reading_progress ORDER BY updatedAt DESC LIMIT 10")
     fun getAllProgress(): Flow<List<ReadingProgressEntity>>
+
+    @Query("DELETE FROM reading_progress WHERE comicId NOT IN (SELECT comicId FROM reading_progress ORDER BY updatedAt DESC LIMIT 10)")
+    suspend fun trimOldProgress()
 
     @Query("DELETE FROM reading_progress WHERE comicId = :comicId")
     suspend fun deleteProgress(comicId: String): Int

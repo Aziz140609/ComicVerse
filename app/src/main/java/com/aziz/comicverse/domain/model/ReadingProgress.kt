@@ -6,5 +6,7 @@ data class ReadingProgress(
     val chapterTitle: String,
     val pageIndex: Int,
     val totalPages: Int,
+    val comicTitle: String = "",
+    val comicCoverUrl: String = "",
     val updatedAt: Long = System.currentTimeMillis()
 )

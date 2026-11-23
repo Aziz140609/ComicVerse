@@ -304,7 +304,7 @@ class ComicRepositoryImpl(
         Unit
     }
 
-    // Room Reading Progress / History
+    // Room Reading Progress / History (Max 10 items, oldest removed)
     override fun getReadingHistory(): Flow<List<ReadingProgress>> {
         return database.readingProgressDao().getAllProgress().map { list ->
             list.map {
@@ -314,6 +314,8 @@ class ComicRepositoryImpl(
                     chapterTitle = it.chapterTitle,
                     pageIndex = it.pageIndex,
                     totalPages = it.totalPages,
+                    comicTitle = it.comicTitle,
+                    comicCoverUrl = it.comicCoverUrl,
                     updatedAt = it.updatedAt
                 )
             }
@@ -321,9 +323,20 @@ class ComicRepositoryImpl(
     }
 
     override suspend fun saveReadingProgress(progress: ReadingProgress): Unit = withContext(Dispatchers.IO) {
-        val comic = LegalDemoComicProvider.demoComics.find { it.id == progress.comicId }
-        val title = comic?.title ?: "Comic"
-        val cover = comic?.coverUrl ?: ""
+        val title = if (progress.comicTitle.isNotBlank()) {
+            progress.comicTitle
+        } else {
+            database.comicDao().getComicById(progress.comicId)?.title
+                ?: LegalDemoComicProvider.demoComics.find { it.id == progress.comicId }?.title
+                ?: "Comic"
+        }
+        val cover = if (progress.comicCoverUrl.isNotBlank()) {
+            progress.comicCoverUrl
+        } else {
+            database.comicDao().getComicById(progress.comicId)?.coverUrl
+                ?: LegalDemoComicProvider.demoComics.find { it.id == progress.comicId }?.coverUrl
+                ?: ""
+        }
 
         database.readingProgressDao().insertOrUpdateProgress(
             ReadingProgressEntity(
@@ -337,6 +350,13 @@ class ComicRepositoryImpl(
                 updatedAt = progress.updatedAt
             )
         )
+        // Ensure maximum 10 items; automatically trim/delete the oldest records
+        database.readingProgressDao().trimOldProgress()
+        Unit
+    }
+
+    override suspend fun deleteReadingProgress(comicId: String): Unit = withContext(Dispatchers.IO) {
+        database.readingProgressDao().deleteProgress(comicId)
         Unit
     }
 }
