@@ -65,6 +65,15 @@ fun SakuraFallingBackdrop(
             alpha = 0.65f,
             rotationDeg = -14f
         ),
+        // Extra Blossom: Mid-Left Breeze
+        SakuraBackdropPetal(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.28f,
+            yDp = 62.dp,
+            sizeDp = 34.dp,
+            alpha = 0.56f,
+            rotationDeg = -32f
+        ),
         SakuraBackdropPetal(
             drawableId = R.drawable.ic_sakura_petal_pair,
             xRatio = 0.16f,
@@ -107,6 +116,15 @@ fun SakuraFallingBackdrop(
             alpha = 0.60f,
             rotationDeg = 12f
         ),
+        // Extra Blossom: Top-Right Near Cluster
+        SakuraBackdropPetal(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.86f,
+            yDp = 30.dp,
+            sizeDp = 38.dp,
+            alpha = 0.62f,
+            rotationDeg = 24f
+        ),
         SakuraBackdropPetal(
             drawableId = R.drawable.ic_sakura_petal_curved,
             xRatio = 0.72f,
@@ -126,7 +144,7 @@ fun SakuraFallingBackdrop(
 
         // ==========================================
         // ZONE 2: UPPER-MIDDLE (y: 160dp - 320dp)
-        // Diminishing density, petals drifting downwards
+        // Diminishing density, blossoms & petals drifting downwards
         // ==========================================
         SakuraBackdropPetal(
             drawableId = R.drawable.ic_sakura_petal_curved,
@@ -136,12 +154,30 @@ fun SakuraFallingBackdrop(
             alpha = 0.42f,
             rotationDeg = 32f
         ),
+        // Extra Blossom: Upper-Middle Right Margin
+        SakuraBackdropPetal(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.82f,
+            yDp = 180.dp,
+            sizeDp = 30.dp,
+            alpha = 0.44f,
+            rotationDeg = 45f
+        ),
         SakuraBackdropPetal(
             drawableId = R.drawable.ic_sakura_petal_pair,
             xRatio = 0.85f,
             yDp = 210.dp,
             sizeDp = 22.dp,
             alpha = 0.38f,
+            rotationDeg = -18f
+        ),
+        // Extra Blossom: Upper-Middle Left Margin
+        SakuraBackdropPetal(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.05f,
+            yDp = 235.dp,
+            sizeDp = 27.dp,
+            alpha = 0.40f,
             rotationDeg = -18f
         ),
         SakuraBackdropPetal(
@@ -165,6 +201,15 @@ fun SakuraFallingBackdrop(
         // ZONE 3: MIDDLE (y: 340dp - 500dp)
         // Sparsely scattered, gentle fading
         // ==========================================
+        // Extra Blossom: Fading Blossom in Middle
+        SakuraBackdropPetal(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.74f,
+            yDp = 360.dp,
+            sizeDp = 21.dp,
+            alpha = 0.26f,
+            rotationDeg = 15f
+        ),
         SakuraBackdropPetal(
             drawableId = R.drawable.ic_sakura_petal_falling,
             xRatio = 0.05f,
