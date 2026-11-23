@@ -26,7 +26,7 @@ class ReaderViewModel(
 
     fun loadChapter(chapterId: String) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, currentPageIndex = 1, errorMessage = null) }
 
             val comicResult = repository.getComicDetail(comicId)
             val chaptersResult = repository.getComicChapters(comicId)

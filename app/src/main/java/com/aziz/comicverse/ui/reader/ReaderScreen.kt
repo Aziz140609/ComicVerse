@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -44,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,9 +70,18 @@ fun ReaderScreen(
     viewModel: ReaderViewModel = viewModel(factory = ReaderViewModel.provideFactory(comicId, chapterId))
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val listState = rememberLazyListState()
+    val currentChapterId = uiState.currentChapter?.id ?: chapterId
+    val listState = rememberSaveable(currentChapterId, saver = LazyListState.Saver) {
+        LazyListState(0, 0)
+    }
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // Reset scroll and page indicator to page 1 whenever the chapter changes
+    LaunchedEffect(currentChapterId) {
+        listState.scrollToItem(0)
+        viewModel.updateCurrentPage(1)
+    }
 
     // Sync current visible page index
     LaunchedEffect(listState) {
