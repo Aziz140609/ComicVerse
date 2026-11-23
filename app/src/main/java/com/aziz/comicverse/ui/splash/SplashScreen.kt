@@ -102,50 +102,34 @@ fun SplashScreen(
                 .alpha(alphaAnim)
                 .padding(horizontal = 24.dp)
         ) {
-            // Circular Japanese Artwork Emblem (Mount Fuji & Sakura with Red Border)
+            // Official ComicVerse Japanese Logo
             Box(
                 modifier = Modifier
-                    .size(136.dp)
-                    .shadow(12.dp, CircleShape, spotColor = Color(0xFF8B1E32).copy(alpha = 0.25f))
-                    .border(3.5.dp, Color(0xFF8B1E32), CircleShape)
-                    .clip(CircleShape)
+                    .size(156.dp)
+                    .shadow(16.dp, RoundedCornerShape(34.dp), spotColor = Color(0xFFFF5A8D).copy(alpha = 0.35f))
+                    .clip(RoundedCornerShape(34.dp))
             ) {
                 Image(
-                    painter = painterResource(R.drawable.bg_japanese_fuji_sakura),
-                    contentDescription = "Mount Fuji and Sakura Emblem",
-                    contentScale = ContentScale.Crop,
-                    alignment = Alignment.Center,
+                    painter = painterResource(R.drawable.img_comicverse_logo),
+                    contentDescription = "ComicVerse Official Logo",
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxSize()
-                )
-
-                // Subtle inner vignette ring
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .border(1.5.dp, Color(0xFFF9F5EE).copy(alpha = 0.6f), CircleShape)
                 )
             }
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
-            // App Title: ComicVerse with authentic Japanese styling
+            // Japanese Subtitle with Hanko Seal Stamp
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Comic",
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = (-0.5).sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = "Verse",
-                    fontSize = 34.sp,
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = (-0.5).sp,
-                    color = Color(0xFF8B1E32) // Crimson Wine
+                    text = "コミックバース • 漫画の世界",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp,
+                    color = Color(0xFF8B1E32)
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -160,25 +144,14 @@ fun SplashScreen(
                 ) {
                     Text(
                         text = "漫画",
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Japanese Subtitle
-            Text(
-                text = "コミックバース • 漫画の世界",
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 2.sp,
-                color = Color(0xFF8B1E32).copy(alpha = 0.85f)
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Slogan
             Text(
@@ -189,7 +162,7 @@ fun SplashScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(42.dp))
 
             // Animated Blooming Sakura Life Cycle
             SakuraBloomIndicator(size = 54.dp)
