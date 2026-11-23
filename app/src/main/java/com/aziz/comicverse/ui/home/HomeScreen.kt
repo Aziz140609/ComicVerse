@@ -40,6 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import androidx.compose.ui.res.stringResource
+import com.aziz.comicverse.R
 import com.aziz.comicverse.domain.model.Comic
 import com.aziz.comicverse.ui.components.ComicCard
 import com.aziz.comicverse.ui.components.ComicErrorState
@@ -99,7 +101,7 @@ fun HomeScreen(
                             )
                         }
                         Text(
-                            text = "Temukan komik favorit dan baca secara vertikal",
+                            text = stringResource(R.string.home_subtitle),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -111,7 +113,7 @@ fun HomeScreen(
                     SearchInputField(
                         query = "",
                         onQueryChange = {},
-                        placeholderText = "Cari komik, manga, atau author...",
+                        placeholderText = stringResource(R.string.search_placeholder),
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                             .clickable { onNavigateToExplore(null) }
@@ -122,8 +124,8 @@ fun HomeScreen(
                 if (uiState.featuredComics.isNotEmpty()) {
                     item {
                         ComicSectionHeader(
-                            title = "Pilihan Editor",
-                            subtitle = "Karya pilihan minggu ini"
+                            title = stringResource(R.string.editor_choice),
+                            subtitle = stringResource(R.string.editor_choice_sub)
                         )
                         FeaturedCarousel(
                             comics = uiState.featuredComics,
@@ -136,9 +138,9 @@ fun HomeScreen(
                 if (uiState.continueReading.isNotEmpty()) {
                     item {
                         ComicSectionHeader(
-                            title = "Lanjutkan Membaca",
-                            subtitle = "Mulai dari halaman terakhir",
-                            actionLabel = "Semua",
+                            title = stringResource(R.string.continue_reading),
+                            subtitle = stringResource(R.string.continue_reading_sub),
+                            actionLabel = stringResource(R.string.see_all),
                             onActionClick = { onNavigateToExplore(null) }
                         )
                         Column(
@@ -162,9 +164,9 @@ fun HomeScreen(
                 if (uiState.popularComics.isNotEmpty()) {
                     item {
                         ComicSectionHeader(
-                            title = "Komik Populer",
-                            subtitle = "Paling banyak diikuti pembaca",
-                            actionLabel = "Lihat Semua",
+                            title = stringResource(R.string.popular_comics),
+                            subtitle = stringResource(R.string.popular_comics_sub),
+                            actionLabel = stringResource(R.string.see_all),
                             onActionClick = { onNavigateToExplore(null) }
                         )
                         LazyRow(
@@ -190,8 +192,8 @@ fun HomeScreen(
                 item {
                     Spacer(modifier = Modifier.height(16.dp))
                     ComicSectionHeader(
-                        title = "Jelajahi Genre",
-                        subtitle = "Koleksi berdasarkan kategori"
+                        title = stringResource(R.string.explore_genres),
+                        subtitle = stringResource(R.string.explore_genres_sub)
                     )
                     val genres = listOf("Action", "Fantasy", "Comedy", "Sci-Fi", "Historical", "Drama")
                     LazyRow(

@@ -20,7 +20,10 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import android.content.res.Configuration
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -65,6 +68,8 @@ fun ReaderScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     // Sync current visible page index
     LaunchedEffect(listState) {
@@ -109,30 +114,38 @@ fun ReaderScreen(
                     itemsIndexed(uiState.pages, key = { index, _ -> index }) { index, page ->
                         Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(0.7f)
-                                .background(Color.Black),
+                                .fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(page.imageUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = "Page ${index + 1}",
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.FillWidth
-                            )
-
-                            // Page Number watermark in subtle style
-                            Text(
-                                text = "${index + 1} / ${uiState.totalPages}",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = Color.White.copy(alpha = 0.5f),
+                            Box(
                                 modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .padding(8.dp)
-                            )
+                                    .then(
+                                        if (isLandscape) Modifier.widthIn(max = 620.dp).fillMaxWidth()
+                                        else Modifier.fillMaxWidth()
+                                    )
+                                    .aspectRatio(0.7f)
+                                    .background(Color.Black),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(page.imageUrl)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "Page ${index + 1}",
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentScale = ContentScale.FillWidth
+                                )
+
+                                Text(
+                                    text = "${index + 1} / ${uiState.totalPages}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color.White.copy(alpha = 0.5f),
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .padding(8.dp)
+                                )
+                            }
                         }
                     }
 
