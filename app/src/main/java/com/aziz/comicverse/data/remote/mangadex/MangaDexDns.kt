@@ -24,20 +24,17 @@ class MangaDexDns : Dns {
     }
 
     override fun lookup(hostname: String): List<InetAddress> {
-        return try {
-            if (hostname.endsWith("mangadex.org", ignoreCase = true)) {
-                mangaDexIps
-            } else if (hostname.endsWith("mangadex.network", ignoreCase = true)) {
+        val lower = hostname.lowercase()
+        return when {
+            lower.endsWith("mangadex.org") -> mangaDexIps
+            lower.endsWith("mangadex.network") -> cloudflareIps
+            else -> {
                 try {
                     Dns.SYSTEM.lookup(hostname)
                 } catch (e: Exception) {
-                    cloudflareIps
+                    if (lower.contains("mangadex")) mangaDexIps else throw e
                 }
-            } else {
-                Dns.SYSTEM.lookup(hostname)
             }
-        } catch (e: Exception) {
-            if (hostname.contains("mangadex")) mangaDexIps else throw e
         }
     }
 }

@@ -254,6 +254,7 @@ fun ComicDetailScreen(
                                         onNavigateToReader(comic.id, firstChapter.id)
                                     }
                                 },
+                                enabled = uiState.chapters.isNotEmpty(),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(48.dp),
@@ -269,7 +270,7 @@ fun ComicDetailScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "Mulai Membaca",
+                                    text = if (uiState.chapters.isNotEmpty()) "Mulai Membaca" else "Chapter Tidak Tersedia",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -326,11 +327,32 @@ fun ComicDetailScreen(
                     }
 
                     // Chapter Items
-                    items(uiState.chapters) { chapter ->
-                        ChapterListItem(
-                            chapter = chapter,
-                            onClick = { onNavigateToReader(comic.id, chapter.id) }
-                        )
+                    if (uiState.chapters.isEmpty()) {
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                shape = MaterialTheme.shapes.small,
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                )
+                            ) {
+                                Text(
+                                    text = "Belum ada chapter gratis yang di-hosting langsung di MangaDex untuk judul ini.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        items(uiState.chapters) { chapter ->
+                            ChapterListItem(
+                                chapter = chapter,
+                                onClick = { onNavigateToReader(comic.id, chapter.id) }
+                            )
+                        }
                     }
                 }
             }

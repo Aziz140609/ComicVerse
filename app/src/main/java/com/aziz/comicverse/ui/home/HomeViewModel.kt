@@ -26,13 +26,12 @@ class HomeViewModel(
         viewModelScope.launch {
             repository.getReadingHistory().collect { history ->
                 if (history.isNotEmpty()) {
-                    val historyComicIds = history.map { it.comicId }.toSet()
-                    val comics = com.aziz.comicverse.data.remote.LegalDemoComicProvider.demoComics.filter {
-                        historyComicIds.contains(it.id)
-                    }
-                    if (comics.isNotEmpty()) {
-                        _uiState.update { it.copy(continueReading = comics) }
-                    }
+                    val comics = history.mapNotNull { progress ->
+                        repository.getComicDetail(progress.comicId).getOrNull()
+                    }.distinctBy { it.id }
+                    _uiState.update { it.copy(continueReading = comics) }
+                } else {
+                    _uiState.update { it.copy(continueReading = emptyList()) }
                 }
             }
         }
@@ -53,7 +52,6 @@ class HomeViewModel(
                     it.copy(
                         featuredComics = trending.take(5),
                         popularComics = popular.ifEmpty { trending },
-                        continueReading = trending.filter { c -> c.isDemoContent },
                         isLoading = false,
                         errorMessage = null
                     )

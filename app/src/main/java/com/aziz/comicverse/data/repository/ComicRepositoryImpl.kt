@@ -146,42 +146,22 @@ class ComicRepositoryImpl(
                 return@withContext Result.success(distinctChapters)
             }
         } catch (e: Exception) {
-            // Ignore and fall back to preview chapters below
+            // Fall through to check if demo comic
         }
 
-        val fallbackChapters = listOf(
-            ComicChapter(
-                id = "pc-ep-1",
-                comicId = comicId,
-                title = "Chapter 1: Official Chapter",
-                chapterNumber = "1",
-                releaseDate = "Terbaru",
-                pageCount = 4
-            ),
-            ComicChapter(
-                id = "pc-ep-2",
-                comicId = comicId,
-                title = "Chapter 2: Highlights",
-                chapterNumber = "2",
-                releaseDate = "Terbaru",
-                pageCount = 4
-            ),
-            ComicChapter(
-                id = "pc-ep-3",
-                comicId = comicId,
-                title = "Chapter 3: Extra",
-                chapterNumber = "3",
-                releaseDate = "Terbaru",
-                pageCount = 4
-            )
-        )
-        Result.success(fallbackChapters)
+        if (comicId.startsWith("demo-")) {
+            return@withContext Result.success(LegalDemoComicProvider.getChapters(comicId))
+        }
+
+        Result.failure(Exception("Chapter untuk komik ini tidak tersedia di server MangaDex."))
     }
 
     override suspend fun getChapterPages(comicId: String, chapterId: String): Result<List<ComicPage>> = withContext(Dispatchers.IO) {
-        val demoPages = LegalDemoComicProvider.getPages(chapterId)
-        if (demoPages.isNotEmpty()) {
-            return@withContext Result.success(demoPages)
+        if (comicId.startsWith("demo-") || chapterId.startsWith("pc-") || chapterId.startsWith("sk-") || chapterId.startsWith("cn-")) {
+            val demoPages = LegalDemoComicProvider.getPages(chapterId)
+            if (demoPages.isNotEmpty()) {
+                return@withContext Result.success(demoPages)
+            }
         }
 
         try {
@@ -201,11 +181,10 @@ class ComicRepositoryImpl(
                 return@withContext Result.success(realPages)
             }
         } catch (e: Exception) {
-            // Ignore and fall back
+            return@withContext Result.failure(Exception("Gagal memuat halaman: ${e.localizedMessage ?: "Koneksi terputus"}"))
         }
 
-        // Fallback to demo pages if MangaDex at-home node is unreachable
-        Result.success(LegalDemoComicProvider.getPages("pc-ep-1"))
+        Result.failure(Exception("Halaman untuk chapter ini tidak ditemukan di MangaDex."))
     }
 
     // Room Favorites
