@@ -79,12 +79,12 @@ fun ExploreScreen(
         // Header with Japanese Sakura Branch Corner & Back Navigation support
         Box(modifier = Modifier.fillMaxWidth()) {
             Image(
-                painter = painterResource(R.drawable.ic_sakura_branch_corner),
+                painter = painterResource(R.drawable.ic_sakura_branch_arch),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .size(95.dp)
-                    .alpha(0.65f)
+                    .size(118.dp)
+                    .alpha(0.82f)
             )
             Row(
                 modifier = Modifier

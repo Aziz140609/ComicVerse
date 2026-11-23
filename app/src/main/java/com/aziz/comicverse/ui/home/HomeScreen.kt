@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -35,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -82,10 +84,10 @@ fun HomeScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                // Falling Sakura Backdrop: dense below artwork, softly drifting into New Update, fading away towards bottom
+                // Falling Sakura Backdrop: very lush at the top and below header, gradually tapering downwards
                 SakuraFallingBackdrop(
                     modifier = Modifier.fillMaxSize(),
-                    topOffset = 130.dp
+                    topOffset = 0.dp
                 )
 
                 LazyColumn(
@@ -191,6 +193,17 @@ fun HomeScreen(
                                 )
                             }
                         }
+
+                        // Lush blooming sakura branch overflowing from bottom-right of header into content
+                        Image(
+                            painter = painterResource(R.drawable.ic_sakura_branch_lush),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                                .size(135.dp)
+                                .offset(x = 16.dp, y = 30.dp)
+                                .alpha(0.85f)
+                        )
                     }
                 }
 

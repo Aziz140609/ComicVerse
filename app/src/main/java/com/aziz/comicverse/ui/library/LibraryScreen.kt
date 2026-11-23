@@ -56,12 +56,12 @@ fun LibraryScreen(
         // Editorial Header with Japanese Sakura Branch Corner
         Box(modifier = Modifier.fillMaxWidth()) {
             Image(
-                painter = painterResource(R.drawable.ic_sakura_branch_corner),
+                painter = painterResource(R.drawable.ic_sakura_branch_lush),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .size(95.dp)
-                    .alpha(0.65f)
+                    .size(118.dp)
+                    .alpha(0.82f)
             )
             Column(
                 modifier = Modifier

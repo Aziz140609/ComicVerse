@@ -57,12 +57,12 @@ fun ReadingHistoryScreen(
         // Top Bar with Sakura Branch Corner Silhouette
         Box(modifier = Modifier.fillMaxWidth()) {
             Image(
-                painter = painterResource(R.drawable.ic_sakura_branch_corner),
+                painter = painterResource(R.drawable.ic_sakura_branch_lush),
                 contentDescription = null,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .size(90.dp)
-                    .alpha(0.65f)
+                    .size(118.dp)
+                    .alpha(0.82f)
             )
             Row(
                 modifier = Modifier
