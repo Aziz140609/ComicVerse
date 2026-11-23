@@ -118,18 +118,32 @@ class ComicRepositoryImpl(
         }
 
         try {
-            val feed = mangaDexApi.getMangaFeed(mangaId = comicId, limit = 96)
+            var targetMangaId = comicId
+            val isUuid = comicId.matches(Regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"))
+            if (!isUuid) {
+                val detail = getComicDetail(comicId).getOrNull()
+                val query = detail?.title ?: comicId
+                val searchResp = mangaDexApi.searchManga(title = query, limit = 5)
+                val match = searchResp.data?.firstOrNull()
+                if (match != null) {
+                    targetMangaId = match.id
+                }
+            }
+
+            val feed = mangaDexApi.getMangaFeed(mangaId = targetMangaId, limit = 96)
             val chapters = feed.data?.filter {
                 // Filter chapters that have pages (exclude external redirect links)
-                (it.attributes?.pages ?: 0) > 0
+                (it.attributes?.pages ?: 0) > 0 && it.attributes?.externalUrl.isNullOrBlank()
             }?.map {
                 ComicMapper.mapMangaDexChapter(it, comicId)
             } ?: emptyList()
 
             if (chapters.isNotEmpty()) {
-                // Sort by chapter number naturally
-                val sorted = chapters.sortedBy { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
-                return@withContext Result.success(sorted)
+                // Group by chapter number to avoid duplicate translations, picking the one with most pages
+                val distinctChapters = chapters.groupBy { it.chapterNumber }
+                    .map { (_, group) -> group.maxByOrNull { it.pageCount } ?: group.first() }
+                    .sortedBy { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
+                return@withContext Result.success(distinctChapters)
             }
         } catch (e: Exception) {
             // Ignore and fall back to preview chapters below
@@ -137,20 +151,28 @@ class ComicRepositoryImpl(
 
         val fallbackChapters = listOf(
             ComicChapter(
-                id = "${comicId}-ch-1",
+                id = "pc-ep-1",
                 comicId = comicId,
                 title = "Chapter 1: Official Chapter",
                 chapterNumber = "1",
                 releaseDate = "Terbaru",
-                pageCount = 6
+                pageCount = 4
             ),
             ComicChapter(
-                id = "${comicId}-ch-2",
+                id = "pc-ep-2",
                 comicId = comicId,
                 title = "Chapter 2: Highlights",
                 chapterNumber = "2",
                 releaseDate = "Terbaru",
-                pageCount = 5
+                pageCount = 4
+            ),
+            ComicChapter(
+                id = "pc-ep-3",
+                comicId = comicId,
+                title = "Chapter 3: Extra",
+                chapterNumber = "3",
+                releaseDate = "Terbaru",
+                pageCount = 4
             )
         )
         Result.success(fallbackChapters)

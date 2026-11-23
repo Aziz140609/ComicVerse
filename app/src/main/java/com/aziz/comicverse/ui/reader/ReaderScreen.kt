@@ -24,6 +24,7 @@ import android.content.res.Configuration
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -123,7 +124,7 @@ fun ReaderScreen(
                                         if (isLandscape) Modifier.widthIn(max = 620.dp).fillMaxWidth()
                                         else Modifier.fillMaxWidth()
                                     )
-                                    .aspectRatio(0.7f)
+                                    .wrapContentHeight()
                                     .background(Color.Black),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -133,7 +134,9 @@ fun ReaderScreen(
                                         .crossfade(true)
                                         .build(),
                                     contentDescription = "Page ${index + 1}",
-                                    modifier = Modifier.fillMaxSize(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(),
                                     contentScale = ContentScale.FillWidth
                                 )
 

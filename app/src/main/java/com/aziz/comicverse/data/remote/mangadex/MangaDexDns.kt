@@ -15,11 +15,29 @@ class MangaDexDns : Dns {
         )
     }
 
+    private val cloudflareIps: List<InetAddress> by lazy {
+        listOf(
+            InetAddress.getByName("104.26.2.73"),
+            InetAddress.getByName("172.67.73.44"),
+            InetAddress.getByName("104.26.3.73")
+        )
+    }
+
     override fun lookup(hostname: String): List<InetAddress> {
-        return if (hostname.endsWith("mangadex.org", ignoreCase = true)) {
-            mangaDexIps
-        } else {
-            Dns.SYSTEM.lookup(hostname)
+        return try {
+            if (hostname.endsWith("mangadex.org", ignoreCase = true)) {
+                mangaDexIps
+            } else if (hostname.endsWith("mangadex.network", ignoreCase = true)) {
+                try {
+                    Dns.SYSTEM.lookup(hostname)
+                } catch (e: Exception) {
+                    cloudflareIps
+                }
+            } else {
+                Dns.SYSTEM.lookup(hostname)
+            }
+        } catch (e: Exception) {
+            if (hostname.contains("mangadex")) mangaDexIps else throw e
         }
     }
 }

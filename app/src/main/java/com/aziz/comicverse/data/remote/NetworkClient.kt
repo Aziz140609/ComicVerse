@@ -19,17 +19,21 @@ object NetworkClient {
             level = HttpLoggingInterceptor.Level.BASIC
         }
 
-        val userAgentInterceptor = Interceptor { chain ->
+        val headerInterceptor = Interceptor { chain ->
             val original = chain.request()
-            val request = original.newBuilder()
+            val requestBuilder = original.newBuilder()
                 .header("User-Agent", "ComicVerse/1.0 (Android; Mobile Programming Project)")
-                .build()
-            chain.proceed(request)
+
+            val host = original.url.host
+            if (host.contains("mangadex.network") || host.contains("mangadex.org")) {
+                requestBuilder.header("Referer", "https://mangadex.org/")
+            }
+            chain.proceed(requestBuilder.build())
         }
 
         OkHttpClient.Builder()
             .dns(MangaDexDns())
-            .addInterceptor(userAgentInterceptor)
+            .addInterceptor(headerInterceptor)
             .addInterceptor(logging)
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
