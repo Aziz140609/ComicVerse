@@ -19,6 +19,23 @@ class HomeViewModel(
 
     init {
         loadHomeData()
+        observeHistory()
+    }
+
+    private fun observeHistory() {
+        viewModelScope.launch {
+            repository.getReadingHistory().collect { history ->
+                if (history.isNotEmpty()) {
+                    val historyComicIds = history.map { it.comicId }.toSet()
+                    val comics = com.aziz.comicverse.data.remote.LegalDemoComicProvider.demoComics.filter {
+                        historyComicIds.contains(it.id)
+                    }
+                    if (comics.isNotEmpty()) {
+                        _uiState.update { it.copy(continueReading = comics) }
+                    }
+                }
+            }
+        }
     }
 
     fun loadHomeData() {

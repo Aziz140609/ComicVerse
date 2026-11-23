@@ -21,6 +21,15 @@ class ComicDetailViewModel(
 
     init {
         loadDetail()
+        observeFavoriteStatus()
+    }
+
+    private fun observeFavoriteStatus() {
+        viewModelScope.launch {
+            repository.isFavorite(comicId).collect { isFav ->
+                _uiState.update { it.copy(isFavorite = isFav) }
+            }
+        }
     }
 
     fun loadDetail() {
@@ -51,7 +60,10 @@ class ComicDetailViewModel(
     }
 
     fun toggleFavorite() {
-        _uiState.update { it.copy(isFavorite = !it.isFavorite) }
+        viewModelScope.launch {
+            val comic = _uiState.value.comic ?: return@launch
+            repository.toggleFavorite(comic)
+        }
     }
 
     companion object {

@@ -72,6 +72,19 @@ class ReaderViewModel(
     fun updateCurrentPage(pageIndex: Int) {
         if (pageIndex in 1.._uiState.value.totalPages) {
             _uiState.update { it.copy(currentPageIndex = pageIndex) }
+            viewModelScope.launch {
+                val state = _uiState.value
+                val chapter = state.currentChapter
+                repository.saveReadingProgress(
+                    com.aziz.comicverse.domain.model.ReadingProgress(
+                        comicId = comicId,
+                        chapterId = chapter?.id ?: initialChapterId,
+                        chapterTitle = chapter?.title ?: "Chapter",
+                        pageIndex = pageIndex,
+                        totalPages = state.totalPages
+                    )
+                )
+            }
         }
     }
 
