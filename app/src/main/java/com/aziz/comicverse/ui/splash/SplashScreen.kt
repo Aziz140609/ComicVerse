@@ -4,6 +4,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,6 +37,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -238,28 +241,28 @@ private fun SakuraWaveWipeOverlay(
             R.drawable.ic_sakura_petal_pair
         )
 
-        // 70 particles forming a dense sweeping wave curtain
-        for (i in 0 until 70) {
+        // 180 particles forming a super dense, thick sweeping sakura wave curtain (SpongeBob bubble wipe style)
+        for (i in 0 until 180) {
             val dId = when {
                 i % 3 == 0 -> R.drawable.ic_sakura_flower_clean   // Full blossoms
                 i % 4 == 0 -> R.drawable.ic_sakura_petals_clean   // Petal clusters
                 else -> drawables[rnd.nextInt(drawables.size)]
             }
             val size = when (dId) {
-                R.drawable.ic_sakura_flower_clean -> (28 + rnd.nextInt(22)).dp // 28dp - 50dp
-                R.drawable.ic_sakura_petals_clean -> (40 + rnd.nextInt(25)).dp // 40dp - 65dp
-                else -> (18 + rnd.nextInt(14)).dp                              // 18dp - 32dp
+                R.drawable.ic_sakura_flower_clean -> (36 + rnd.nextInt(30)).dp // 36dp - 66dp (lush blossoms)
+                R.drawable.ic_sakura_petals_clean -> (48 + rnd.nextInt(32)).dp // 48dp - 80dp (thick clusters)
+                else -> (24 + rnd.nextInt(20)).dp                              // 24dp - 44dp (fluttering petals)
             }
 
             list.add(
                 SakuraWaveParticle(
                     drawableId = dId,
-                    longitudinalOffset = (rnd.nextFloat() - 0.5f) * 0.70f, // Wave thickness
-                    lateralOffset = (rnd.nextFloat() - 0.5f) * 1.30f,      // Wave width span
+                    longitudinalOffset = (rnd.nextFloat() - 0.5f) * 1.15f, // Much deeper wave thickness
+                    lateralOffset = (rnd.nextFloat() - 0.5f) * 1.65f,      // Broad wave span covering entire screen
                     sizeDp = size,
-                    baseAlpha = 0.75f + rnd.nextFloat() * 0.25f,
+                    baseAlpha = 0.82f + rnd.nextFloat() * 0.18f,
                     baseRotation = rnd.nextFloat() * 360f,
-                    spinMultiplier = (rnd.nextFloat() - 0.5f) * 3f,
+                    spinMultiplier = (rnd.nextFloat() - 0.5f) * 3.5f,
                     wobbleFrequency = 2f + rnd.nextFloat() * 4f
                 )
             )
@@ -272,24 +275,42 @@ private fun SakuraWaveWipeOverlay(
         val screenHeight = maxHeight
 
         Box(modifier = Modifier.fillMaxSize()) {
-            // Wave progress maps from -0.35f (entry) to 1.35f (exit)
-            val wavePos = -0.35f + progress * 1.70f
+            // Wave progress maps from -0.45f (entry) to 1.45f (exit)
+            val wavePos = -0.45f + progress * 1.90f
+
+            // Lush translucent sakura pink wash moving diagonally with the wave for SpongeBob wipe body fullness
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val centerWaveX = size.width * (1.20f - wavePos * 1.50f)
+                val centerWaveY = size.height * (-0.20f + wavePos * 1.50f)
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color(0xFFFFB6C1).copy(alpha = 0.60f),
+                            Color(0xFFFFC0CB).copy(alpha = 0.40f),
+                            Color(0xFFFFD1DC).copy(alpha = 0.15f),
+                            Color.Transparent
+                        ),
+                        center = Offset(centerWaveX, centerWaveY),
+                        radius = size.width * 1.15f
+                    )
+                )
+            }
 
             particles.forEach { p ->
                 // Position along diagonal stream (Top-Right to Bottom-Left)
                 val itemProgress = wavePos + p.longitudinalOffset
 
-                // Diagonal path: X moves from right (1.15) to left (-0.25)
-                // Y moves from top (-0.15) to bottom (1.25)
-                val baseX = 1.15f - itemProgress * 1.40f
-                val baseY = -0.15f + itemProgress * 1.40f
+                // Diagonal path: X moves from right (1.20) to left (-0.30)
+                // Y moves from top (-0.20) to bottom (1.30)
+                val baseX = 1.20f - itemProgress * 1.50f
+                val baseY = -0.20f + itemProgress * 1.50f
 
                 // Lateral offset (perpendicular to diagonal stream)
-                val perpX = p.lateralOffset * 0.55f
-                val perpY = p.lateralOffset * 0.55f
+                val perpX = p.lateralOffset * 0.65f
+                val perpY = p.lateralOffset * 0.65f
 
                 // Sine wave flutter/wobble as wind pushes the wave
-                val wobble = sin(progress * Math.PI * p.wobbleFrequency).toFloat() * 14f
+                val wobble = sin(progress * Math.PI * p.wobbleFrequency).toFloat() * 16f
 
                 val finalX = screenWidth * (baseX + perpX) + wobble.dp
                 val finalY = screenHeight * (baseY + perpY) + (wobble * 0.5f).dp
