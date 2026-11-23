@@ -36,7 +36,10 @@ fun ComicVerseNavGraph(
     val currentRoute = navBackStackEntry?.destination?.route
 
     // Hide BottomBar on Detail & Reader screens
-    val isBottomBarVisible = bottomNavItems.any { it.route == currentRoute }
+    val isBottomBarVisible = currentRoute == Screen.Home.route ||
+            currentRoute?.startsWith("explore") == true ||
+            currentRoute == Screen.Library.route ||
+            currentRoute == Screen.Settings.route
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -102,17 +105,28 @@ fun ComicVerseNavGraph(
                     onNavigateToDetail = { comicId ->
                         navController.navigate(Screen.Detail.createRoute(comicId))
                     },
-                    onNavigateToExplore = { _ ->
-                        navController.navigate(Screen.Explore.route)
+                    onNavigateToExplore = { genre ->
+                        navController.navigate(Screen.Explore.createRoute(genre))
                     }
                 )
             }
 
-            composable(Screen.Explore.route) {
+            composable(
+                route = Screen.Explore.routeWithArgs,
+                arguments = listOf(
+                    navArgument("genre") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
+                )
+            ) { backStackEntry ->
+                val genre = backStackEntry.arguments?.getString("genre")
                 ExploreScreen(
                     onNavigateToDetail = { comicId ->
                         navController.navigate(Screen.Detail.createRoute(comicId))
-                    }
+                    },
+                    initialGenre = genre
                 )
             }
 

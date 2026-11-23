@@ -29,7 +29,12 @@ sealed class Screen(
         title = "Explore",
         selectedIcon = Icons.Filled.Explore,
         unselectedIcon = Icons.Outlined.Explore
-    )
+    ) {
+        const val routeWithArgs = "explore?genre={genre}"
+        fun createRoute(genre: String? = null): String {
+            return if (genre != null) "explore?genre=$genre" else "explore"
+        }
+    }
 
     data object Library : Screen(
         route = "library",
