@@ -2,11 +2,7 @@ package com.aziz.comicverse.ui.splash
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,28 +45,33 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aziz.comicverse.R
 import kotlinx.coroutines.delay
+import kotlin.math.sin
+import kotlin.random.Random
 
 /**
- * Data class representing a petal or blossom along the diagonal wave stream.
+ * Data model for a particle within the SpongeBob-style Sakura Wave Wipe.
  */
-private data class SakuraWaveElement(
+private data class SakuraWaveParticle(
     val drawableId: Int,
-    val xRatio: Float,
-    val yRatio: Float,
+    val longitudinalOffset: Float, // Position along wave flow (-0.35f to 0.35f)
+    val lateralOffset: Float,      // Spread across wave width (-0.65f to 0.65f)
     val sizeDp: Dp,
-    val alpha: Float,
-    val rotationDeg: Float
+    val baseAlpha: Float,
+    val baseRotation: Float,
+    val spinMultiplier: Float,
+    val wobbleFrequency: Float
 )
 
 /**
  * Japanese Aesthetic Splash Screen for ComicVerse.
  *
- * Design:
+ * Features:
  * - Washi paper background.
- * - Diagonal sakura flower wave streaming from Top-Right to Bottom-Left corner.
- * - Stylized Pink ComicVerse Manga Typography with speed swoosh and sakura blossom.
+ * - Stylized Pink ComicVerse Manga Typography with speed swoosh & sakura blossom.
  * - Traditional Japanese Hanko seal stamp (漫画) & Kanji subtitle.
- * - Clean, distraction-free (no loading animation in splash).
+ * - SpongeBob-Style "Sakura Wave Wipe" Transition:
+ *   A rich, cascading wave of sakura blossoms and petals sweeping across the screen
+ *   from Top-Right to Bottom-Left to reveal the app!
  */
 @Composable
 fun SplashScreen(
@@ -78,22 +79,34 @@ fun SplashScreen(
     modifier: Modifier = Modifier
 ) {
     var startAnimation by remember { mutableStateOf(false) }
+    var startWaveWipe by remember { mutableStateOf(false) }
 
     val alphaAnim by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
-        animationSpec = tween(durationMillis = 1100, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
         label = "SplashAlpha"
     )
 
     val scaleAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0.85f,
-        animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing),
+        targetValue = if (startAnimation) 1f else 0.86f,
+        animationSpec = tween(durationMillis = 900, easing = FastOutSlowInEasing),
         label = "SplashScale"
+    )
+
+    // SpongeBob-style Wave Wipe progress: sweeps from 0f (top-right) to 1f (bottom-left)
+    val waveProgress by animateFloatAsState(
+        targetValue = if (startWaveWipe) 1f else 0f,
+        animationSpec = tween(durationMillis = 1500, easing = LinearEasing),
+        label = "SakuraWaveWipe"
     )
 
     LaunchedEffect(Unit) {
         startAnimation = true
-        delay(2200)
+        // After branding displays, trigger the sweeping Sakura Wave Wipe
+        delay(700)
+        startWaveWipe = true
+        // Right as the thickest part of the wave sweeps over the screen, transition to Home
+        delay(1400)
         onSplashFinished()
     }
 
@@ -103,11 +116,6 @@ fun SplashScreen(
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        // Diagonal Sakura Stream from Top-Right to Bottom-Left
-        SakuraDiagonalWaveStream(
-            modifier = Modifier.fillMaxSize()
-        )
-
         // Center Branding Content
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -196,60 +204,67 @@ fun SplashScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
         }
+
+        // SpongeBob-Style Sakura Wave Wipe Overlay
+        if (startWaveWipe) {
+            SakuraWaveWipeOverlay(
+                progress = waveProgress,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
 /**
- * Renders a cinematic diagonal stream / wave of sakura blossoms and drifting petals
- * flowing from the Top-Right corner to the Bottom-Left corner.
+ * SpongeBob-Style Sakura Wave Wipe Overlay.
+ *
+ * Simulates a sweeping wave/curtain of dozens of blooming sakura blossoms and fluttering petals
+ * washing over the entire screen from Top-Right (x=1.1, y=-0.1) to Bottom-Left (x=-0.2, y=1.2).
  */
 @Composable
-private fun SakuraDiagonalWaveStream(
+private fun SakuraWaveWipeOverlay(
+    progress: Float,
     modifier: Modifier = Modifier
 ) {
-    // Subtle breeze drift animation
-    val infiniteTransition = rememberInfiniteTransition(label = "SakuraWaveBreeze")
-    val breezeOffset by infiniteTransition.animateFloat(
-        initialValue = -5f,
-        targetValue = 5f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2800, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "BreezeOffset"
-    )
-
-    val waveElements = remember {
-        listOf(
-            // 1. Top-Right Corner (Titik Masuk Gelombang)
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.94f, 0.03f, 40.dp, 0.85f, 130f),
-            SakuraWaveElement(R.drawable.ic_sakura_petals_clean, 0.86f, 0.07f, 50.dp, 0.78f, 140f),
-            SakuraWaveElement(R.drawable.ic_sakura_petal_curved, 0.92f, 0.11f, 22.dp, 0.72f, 125f),
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.80f, 0.14f, 36.dp, 0.80f, 135f),
-
-            // 2. Aliran Menengah Atas
-            SakuraWaveElement(R.drawable.ic_sakura_petal_pair, 0.74f, 0.20f, 26.dp, 0.72f, 145f),
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.68f, 0.26f, 34.dp, 0.75f, 120f),
-            SakuraWaveElement(R.drawable.ic_sakura_petal_falling, 0.62f, 0.32f, 20.dp, 0.68f, 140f),
-
-            // 3. Aliran Tengah (Menyilang di sekitar area judul)
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.58f, 0.38f, 32.dp, 0.70f, 130f),
-            SakuraWaveElement(R.drawable.ic_sakura_petals_clean, 0.50f, 0.44f, 52.dp, 0.68f, 135f),
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.44f, 0.50f, 34.dp, 0.72f, 140f),
-            SakuraWaveElement(R.drawable.ic_sakura_petal_curved, 0.40f, 0.56f, 22.dp, 0.68f, 125f),
-
-            // 4. Aliran Menengah Bawah
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.34f, 0.62f, 34.dp, 0.74f, 135f),
-            SakuraWaveElement(R.drawable.ic_sakura_petal_pair, 0.28f, 0.68f, 26.dp, 0.70f, 145f),
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.24f, 0.74f, 36.dp, 0.76f, 130f),
-            SakuraWaveElement(R.drawable.ic_sakura_petal_curved, 0.18f, 0.80f, 22.dp, 0.72f, 140f),
-
-            // 5. Pojok Kiri Bawah (Titik Keluar Gelombang)
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.14f, 0.85f, 38.dp, 0.80f, 125f),
-            SakuraWaveElement(R.drawable.ic_sakura_petals_clean, 0.08f, 0.90f, 50.dp, 0.76f, 140f),
-            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.03f, 0.94f, 40.dp, 0.82f, 135f),
-            SakuraWaveElement(R.drawable.ic_sakura_petal_falling, 0.02f, 0.88f, 20.dp, 0.70f, 130f)
+    // Generate deterministic particles for the wave wipe
+    val particles = remember {
+        val list = mutableListOf<SakuraWaveParticle>()
+        val rnd = Random(42) // Fixed seed for stable layout
+        val drawables = listOf(
+            R.drawable.ic_sakura_flower_clean,
+            R.drawable.ic_sakura_petals_clean,
+            R.drawable.ic_sakura_petal_curved,
+            R.drawable.ic_sakura_petal_falling,
+            R.drawable.ic_sakura_petal_pair
         )
+
+        // 70 particles forming a dense sweeping wave curtain
+        for (i in 0 until 70) {
+            val dId = when {
+                i % 3 == 0 -> R.drawable.ic_sakura_flower_clean   // Full blossoms
+                i % 4 == 0 -> R.drawable.ic_sakura_petals_clean   // Petal clusters
+                else -> drawables[rnd.nextInt(drawables.size)]
+            }
+            val size = when (dId) {
+                R.drawable.ic_sakura_flower_clean -> (28 + rnd.nextInt(22)).dp // 28dp - 50dp
+                R.drawable.ic_sakura_petals_clean -> (40 + rnd.nextInt(25)).dp // 40dp - 65dp
+                else -> (18 + rnd.nextInt(14)).dp                              // 18dp - 32dp
+            }
+
+            list.add(
+                SakuraWaveParticle(
+                    drawableId = dId,
+                    longitudinalOffset = (rnd.nextFloat() - 0.5f) * 0.70f, // Wave thickness
+                    lateralOffset = (rnd.nextFloat() - 0.5f) * 1.30f,      // Wave width span
+                    sizeDp = size,
+                    baseAlpha = 0.75f + rnd.nextFloat() * 0.25f,
+                    baseRotation = rnd.nextFloat() * 360f,
+                    spinMultiplier = (rnd.nextFloat() - 0.5f) * 3f,
+                    wobbleFrequency = 2f + rnd.nextFloat() * 4f
+                )
+            )
+        }
+        list
     }
 
     BoxWithConstraints(modifier = modifier) {
@@ -257,18 +272,38 @@ private fun SakuraDiagonalWaveStream(
         val screenHeight = maxHeight
 
         Box(modifier = Modifier.fillMaxSize()) {
-            waveElements.forEachIndexed { index, item ->
-                val xPos = screenWidth * item.xRatio + (breezeOffset * (if (index % 2 == 0) 1f else -1f)).dp
-                val yPos = screenHeight * item.yRatio + (breezeOffset * 0.5f).dp
+            // Wave progress maps from -0.35f (entry) to 1.35f (exit)
+            val wavePos = -0.35f + progress * 1.70f
+
+            particles.forEach { p ->
+                // Position along diagonal stream (Top-Right to Bottom-Left)
+                val itemProgress = wavePos + p.longitudinalOffset
+
+                // Diagonal path: X moves from right (1.15) to left (-0.25)
+                // Y moves from top (-0.15) to bottom (1.25)
+                val baseX = 1.15f - itemProgress * 1.40f
+                val baseY = -0.15f + itemProgress * 1.40f
+
+                // Lateral offset (perpendicular to diagonal stream)
+                val perpX = p.lateralOffset * 0.55f
+                val perpY = p.lateralOffset * 0.55f
+
+                // Sine wave flutter/wobble as wind pushes the wave
+                val wobble = sin(progress * Math.PI * p.wobbleFrequency).toFloat() * 14f
+
+                val finalX = screenWidth * (baseX + perpX) + wobble.dp
+                val finalY = screenHeight * (baseY + perpY) + (wobble * 0.5f).dp
+
+                val currentRotation = p.baseRotation + progress * 360f * p.spinMultiplier
 
                 Image(
-                    painter = painterResource(item.drawableId),
+                    painter = painterResource(p.drawableId),
                     contentDescription = null,
                     modifier = Modifier
-                        .offset(x = xPos, y = yPos)
-                        .size(item.sizeDp)
-                        .rotate(item.rotationDeg + breezeOffset * 0.8f)
-                        .alpha(item.alpha)
+                        .offset(x = finalX, y = finalY)
+                        .size(p.sizeDp)
+                        .rotate(currentRotation)
+                        .alpha(p.baseAlpha)
                 )
             }
         }
