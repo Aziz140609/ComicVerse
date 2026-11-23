@@ -1,0 +1,56 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+
+    <!-- Rising Sun / Hinomaru -->
+    <path
+        android:pathData="M 100,65 m -30,0 a 30,30 0 1,0 60,0 a 30,30 0 1,0 -60,0"
+        android:fillColor="#25FF4081" />
+
+    <!-- Mount Fuji Silhouette -->
+    <path
+        android:pathData="M 40,150 C 65,135 80,105 92,72 L 108,72 C 120,105 135,135 160,150 Z"
+        android:fillColor="#209C27B0" />
+
+    <!-- Mount Fuji Snow Cap -->
+    <path
+        android:pathData="M 92,72 L 108,72 C 112,82 116,88 118,92 C 114,94 111,91 107,95 C 103,98 101,93 98,96 C 94,93 91,96 87,93 C 85,88 88,82 92,72 Z"
+        android:fillColor="#40FFFFFF" />
+
+    <!-- Torii Gate Silhouette (Vermilion / Red) -->
+    <!-- Top curved beam (Kasagi) -->
+    <path
+        android:pathData="M 50,88 C 75,85 125,85 150,88 L 152,92 C 125,89 75,89 48,92 Z"
+        android:fillColor="#D32F2F" />
+
+    <!-- Second beam (Shimaki & Nuki) -->
+    <path
+        android:pathData="M 54,94 L 146,94 L 146,97 L 54,97 Z"
+        android:fillColor="#C62828" />
+    <path
+        android:pathData="M 58,103 L 142,103 L 142,106 L 58,106 Z"
+        android:fillColor="#B71C1C" />
+
+    <!-- Vertical Pillars (Hashira) -->
+    <path
+        android:pathData="M 68,90 L 73,90 L 71,150 L 66,150 Z"
+        android:fillColor="#C62828" />
+    <path
+        android:pathData="M 127,90 L 132,90 L 134,150 L 129,150 Z"
+        android:fillColor="#C62828" />
+
+    <!-- Central strut (Gakuzuka) -->
+    <path
+        android:pathData="M 98,94 L 102,94 L 102,103 L 98,103 Z"
+        android:fillColor="#C62828" />
+
+    <!-- Base Stones (Kamebara) -->
+    <path
+        android:pathData="M 63,148 L 74,148 L 74,150 L 63,150 Z"
+        android:fillColor="#424242" />
+    <path
+        android:pathData="M 126,148 L 137,148 L 137,150 L 126,150 Z"
+        android:fillColor="#424242" />
+</vector>

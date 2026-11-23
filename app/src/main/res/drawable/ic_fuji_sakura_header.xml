@@ -1,0 +1,177 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="400dp"
+    android:height="170dp"
+    android:viewportWidth="400"
+    android:viewportHeight="170">
+
+    <!-- Soft Dawn Sky Gradient -->
+    <path
+        android:pathData="M0,0h400v170h-400z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="200"
+                android:startY="0"
+                android:endX="200"
+                android:endY="170">
+                <item android:offset="0.0" android:color="#00FFF0F3" />
+                <item android:offset="0.6" android:color="#20FCE4EC" />
+                <item android:offset="1.0" android:color="#50F8BBD0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Japanese Rising Sun (Asahi Silhouette) -->
+    <path
+        android:pathData="M 215,95 m -38,0 a 38,38 0 1,0 76,0 a 38,38 0 1,0 -76,0">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="215"
+                android:centerY="95"
+                android:gradientRadius="42">
+                <item android:offset="0.0" android:color="#40FF4081" />
+                <item android:offset="0.7" android:color="#25F06292" />
+                <item android:offset="1.0" android:color="#00FCE4EC" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Mount Fuji Silhouette (Body) -->
+    <path
+        android:pathData="M 100,170 C 145,150 170,118 190,82 L 240,82 C 260,118 285,150 330,170 Z"
+        android:fillColor="#30B39DDB" />
+
+    <!-- Mount Fuji Snow Cap -->
+    <path
+        android:pathData="M 190,82 L 240,82 C 248,96 254,106 256,112 C 251,114 246,110 241,115 C 236,119 233,113 228,118 C 223,122 218,115 214,120 C 209,116 205,121 200,117 C 196,114 192,118 187,113 C 182,109 179,112 174,112 C 176,106 182,96 190,82 Z"
+        android:fillColor="#55FFFFFF" />
+
+    <!-- Mount Fuji Crater Rim -->
+    <path
+        android:pathData="M 190,82 C 202,85 228,85 240,82 C 235,80 195,80 190,82 Z"
+        android:fillColor="#359575CD" />
+
+    <!-- Distant Japanese Mist & Cloud Hills -->
+    <path
+        android:pathData="M 0,170 C 50,148 110,154 180,146 C 250,138 320,152 400,142 L 400,170 L 0,170 Z"
+        android:fillColor="#25F48FB1" />
+    <path
+        android:pathData="M 0,170 C 70,155 140,160 220,152 C 300,144 350,158 400,156 L 400,170 L 0,170 Z"
+        android:fillColor="#30F8BBD0" />
+
+    <!-- Traditional Japanese Stylized Wave / Cloud (Kumo) -->
+    <path
+        android:pathData="M 50,110 C 65,110 75,102 85,105 C 95,108 105,104 115,108 C 105,112 90,114 75,113 C 62,113 55,111 50,110 Z"
+        android:fillColor="#30FFFFFF" />
+    <path
+        android:pathData="M 280,125 C 295,125 305,118 315,121 C 325,124 335,120 345,123 C 335,127 320,128 305,128 C 292,127 285,126 280,125 Z"
+        android:fillColor="#25FFFFFF" />
+
+    <!-- Sakura Branch (Siluet Ranting Bunga Sakura) stretching from Top-Right -->
+    <!-- Main Branch -->
+    <path
+        android:pathData="M 405,-5 C 380,15 350,22 320,28 C 290,34 265,52 245,68 C 243,70 246,73 248,71 C 267,56 291,38 321,33 C 351,27 381,20 405,2 Z"
+        android:fillColor="#705D4037" />
+
+    <!-- Sub Branch 1 -->
+    <path
+        android:pathData="M 345,24 C 330,38 310,48 290,52 C 288,52 288,55 291,55 C 311,51 331,41 346,26 Z"
+        android:fillColor="#605D4037" />
+
+    <!-- Sub Branch 2 -->
+    <path
+        android:pathData="M 285,42 C 275,32 260,28 245,25 C 244,25 243,28 245,28 C 259,31 273,35 283,45 Z"
+        android:fillColor="#605D4037" />
+
+    <!-- Sakura Blossoms (Bunga Sakura Mekar 5 Kelopak) -->
+    <!-- Blossom 1 (Big, at 245, 68) -->
+    <group android:translateX="245" android:translateY="68">
+        <!-- 5 Petals -->
+        <path android:pathData="M0,0 C -5,-12 5,-12 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 C 11,-6 14,4 0,0" android:fillColor="#D5FF4081" />
+        <path android:pathData="M0,0 C 9,9 -1,13 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 C -8,9 -12,0 0,0" android:fillColor="#D0F8BBD0" />
+        <path android:pathData="M0,0 C -12,-4 -7,-11 0,0" android:fillColor="#E0FF80AB" />
+        <!-- Center pistil -->
+        <path android:pathData="M0,0 m -2,0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0" android:fillColor="#E91E63" />
+    </group>
+
+    <!-- Blossom 2 (At 290, 52) -->
+    <group android:translateX="290" android:translateY="52">
+        <path android:pathData="M0,0 C -4,-10 4,-10 0,0" android:fillColor="#E0FF80AB" />
+        <path android:pathData="M0,0 C 9,-5 12,3 0,0" android:fillColor="#D5FF4081" />
+        <path android:pathData="M0,0 C 7,8 -1,11 0,0" android:fillColor="#E0FF80AB" />
+        <path android:pathData="M0,0 C -7,8 -10,0 0,0" android:fillColor="#D0F8BBD0" />
+        <path android:pathData="M0,0 C -10,-3 -6,-9 0,0" android:fillColor="#D5FF80AB" />
+        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#C2185B" />
+    </group>
+
+    <!-- Blossom 3 (At 335, 26) -->
+    <group android:translateX="335" android:translateY="26">
+        <path android:pathData="M0,0 C -4,-11 5,-11 0,0" android:fillColor="#E5FF4081" />
+        <path android:pathData="M0,0 C 10,-5 13,4 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 C 8,9 -1,12 0,0" android:fillColor="#D5F8BBD0" />
+        <path android:pathData="M0,0 C -8,8 -11,0 0,0" android:fillColor="#E0FF80AB" />
+        <path android:pathData="M0,0 C -11,-3 -6,-10 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 m -2,0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0" android:fillColor="#AD1457" />
+    </group>
+
+    <!-- Blossom 4 (At 248, 26) -->
+    <group android:translateX="248" android:translateY="26">
+        <path android:pathData="M0,0 C -3,-8 3,-8 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 C 7,-4 9,3 0,0" android:fillColor="#C0FF4081" />
+        <path android:pathData="M0,0 C 6,7 -1,9 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 C -6,6 -8,0 0,0" android:fillColor="#C5F8BBD0" />
+        <path android:pathData="M0,0 C -8,-2 -4,-8 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#C2185B" />
+    </group>
+
+    <!-- Blossom 5 (At 370, 16) -->
+    <group android:translateX="370" android:translateY="16">
+        <path android:pathData="M0,0 C -4,-9 4,-9 0,0" android:fillColor="#E0FF80AB" />
+        <path android:pathData="M0,0 C 8,-4 11,3 0,0" android:fillColor="#D0FF4081" />
+        <path android:pathData="M0,0 C 7,8 -1,10 0,0" android:fillColor="#E0F8BBD0" />
+        <path android:pathData="M0,0 C -7,7 -9,0 0,0" android:fillColor="#D0FF80AB" />
+        <path android:pathData="M0,0 C -9,-3 -5,-8 0,0" android:fillColor="#E0FF80AB" />
+        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#C2185B" />
+    </group>
+
+    <!-- Drifting Floating Sakura Petals (Kelopak Bunga Sakura Berguguran) -->
+    <!-- Petal 1 (Near mountain peak) -->
+    <path
+        android:pathData="M 180,60 C 175,54 170,58 172,65 C 174,72 182,70 185,67 C 187,64 184,62 180,60 Z"
+        android:fillColor="#C0FF80AB" />
+
+    <!-- Petal 2 (Middle sky) -->
+    <path
+        android:pathData="M 215,40 C 218,34 225,36 226,42 C 227,48 220,52 216,49 C 213,46 214,43 215,40 Z"
+        android:fillColor="#B5FF4081" />
+
+    <!-- Petal 3 (Left side breeze) -->
+    <path
+        android:pathData="M 130,85 C 126,80 120,83 122,89 C 124,95 131,93 134,90 C 136,88 133,86 130,85 Z"
+        android:fillColor="#B0F8BBD0" />
+
+    <!-- Petal 4 (Falling lower) -->
+    <path
+        android:pathData="M 160,110 C 163,105 169,107 170,112 C 171,117 165,120 162,118 C 159,115 160,112 160,110 Z"
+        android:fillColor="#A0FF80AB" />
+
+    <!-- Petal 5 (Far left drift) -->
+    <path
+        android:pathData="M 85,95 C 82,90 77,93 78,98 C 80,103 86,102 88,99 C 90,97 87,95 85,95 Z"
+        android:fillColor="#90FF4081" />
+
+    <!-- Petal 6 (Near branch) -->
+    <path
+        android:pathData="M 270,78 C 273,73 278,75 279,79 C 280,84 275,87 272,85 C 270,83 271,80 270,78 Z"
+        android:fillColor="#C0FF80AB" />
+
+    <!-- Petal 7 (High sky) -->
+    <path
+        android:pathData="M 315,8 C 318,3 323,5 324,9 C 325,14 320,17 317,15 C 315,13 316,10 315,8 Z"
+        android:fillColor="#B0FF80AB" />
+
+</vector>

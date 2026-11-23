@@ -4,16 +4,17 @@ import androidx.compose.ui.graphics.Color
 
 // Japanese Editorial Color Palette
 object ComicColorTokens {
-    // Light Mode
-    val LightBackground = Color(0xFFF8F4EC)
+    // Light Mode (Authentic Japanese Aesthetics: Washi, Sakura Pink, Torii Crimson, Sumi Ink)
+    val LightBackground = Color(0xFFFAF7F2)
     val LightSurface = Color(0xFFFFFFFF)
-    val LightSurfaceVariant = Color(0xFFF1ECE4)
-    val LightPrimary = Color(0xFFB84C59)
+    val LightSurfaceVariant = Color(0xFFF7EFF1)
+    val LightPrimary = Color(0xFFC62828) // Torii Crimson / Japanese Vermilion
     val LightOnPrimary = Color(0xFFFFFFFF)
-    val LightSakura = Color(0xFFE9BFC5)
-    val LightTextPrimary = Color(0xFF29252A)
-    val LightTextSecondary = Color(0xFF8C7773)
-    val LightBorder = Color(0xFFE5DDD5)
+    val LightSakura = Color(0xFFF8BBD0) // Soft Cherry Blossom
+    val LightSakuraDeep = Color(0xFFD81B60) // Deep Sakura Accent
+    val LightTextPrimary = Color(0xFF2C2426) // Sumi Charcoal
+    val LightTextSecondary = Color(0xFF7D6B71) // Japanese Slate
+    val LightBorder = Color(0xFFEFE4DC) // Washi Border
 
     // Dark Mode
     val DarkBackground = Color(0xFF181619)
