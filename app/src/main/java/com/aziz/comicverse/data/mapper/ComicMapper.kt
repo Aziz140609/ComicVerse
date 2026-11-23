@@ -51,18 +51,23 @@ object ComicMapper {
     fun mapMangaDexChapter(item: MangaDexChapterItem, mangaId: String): ComicChapter {
         val attr = item.attributes
         val chNum = attr?.chapter ?: "1"
+        val lang = attr?.translatedLanguage ?: "id"
+        val langPrefix = if (lang == "id") "[ID] " else if (lang == "en") "[EN] " else ""
         val titleText = if (!attr?.title.isNullOrBlank()) {
-            "Chapter $chNum: ${attr?.title}"
+            "${langPrefix}Chapter $chNum: ${attr.title}"
         } else {
-            "Chapter $chNum"
+            "${langPrefix}Chapter $chNum"
         }
+
+        val langBadge = if (lang == "id") "🇮🇩 Indo" else "🇬🇧 Eng"
+        val dateText = attr?.publishAt?.take(10) ?: "Terbaru"
 
         return ComicChapter(
             id = item.id,
             comicId = mangaId,
             title = titleText,
             chapterNumber = chNum,
-            releaseDate = attr?.publishAt?.take(10) ?: "Terbaru",
+            releaseDate = "$langBadge • $dateText",
             pageCount = attr?.pages ?: 0
         )
     }

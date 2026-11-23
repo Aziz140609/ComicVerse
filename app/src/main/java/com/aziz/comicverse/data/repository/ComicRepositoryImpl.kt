@@ -130,7 +130,7 @@ class ComicRepositoryImpl(
                 }
             }
 
-            val feed = mangaDexApi.getMangaFeed(mangaId = targetMangaId, limit = 96)
+            val feed = mangaDexApi.getMangaFeed(mangaId = targetMangaId, limit = 100)
             val chapters = feed.data?.filter {
                 // Filter chapters that have pages (exclude external redirect links)
                 (it.attributes?.pages ?: 0) > 0 && it.attributes?.externalUrl.isNullOrBlank()
@@ -139,9 +139,14 @@ class ComicRepositoryImpl(
             } ?: emptyList()
 
             if (chapters.isNotEmpty()) {
-                // Group by chapter number to avoid duplicate translations, picking the one with most pages
+                // Group by chapter number to avoid duplicate translations, prioritizing Indonesian [ID] then English [EN]
                 val distinctChapters = chapters.groupBy { it.chapterNumber }
-                    .map { (_, group) -> group.maxByOrNull { it.pageCount } ?: group.first() }
+                    .map { (_, group) ->
+                        group.find { it.title.startsWith("[ID]") }
+                            ?: group.find { it.title.startsWith("[EN]") }
+                            ?: group.maxByOrNull { it.pageCount }
+                            ?: group.first()
+                    }
                     .sortedBy { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
                 return@withContext Result.success(distinctChapters)
             }
@@ -169,13 +174,17 @@ class ComicRepositoryImpl(
             val atHome = mangaDexApi.getAtHomeServer(chapterId)
             val baseUrl = atHome.baseUrl
             val hash = atHome.chapter?.hash
-            val filenames = atHome.chapter?.data ?: atHome.chapter?.dataSaver ?: emptyList()
+
+            // Use data-saver for 10x-20x faster mobile loading
+            val useDataSaver = !atHome.chapter?.dataSaver.isNullOrEmpty()
+            val filenames = if (useDataSaver) atHome.chapter?.dataSaver ?: emptyList() else atHome.chapter?.data ?: emptyList()
+            val pathFolder = if (useDataSaver) "data-saver" else "data"
 
             if (!baseUrl.isNullOrBlank() && !hash.isNullOrBlank() && filenames.isNotEmpty()) {
                 val realPages = filenames.mapIndexed { idx, filename ->
                     ComicPage(
                         index = idx + 1,
-                        imageUrl = "$baseUrl/data/$hash/$filename"
+                        imageUrl = "$baseUrl/$pathFolder/$hash/$filename"
                     )
                 }
                 return@withContext Result.success(realPages)

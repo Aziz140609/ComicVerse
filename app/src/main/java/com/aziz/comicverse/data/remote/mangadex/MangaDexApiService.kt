@@ -33,8 +33,9 @@ interface MangaDexApiService {
     suspend fun getMangaFeed(
         @Path("id") mangaId: String,
         @Query("order[chapter]") order: String = "asc",
-        @Query("limit") limit: Int = 96,
-        @Query("contentRating[]") rating: List<String> = listOf("safe", "suggestive")
+        @Query("limit") limit: Int = 100,
+        @Query("contentRating[]") rating: List<String> = listOf("safe", "suggestive"),
+        @Query("translatedLanguage[]") languages: List<String> = listOf("id", "en")
     ): MangaDexFeedResponse
 
     @GET("at-home/server/{chapterId}")

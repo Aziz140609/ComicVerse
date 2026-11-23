@@ -35,6 +35,7 @@ object NetworkClient {
             .dns(MangaDexDns())
             .addInterceptor(headerInterceptor)
             .addInterceptor(logging)
+            .connectionPool(okhttp3.ConnectionPool(10, 5, TimeUnit.MINUTES))
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .build()

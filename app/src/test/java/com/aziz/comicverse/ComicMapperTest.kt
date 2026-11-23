@@ -110,7 +110,7 @@ class ComicMapperTest {
         val chapter = ComicMapper.mapMangaDexChapter(chapterItem, "md-123")
         assertEquals("ch-1", chapter.id)
         assertEquals("md-123", chapter.comicId)
-        assertEquals("Chapter 1: The End of the Journey", chapter.title)
+        assertEquals("[EN] Chapter 1: The End of the Journey", chapter.title)
         assertEquals("1", chapter.chapterNumber)
     }
 }
