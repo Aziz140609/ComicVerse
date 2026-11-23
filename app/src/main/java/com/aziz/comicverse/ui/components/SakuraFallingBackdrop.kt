@@ -35,11 +35,12 @@ private data class SakuraBackdropElement(
 )
 
 /**
- * Japanese Sakura Falling Backdrop with Lush Canopy & Continuous Density Gradient.
+ * Japanese Sakura Falling Backdrop with Evenly Distributed Canopy & Wall-Anchored Branches.
  *
- * - Paling Atas: Sangat lebat (dense branch canopies, multiple full blossoms & drifting petals).
- * - Bawah Gambar: Sangat lebat (rich clusters of sakura blossoms & petal swarms).
- * - Menengah ke Bawah: Berangsur-angsur menipis namun tetap lumayan banyak sepanjang layar.
+ * - Batang Kiri: Menempel erat di dinding layar kiri atas (flush against left wall).
+ * - Batang Kanan: Menempel di dinding layar kanan dan DITURUNKAN KE BAWAH (flush against right wall, y: ~270dp).
+ * - Bagian Atas: Sangat lebat namun DIRATAKAN merata horizontal tanpa tumpukan mengelompok.
+ * - Bagian Bawah: Menipis secara bertahap namun tetap tersebar merata.
  */
 @Composable
 fun SakuraFallingBackdrop(
@@ -48,228 +49,231 @@ fun SakuraFallingBackdrop(
 ) {
     val elements = listOf(
         // =========================================================================
-        // ZONE 1: TOP CANOPY — SANGAT LEBAT (y: 0dp - 200dp)
-        // Ranting sakura melengkung (arch), cabang berbunga lebat, & bunga mekar penuh
+        // 1. RANTING MENEMPEL DI DINDING LAYAR (WALL-ANCHORED BRANCHES)
         // =========================================================================
-        // Arching Branch Canopy Top-Right
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_branch_arch,
-            xRatio = 0.65f,
-            yDp = (-10).dp,
-            sizeDp = 145.dp,
-            alpha = 0.78f,
-            rotationDeg = 5f
-        ),
-        // Lush Blooming Branch Top-Left
+        // Batang Kiri: Menempel rapat di dinding kiri atas
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_branch_lush,
-            xRatio = (-0.08f),
+            xRatio = -0.06f,
             yDp = 8.dp,
-            sizeDp = 115.dp,
-            alpha = 0.72f,
-            rotationDeg = 25f
+            sizeDp = 120.dp,
+            alpha = 0.76f,
+            rotationDeg = 18f
         ),
-        // Dense Top Blossoms (Bunga Mekar Penuh)
+        // Batang Kanan: Menempel di dinding kanan dan DITURUNKAN KE BAWAH (~270dp)
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_branch_arch,
+            xRatio = 0.74f,
+            yDp = 270.dp,
+            sizeDp = 135.dp,
+            alpha = 0.75f,
+            rotationDeg = -10f
+        ),
+
+        // =========================================================================
+        // ZONE 1: TOP CANOPY — SANGAT LEBAT & DIRATAKAN MERATA (y: 10dp - 190dp)
+        // Tersebar merata dari kiri ke kanan tanpa tumpukan di satu titik
+        // =========================================================================
+        // Gelombang 1 (y: 15dp - 35dp) — Rata horizontal di puncak layar
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.03f,
-            yDp = 18.dp,
-            sizeDp = 44.dp,
-            alpha = 0.75f,
+            xRatio = 0.10f,
+            yDp = 22.dp,
+            sizeDp = 36.dp,
+            alpha = 0.74f,
             rotationDeg = -14f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.22f,
-            yDp = 28.dp,
-            sizeDp = 36.dp,
-            alpha = 0.68f,
-            rotationDeg = 30f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.45f,
-            yDp = 14.dp,
-            sizeDp = 40.dp,
-            alpha = 0.70f,
-            rotationDeg = -22f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.86f,
-            yDp = 24.dp,
-            sizeDp = 42.dp,
-            alpha = 0.75f,
-            rotationDeg = 18f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.32f,
-            yDp = 75.dp,
-            sizeDp = 35.dp,
-            alpha = 0.65f,
-            rotationDeg = -35f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.68f,
-            yDp = 85.dp,
-            sizeDp = 36.dp,
-            alpha = 0.66f,
-            rotationDeg = 40f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.12f,
-            yDp = 110.dp,
+            xRatio = 0.28f,
+            yDp = 15.dp,
             sizeDp = 38.dp,
-            alpha = 0.68f,
-            rotationDeg = 12f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.90f,
-            yDp = 120.dp,
-            sizeDp = 34.dp,
-            alpha = 0.68f,
-            rotationDeg = -20f
-        ),
-        // Petal Swarms in Top Zone
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petals_clean,
-            xRatio = 0.72f,
-            yDp = 45.dp,
-            sizeDp = 75.dp,
             alpha = 0.70f,
-            rotationDeg = 15f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petals_clean,
-            xRatio = 0.14f,
-            yDp = 80.dp,
-            sizeDp = 65.dp,
-            alpha = 0.62f,
-            rotationDeg = -25f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_pair,
-            xRatio = 0.54f,
-            yDp = 50.dp,
-            sizeDp = 28.dp,
-            alpha = 0.60f,
             rotationDeg = 25f
         ),
         SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_falling,
-            xRatio = 0.07f,
-            yDp = 145.dp,
-            sizeDp = 20.dp,
-            alpha = 0.58f,
-            rotationDeg = -30f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_curved,
-            xRatio = 0.78f,
-            yDp = 155.dp,
-            sizeDp = 22.dp,
-            alpha = 0.55f,
-            rotationDeg = 35f
-        ),
-
-        // =========================================================================
-        // ZONE 2: SUB-HEADER / UPPER-MIDDLE — LEBAT DI BAWAH GAMBAR (y: 200dp - 400dp)
-        // Transisi kaya bunga mekar di bawah banner gambar / header
-        // =========================================================================
-        // Lush Branch Accent on Right Edge
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_branch_lush,
-            xRatio = 0.78f,
-            yDp = 205.dp,
-            sizeDp = 100.dp,
-            alpha = 0.65f,
-            rotationDeg = -30f
-        ),
-        // Sub-header Blossoms
-        SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.05f,
-            yDp = 210.dp,
-            sizeDp = 38.dp,
-            alpha = 0.64f,
-            rotationDeg = 22f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.28f,
-            yDp = 225.dp,
-            sizeDp = 32.dp,
-            alpha = 0.58f,
+            xRatio = 0.46f,
+            yDp = 28.dp,
+            sizeDp = 40.dp,
+            alpha = 0.72f,
             rotationDeg = -18f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.60f,
-            yDp = 240.dp,
+            xRatio = 0.64f,
+            yDp = 16.dp,
             sizeDp = 36.dp,
-            alpha = 0.60f,
-            rotationDeg = 45f
+            alpha = 0.70f,
+            rotationDeg = 32f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.88f,
-            yDp = 255.dp,
-            sizeDp = 35.dp,
+            xRatio = 0.84f,
+            yDp = 26.dp,
+            sizeDp = 38.dp,
+            alpha = 0.72f,
+            rotationDeg = -20f
+        ),
+
+        // Gelombang 2 (y: 65dp - 110dp) — Mengisi celah di antara gelombang 1
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.04f,
+            yDp = 80.dp,
+            sizeDp = 32.dp,
+            alpha = 0.68f,
+            rotationDeg = 15f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petals_clean,
+            xRatio = 0.20f,
+            yDp = 90.dp,
+            sizeDp = 50.dp,
             alpha = 0.62f,
             rotationDeg = -12f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.15f,
-            yDp = 290.dp,
-            sizeDp = 30.dp,
-            alpha = 0.55f,
-            rotationDeg = 33f
+            xRatio = 0.38f,
+            yDp = 72.dp,
+            sizeDp = 34.dp,
+            alpha = 0.68f,
+            rotationDeg = -30f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_pair,
+            xRatio = 0.55f,
+            yDp = 88.dp,
+            sizeDp = 26.dp,
+            alpha = 0.60f,
+            rotationDeg = 22f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.44f,
-            yDp = 320.dp,
+            xRatio = 0.74f,
+            yDp = 78.dp,
             sizeDp = 34.dp,
-            alpha = 0.54f,
-            rotationDeg = -28f
+            alpha = 0.68f,
+            rotationDeg = 40f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.90f,
+            yDp = 98.dp,
+            sizeDp = 32.dp,
+            alpha = 0.66f,
+            rotationDeg = -15f
+        ),
+
+        // Gelombang 3 (y: 125dp - 185dp) — Melayang turun secara teratur
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.12f,
+            yDp = 140.dp,
+            sizeDp = 30.dp,
+            alpha = 0.62f,
+            rotationDeg = 28f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_curved,
+            xRatio = 0.30f,
+            yDp = 155.dp,
+            sizeDp = 20.dp,
+            alpha = 0.58f,
+            rotationDeg = -25f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.48f,
+            yDp = 135.dp,
+            sizeDp = 32.dp,
+            alpha = 0.64f,
+            rotationDeg = -16f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_falling,
+            xRatio = 0.66f,
+            yDp = 160.dp,
+            sizeDp = 19.dp,
+            alpha = 0.56f,
+            rotationDeg = 35f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
             xRatio = 0.82f,
-            yDp = 345.dp,
-            sizeDp = 31.dp,
-            alpha = 0.52f,
-            rotationDeg = 15f
+            yDp = 145.dp,
+            sizeDp = 30.dp,
+            alpha = 0.62f,
+            rotationDeg = 18f
         ),
-        // Petal Swarms in Sub-Header
+
+        // =========================================================================
+        // ZONE 2: SUB-HEADER / TRANSISI BAWAH GAMBAR (y: 200dp - 390dp)
+        // =========================================================================
         SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petals_clean,
-            xRatio = 0.35f,
-            yDp = 265.dp,
-            sizeDp = 60.dp,
-            alpha = 0.52f,
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.05f,
+            yDp = 215.dp,
+            sizeDp = 30.dp,
+            alpha = 0.60f,
             rotationDeg = 20f
         ),
         SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_pair,
-            xRatio = 0.08f,
-            yDp = 340.dp,
-            sizeDp = 24.dp,
-            alpha = 0.50f,
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.25f,
+            yDp = 230.dp,
+            sizeDp = 28.dp,
+            alpha = 0.55f,
             rotationDeg = -22f
         ),
         SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_curved,
-            xRatio = 0.65f,
-            yDp = 370.dp,
-            sizeDp = 20.dp,
-            alpha = 0.48f,
-            rotationDeg = 40f
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.48f,
+            yDp = 220.dp,
+            sizeDp = 30.dp,
+            alpha = 0.58f,
+            rotationDeg = 35f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petals_clean,
+            xRatio = 0.68f,
+            yDp = 232.dp,
+            sizeDp = 46.dp,
+            alpha = 0.52f,
+            rotationDeg = 12f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.14f,
+            yDp = 285.dp,
+            sizeDp = 28.dp,
+            alpha = 0.54f,
+            rotationDeg = 15f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.38f,
+            yDp = 310.dp,
+            sizeDp = 28.dp,
+            alpha = 0.52f,
+            rotationDeg = -28f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.60f,
+            yDp = 330.dp,
+            sizeDp = 27.dp,
+            alpha = 0.50f,
+            rotationDeg = 42f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_falling,
+            xRatio = 0.88f,
+            yDp = 350.dp,
+            sizeDp = 18.dp,
+            alpha = 0.46f,
+            rotationDeg = -14f
         ),
 
         // =========================================================================
@@ -277,144 +281,127 @@ fun SakuraFallingBackdrop(
         // =========================================================================
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.06f,
-            yDp = 410.dp,
-            sizeDp = 28.dp,
-            alpha = 0.46f,
-            rotationDeg = -15f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.86f,
-            yDp = 430.dp,
-            sizeDp = 29.dp,
-            alpha = 0.45f,
-            rotationDeg = 28f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.28f,
-            yDp = 480.dp,
-            sizeDp = 26.dp,
-            alpha = 0.40f,
-            rotationDeg = 35f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.72f,
-            yDp = 515.dp,
-            sizeDp = 27.dp,
-            alpha = 0.38f,
-            rotationDeg = -24f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.12f,
-            yDp = 560.dp,
+            xRatio = 0.08f,
+            yDp = 415.dp,
             sizeDp = 25.dp,
-            alpha = 0.36f,
-            rotationDeg = 18f
+            alpha = 0.44f,
+            rotationDeg = -18f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.84f,
-            yDp = 610.dp,
-            sizeDp = 24.dp,
-            alpha = 0.34f,
-            rotationDeg = -32f
-        ),
-        // Drifting Petals in Middle
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petals_clean,
-            xRatio = 0.50f,
-            yDp = 445.dp,
-            sizeDp = 50.dp,
-            alpha = 0.38f,
-            rotationDeg = -10f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_pair,
-            xRatio = 0.40f,
-            yDp = 540.dp,
-            sizeDp = 22.dp,
-            alpha = 0.35f,
-            rotationDeg = 15f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_falling,
-            xRatio = 0.92f,
-            yDp = 520.dp,
-            sizeDp = 16.dp,
-            alpha = 0.35f,
-            rotationDeg = -20f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_curved,
-            xRatio = 0.05f,
-            yDp = 625.dp,
-            sizeDp = 18.dp,
-            alpha = 0.32f,
+            xRatio = 0.35f,
+            yDp = 440.dp,
+            sizeDp = 25.dp,
+            alpha = 0.42f,
             rotationDeg = 25f
         ),
         SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_falling,
-            xRatio = 0.58f,
-            yDp = 635.dp,
-            sizeDp = 16.dp,
-            alpha = 0.30f,
-            rotationDeg = -14f
-        ),
-
-        // =========================================================================
-        // ZONE 4: LOWER-MIDDLE — MENIPIS TAPI TETAP BERASA (y: 650dp - 880dp)
-        // =========================================================================
-        SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.22f,
-            yDp = 680.dp,
-            sizeDp = 22.dp,
-            alpha = 0.28f,
-            rotationDeg = -26f
+            xRatio = 0.62f,
+            yDp = 425.dp,
+            sizeDp = 26.dp,
+            alpha = 0.42f,
+            rotationDeg = -30f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.78f,
-            yDp = 730.dp,
-            sizeDp = 21.dp,
-            alpha = 0.26f,
-            rotationDeg = 20f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_flower_clean,
-            xRatio = 0.08f,
-            yDp = 810.dp,
-            sizeDp = 20.dp,
-            alpha = 0.22f,
-            rotationDeg = 15f
-        ),
-        SakuraBackdropElement(
-            drawableId = R.drawable.ic_sakura_petal_pair,
             xRatio = 0.88f,
-            yDp = 780.dp,
-            sizeDp = 20.dp,
-            alpha = 0.25f,
-            rotationDeg = -18f
+            yDp = 460.dp,
+            sizeDp = 24.dp,
+            alpha = 0.40f,
+            rotationDeg = 15f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_petal_curved,
             xRatio = 0.48f,
-            yDp = 820.dp,
-            sizeDp = 16.dp,
-            alpha = 0.22f,
-            rotationDeg = 30f
+            yDp = 475.dp,
+            sizeDp = 18.dp,
+            alpha = 0.36f,
+            rotationDeg = 20f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.20f,
+            yDp = 510.dp,
+            sizeDp = 24.dp,
+            alpha = 0.38f,
+            rotationDeg = 32f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.50f,
+            yDp = 535.dp,
+            sizeDp = 24.dp,
+            alpha = 0.36f,
+            rotationDeg = -20f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.78f,
+            yDp = 560.dp,
+            sizeDp = 22.dp,
+            alpha = 0.34f,
+            rotationDeg = 28f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_petal_falling,
-            xRatio = 0.70f,
-            yDp = 865.dp,
+            xRatio = 0.06f,
+            yDp = 580.dp,
+            sizeDp = 17.dp,
+            alpha = 0.32f,
+            rotationDeg = -22f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_pair,
+            xRatio = 0.86f,
+            yDp = 620.dp,
+            sizeDp = 20.dp,
+            alpha = 0.30f,
+            rotationDeg = 16f
+        ),
+
+        // =========================================================================
+        // ZONE 4: LOWER-MIDDLE — MENIPIS BERTAHAP (y: 650dp - 880dp)
+        // =========================================================================
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.12f,
+            yDp = 680.dp,
+            sizeDp = 21.dp,
+            alpha = 0.28f,
+            rotationDeg = -24f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.42f,
+            yDp = 720.dp,
+            sizeDp = 20.dp,
+            alpha = 0.26f,
+            rotationDeg = 18f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_flower_clean,
+            xRatio = 0.76f,
+            yDp = 750.dp,
+            sizeDp = 20.dp,
+            alpha = 0.24f,
+            rotationDeg = -15f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_pair,
+            xRatio = 0.24f,
+            yDp = 800.dp,
+            sizeDp = 18.dp,
+            alpha = 0.22f,
+            rotationDeg = 25f
+        ),
+        SakuraBackdropElement(
+            drawableId = R.drawable.ic_sakura_petal_falling,
+            xRatio = 0.85f,
+            yDp = 840.dp,
             sizeDp = 15.dp,
             alpha = 0.20f,
-            rotationDeg = -22f
+            rotationDeg = -30f
         ),
 
         // =========================================================================
@@ -422,27 +409,27 @@ fun SakuraFallingBackdrop(
         // =========================================================================
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_petal_curved,
-            xRatio = 0.12f,
+            xRatio = 0.18f,
             yDp = 910.dp,
             sizeDp = 14.dp,
             alpha = 0.16f,
-            rotationDeg = 18f
+            rotationDeg = 20f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_petal_falling,
-            xRatio = 0.85f,
-            yDp = 955.dp,
+            xRatio = 0.54f,
+            yDp = 960.dp,
             sizeDp = 13.dp,
             alpha = 0.14f,
             rotationDeg = -35f
         ),
         SakuraBackdropElement(
             drawableId = R.drawable.ic_sakura_petal_curved,
-            xRatio = 0.42f,
+            xRatio = 0.82f,
             yDp = 1010.dp,
             sizeDp = 12.dp,
             alpha = 0.11f,
-            rotationDeg = 24f
+            rotationDeg = 15f
         )
     )
 

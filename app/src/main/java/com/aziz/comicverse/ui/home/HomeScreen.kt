@@ -193,17 +193,6 @@ fun HomeScreen(
                                 )
                             }
                         }
-
-                        // Lush blooming sakura branch overflowing from bottom-right of header into content
-                        Image(
-                            painter = painterResource(R.drawable.ic_sakura_branch_lush),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .size(135.dp)
-                                .offset(x = 16.dp, y = 30.dp)
-                                .alpha(0.85f)
-                        )
                     }
                 }
 
