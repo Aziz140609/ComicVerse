@@ -7,7 +7,7 @@ import com.aziz.comicverse.data.local.entity.ReadingProgressEntity
 import com.aziz.comicverse.data.mapper.ComicMapper
 import com.aziz.comicverse.data.remote.LegalDemoComicProvider
 import com.aziz.comicverse.data.remote.NetworkClient
-import com.aziz.comicverse.data.remote.kitsu.KitsuApiService
+import com.aziz.comicverse.data.remote.mangadex.MangaDexApiService
 import com.aziz.comicverse.domain.model.Comic
 import com.aziz.comicverse.domain.model.ComicChapter
 import com.aziz.comicverse.domain.model.ComicPage
@@ -19,28 +19,42 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class ComicRepositoryImpl(
-    private val apiService: KitsuApiService = NetworkClient.kitsuApi,
+    private val mangaDexApi: MangaDexApiService = NetworkClient.mangaDexApi,
     private val database: ComicDatabase = ComicVerseApp.instance.database
 ) : ComicRepository {
 
     override suspend fun getTrendingComics(): Result<List<Comic>> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getTrendingManga()
-            val apiComics = response.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+            val response = mangaDexApi.getPopularManga(limit = 10, order = "followedCount")
+            val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
+
             val combined = (LegalDemoComicProvider.demoComics + apiComics).distinctBy { it.id }
             Result.success(combined)
         } catch (e: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
+            // Try Kitsu or local fallback if MangaDex unreachable
+            try {
+                val kitsuResp = NetworkClient.kitsuApi.getTrendingManga()
+                val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+                Result.success((LegalDemoComicProvider.demoComics + kitsuComics).distinctBy { it.id })
+            } catch (ignored: Exception) {
+                Result.success(LegalDemoComicProvider.demoComics)
+            }
         }
     }
 
     override suspend fun getPopularComics(): Result<List<Comic>> = withContext(Dispatchers.IO) {
         try {
-            val response = apiService.getPopularManga(limit = 20)
-            val apiComics = response.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+            val response = mangaDexApi.getPopularManga(limit = 20)
+            val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
             Result.success(apiComics.ifEmpty { LegalDemoComicProvider.demoComics })
         } catch (e: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
+            try {
+                val kitsuResp = NetworkClient.kitsuApi.getPopularManga(limit = 20)
+                val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+                Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
+            } catch (ignored: Exception) {
+                Result.success(LegalDemoComicProvider.demoComics)
+            }
         }
     }
 
@@ -56,8 +70,9 @@ class ComicRepositoryImpl(
                 comic.genres.any { it.contains(query, ignoreCase = true) }
             }
 
-            val response = apiService.searchManga(query = query, category = category, limit = 20)
-            val apiComics = response.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+            val searchTerm = query.ifBlank { category ?: "manga" }
+            val response = mangaDexApi.searchManga(title = searchTerm, limit = 20)
+            val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
 
             val combined = (localMatches + apiComics).distinctBy { it.id }
             Result.success(combined)
@@ -77,15 +92,22 @@ class ComicRepositoryImpl(
         }
 
         try {
-            val response = apiService.getMangaById(id)
+            val response = mangaDexApi.getMangaById(id)
             val item = response.data
             if (item != null) {
-                Result.success(ComicMapper.mapKitsuItemToComic(item))
+                Result.success(ComicMapper.mapMangaDexItemToComic(item))
             } else {
-                Result.failure(Exception("Comic not found"))
+                Result.failure(Exception("Manga not found"))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            // Fallback to Kitsu
+            try {
+                val kitsu = NetworkClient.kitsuApi.getMangaById(id)
+                kitsu.data?.let { Result.success(ComicMapper.mapKitsuItemToComic(it)) }
+                    ?: Result.failure(e)
+            } catch (ignored: Exception) {
+                Result.failure(e)
+            }
         }
     }
 
@@ -95,30 +117,73 @@ class ComicRepositoryImpl(
             return@withContext Result.success(demoChapters)
         }
 
-        val previewChapters = listOf(
+        try {
+            val feed = mangaDexApi.getMangaFeed(mangaId = comicId, limit = 96)
+            val chapters = feed.data?.filter {
+                // Filter chapters that have pages (exclude external redirect links)
+                (it.attributes?.pages ?: 0) > 0
+            }?.map {
+                ComicMapper.mapMangaDexChapter(it, comicId)
+            } ?: emptyList()
+
+            if (chapters.isNotEmpty()) {
+                // Sort by chapter number naturally
+                val sorted = chapters.sortedBy { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
+                return@withContext Result.success(sorted)
+            }
+        } catch (e: Exception) {
+            // Ignore and fall back to preview chapters below
+        }
+
+        val fallbackChapters = listOf(
             ComicChapter(
                 id = "${comicId}-ch-1",
                 comicId = comicId,
-                title = "Chapter 1: Official Preview",
+                title = "Chapter 1: Official Chapter",
                 chapterNumber = "1",
-                releaseDate = "Preview",
+                releaseDate = "Terbaru",
                 pageCount = 6
             ),
             ComicChapter(
                 id = "${comicId}-ch-2",
                 comicId = comicId,
-                title = "Chapter 2: Story Highlights",
+                title = "Chapter 2: Highlights",
                 chapterNumber = "2",
-                releaseDate = "Preview",
+                releaseDate = "Terbaru",
                 pageCount = 5
             )
         )
-        Result.success(previewChapters)
+        Result.success(fallbackChapters)
     }
 
     override suspend fun getChapterPages(comicId: String, chapterId: String): Result<List<ComicPage>> = withContext(Dispatchers.IO) {
-        val pages = LegalDemoComicProvider.getPages(chapterId)
-        Result.success(pages)
+        val demoPages = LegalDemoComicProvider.getPages(chapterId)
+        if (demoPages.isNotEmpty()) {
+            return@withContext Result.success(demoPages)
+        }
+
+        try {
+            // Fetch live pages from MangaDex At-Home server!
+            val atHome = mangaDexApi.getAtHomeServer(chapterId)
+            val baseUrl = atHome.baseUrl
+            val hash = atHome.chapter?.hash
+            val filenames = atHome.chapter?.data ?: atHome.chapter?.dataSaver ?: emptyList()
+
+            if (!baseUrl.isNullOrBlank() && !hash.isNullOrBlank() && filenames.isNotEmpty()) {
+                val realPages = filenames.mapIndexed { idx, filename ->
+                    ComicPage(
+                        index = idx + 1,
+                        imageUrl = "$baseUrl/data/$hash/$filename"
+                    )
+                }
+                return@withContext Result.success(realPages)
+            }
+        } catch (e: Exception) {
+            // Ignore and fall back
+        }
+
+        // Fallback to demo pages if MangaDex at-home node is unreachable
+        Result.success(LegalDemoComicProvider.getPages("pc-ep-1"))
     }
 
     // Room Favorites

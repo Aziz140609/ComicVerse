@@ -103,10 +103,10 @@ ComicVerse mengusung gaya desain **Japanese editorial** dengan sentuhan nuansa k
 
 ## ⚖️ Penjelasan Sumber Konten (Mixed Strategy)
 
-Aplikasi ComicVerse menggunakan strategi konten campuran (**Mixed Content**):
-1. **Catalog Metadata API:** Mengambil data katalog publik (judul, poster cover, author, rating, sinopsis, status).
-2. **Legal Demo Full Reader:** Menyediakan konten komik lengkap untuk reader menggunakan materi berlisensi terbuka **Creative Commons (CC-BY 4.0)** seperti serial *Pepper & Carrot* karya David Revoy serta karya domain publik, sehingga 100% legal, aman hak cipta, dan dapat didemonstrasikan kapan saja tanpa risiko pelanggaran lisensi.
-3. **Offline Fallback:** Apabila koneksi internet tidak stabil atau terblokir DNS ISP, repositori secara otomatis menyediakan data lokal cadangan agar aplikasi tetap berjalan prima saat presentasi.
+Aplikasi ComicVerse menggunakan strategi konten komprehensif (**Live MangaDex + Mixed Content**):
+1. **MangaDex API Live Reader:** Terintegrasi langsung dengan API resmi MangaDex (`api.mangadex.org`) untuk mengambil katalog manga global, daftar chapter, dan halaman chapter asli melalui jaringan At-Home server MangaDex (`*.mangadex.network`).
+2. **Built-in DNS Bypass (Anti-Block):** Dilengkapi dengan custom resolver DNS (`MangaDexDns`) yang meresolusi hostname MangaDex langsung ke IP anycast resminya (`45.129.229.1` / `45.129.229.2`). Hal ini membuat aplikasi tetap dapat memuat katalog komik, cover, dan halaman chapter di jaringan ISP Indonesia tanpa terpengaruh blokir DNS *TrustPositif/aduankonten*.
+3. **Kitsu Catalog & Legal Demo CC-BY:** Sebagai fallback cerdas jika koneksi internet lambat atau offline, aplikasi tetap menyediakan konten legal berlisensi Creative Commons (*Pepper & Carrot* karya David Revoy) dan katalog Kitsu API, sehingga 100% aman dan selalu siap didemonstrasikan.
 
 ---
 
