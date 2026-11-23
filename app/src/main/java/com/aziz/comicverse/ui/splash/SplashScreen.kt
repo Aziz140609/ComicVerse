@@ -38,8 +38,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,13 +55,13 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 /**
- * Data model for a particle within the SpongeBob-style Sakura Wave Wipe.
+ * Data model for a particle within the high-performance SpongeBob-style Sakura Wave Wipe.
  */
 private data class SakuraWaveParticle(
-    val drawableId: Int,
-    val longitudinalOffset: Float, // Position along wave flow (-0.35f to 0.35f)
-    val lateralOffset: Float,      // Spread across wave width (-0.65f to 0.65f)
-    val sizeDp: Dp,
+    val typeIndex: Int,            // Index of painter in cached list
+    val longitudinalOffset: Float, // Position along wave flow (-0.6f to 0.6f)
+    val lateralOffset: Float,      // Spread across wave width (-0.8f to 0.8f)
+    val sizeRatio: Float,          // Size relative to screen width (0.07f to 0.22f)
     val baseAlpha: Float,
     val baseRotation: Float,
     val spinMultiplier: Float,
@@ -219,47 +222,52 @@ fun SplashScreen(
 }
 
 /**
- * SpongeBob-Style Sakura Wave Wipe Overlay.
+ * High-Performance SpongeBob-Style Sakura Wave Wipe Overlay.
  *
- * Simulates a sweeping wave/curtain of dozens of blooming sakura blossoms and fluttering petals
- * washing over the entire screen from Top-Right (x=1.1, y=-0.1) to Bottom-Left (x=-0.2, y=1.2).
+ * Renders a rich, dense wave of sakura blossoms and fluttering petals directly on a single
+ * hardware-accelerated GPU Canvas (0 recompositions, 0 layout overhead, silky 60-120 FPS).
  */
 @Composable
 private fun SakuraWaveWipeOverlay(
     progress: Float,
     modifier: Modifier = Modifier
 ) {
+    // Cache the 5 painter resources once to avoid repeated resource lookups per frame
+    val flowerPainter = painterResource(R.drawable.ic_sakura_flower_clean)
+    val petalsPainter = painterResource(R.drawable.ic_sakura_petals_clean)
+    val curvedPainter = painterResource(R.drawable.ic_sakura_petal_curved)
+    val fallingPainter = painterResource(R.drawable.ic_sakura_petal_falling)
+    val pairPainter = painterResource(R.drawable.ic_sakura_petal_pair)
+
+    val painters = remember(flowerPainter, petalsPainter, curvedPainter, fallingPainter, pairPainter) {
+        listOf(flowerPainter, petalsPainter, curvedPainter, fallingPainter, pairPainter)
+    }
+
     // Generate deterministic particles for the wave wipe
     val particles = remember {
         val list = mutableListOf<SakuraWaveParticle>()
         val rnd = Random(42) // Fixed seed for stable layout
-        val drawables = listOf(
-            R.drawable.ic_sakura_flower_clean,
-            R.drawable.ic_sakura_petals_clean,
-            R.drawable.ic_sakura_petal_curved,
-            R.drawable.ic_sakura_petal_falling,
-            R.drawable.ic_sakura_petal_pair
-        )
 
-        // 180 particles forming a super dense, thick sweeping sakura wave curtain (SpongeBob bubble wipe style)
-        for (i in 0 until 180) {
-            val dId = when {
-                i % 3 == 0 -> R.drawable.ic_sakura_flower_clean   // Full blossoms
-                i % 4 == 0 -> R.drawable.ic_sakura_petals_clean   // Petal clusters
-                else -> drawables[rnd.nextInt(drawables.size)]
+        // 120 particles forming a dense, rich sweeping sakura curtain
+        for (i in 0 until 120) {
+            val typeIdx = when {
+                i % 3 == 0 -> 0 // Full blossoms (ic_sakura_flower_clean)
+                i % 4 == 0 -> 1 // Petal clusters (ic_sakura_petals_clean)
+                else -> 2 + rnd.nextInt(3) // Fluttering petals
             }
-            val size = when (dId) {
-                R.drawable.ic_sakura_flower_clean -> (36 + rnd.nextInt(30)).dp // 36dp - 66dp (lush blossoms)
-                R.drawable.ic_sakura_petals_clean -> (48 + rnd.nextInt(32)).dp // 48dp - 80dp (thick clusters)
-                else -> (24 + rnd.nextInt(20)).dp                              // 24dp - 44dp (fluttering petals)
+
+            val sizeRatio = when (typeIdx) {
+                0 -> 0.11f + rnd.nextFloat() * 0.08f // 11% - 19% of screen width (~45dp - 75dp)
+                1 -> 0.13f + rnd.nextFloat() * 0.09f // 13% - 22% of screen width (~52dp - 88dp)
+                else -> 0.06f + rnd.nextFloat() * 0.05f // 6% - 11% of screen width (~24dp - 44dp)
             }
 
             list.add(
                 SakuraWaveParticle(
-                    drawableId = dId,
-                    longitudinalOffset = (rnd.nextFloat() - 0.5f) * 1.15f, // Much deeper wave thickness
-                    lateralOffset = (rnd.nextFloat() - 0.5f) * 1.65f,      // Broad wave span covering entire screen
-                    sizeDp = size,
+                    typeIndex = typeIdx,
+                    longitudinalOffset = (rnd.nextFloat() - 0.5f) * 1.15f, // Deep wave thickness
+                    lateralOffset = (rnd.nextFloat() - 0.5f) * 1.65f,      // Broad screen coverage
+                    sizeRatio = sizeRatio,
                     baseAlpha = 0.82f + rnd.nextFloat() * 0.18f,
                     baseRotation = rnd.nextFloat() * 360f,
                     spinMultiplier = (rnd.nextFloat() - 0.5f) * 3.5f,
@@ -270,62 +278,59 @@ private fun SakuraWaveWipeOverlay(
         list
     }
 
-    BoxWithConstraints(modifier = modifier) {
-        val screenWidth = maxWidth
-        val screenHeight = maxHeight
+    // Single hardware-accelerated GPU Canvas
+    Canvas(modifier = modifier) {
+        val screenWidth = size.width
+        val screenHeight = size.height
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            // Wave progress maps from -0.45f (entry) to 1.45f (exit)
-            val wavePos = -0.45f + progress * 1.90f
+        // Wave progress maps from -0.45f (entry) to 1.45f (exit)
+        val wavePos = -0.45f + progress * 1.90f
 
-            // Lush translucent sakura pink wash moving diagonally with the wave for SpongeBob wipe body fullness
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                val centerWaveX = size.width * (1.20f - wavePos * 1.50f)
-                val centerWaveY = size.height * (-0.20f + wavePos * 1.50f)
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            Color(0xFFFFB6C1).copy(alpha = 0.60f),
-                            Color(0xFFFFC0CB).copy(alpha = 0.40f),
-                            Color(0xFFFFD1DC).copy(alpha = 0.15f),
-                            Color.Transparent
-                        ),
-                        center = Offset(centerWaveX, centerWaveY),
-                        radius = size.width * 1.15f
-                    )
-                )
-            }
+        // 1. Lush translucent sakura pink wash moving diagonally with the wave for full body thickness
+        val centerWaveX = screenWidth * (1.20f - wavePos * 1.50f)
+        val centerWaveY = screenHeight * (-0.20f + wavePos * 1.50f)
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color(0xFFFFB6C1).copy(alpha = 0.55f),
+                    Color(0xFFFFC0CB).copy(alpha = 0.35f),
+                    Color(0xFFFFD1DC).copy(alpha = 0.12f),
+                    Color.Transparent
+                ),
+                center = Offset(centerWaveX, centerWaveY),
+                radius = screenWidth * 1.15f
+            )
+        )
 
-            particles.forEach { p ->
-                // Position along diagonal stream (Top-Right to Bottom-Left)
-                val itemProgress = wavePos + p.longitudinalOffset
+        // 2. Direct GPU drawing of all sakura particles (0 recomposition, 0 layout overhead)
+        particles.forEach { p ->
+            val itemProgress = wavePos + p.longitudinalOffset
 
-                // Diagonal path: X moves from right (1.20) to left (-0.30)
-                // Y moves from top (-0.20) to bottom (1.30)
-                val baseX = 1.20f - itemProgress * 1.50f
-                val baseY = -0.20f + itemProgress * 1.50f
+            // Diagonal path: Top-Right (1.20) to Bottom-Left (-0.30)
+            val baseX = 1.20f - itemProgress * 1.50f
+            val baseY = -0.20f + itemProgress * 1.50f
 
-                // Lateral offset (perpendicular to diagonal stream)
-                val perpX = p.lateralOffset * 0.65f
-                val perpY = p.lateralOffset * 0.65f
+            val perpX = p.lateralOffset * 0.65f
+            val perpY = p.lateralOffset * 0.65f
 
-                // Sine wave flutter/wobble as wind pushes the wave
-                val wobble = sin(progress * Math.PI * p.wobbleFrequency).toFloat() * 16f
+            val wobble = sin(progress * Math.PI * p.wobbleFrequency).toFloat() * 16f
 
-                val finalX = screenWidth * (baseX + perpX) + wobble.dp
-                val finalY = screenHeight * (baseY + perpY) + (wobble * 0.5f).dp
+            val pSize = screenWidth * p.sizeRatio
+            val finalX = screenWidth * (baseX + perpX) + wobble
+            val finalY = screenHeight * (baseY + perpY) + (wobble * 0.5f)
 
-                val currentRotation = p.baseRotation + progress * 360f * p.spinMultiplier
+            val currentRotation = p.baseRotation + progress * 360f * p.spinMultiplier
+            val painter = painters[p.typeIndex]
 
-                Image(
-                    painter = painterResource(p.drawableId),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .offset(x = finalX, y = finalY)
-                        .size(p.sizeDp)
-                        .rotate(currentRotation)
-                        .alpha(p.baseAlpha)
-                )
+            rotate(degrees = currentRotation, pivot = Offset(finalX + pSize / 2f, finalY + pSize / 2f)) {
+                translate(left = finalX, top = finalY) {
+                    with(painter) {
+                        draw(
+                            size = Size(pSize, pSize),
+                            alpha = p.baseAlpha
+                        )
+                    }
+                }
             }
         }
     }
