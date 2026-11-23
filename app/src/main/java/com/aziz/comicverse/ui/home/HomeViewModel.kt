@@ -42,6 +42,10 @@ class HomeViewModel(
         _uiState.update { it.copy(isNewUpdateExpanded = !it.isNewUpdateExpanded) }
     }
 
+    fun toggleCompletedExpanded() {
+        _uiState.update { it.copy(isCompletedExpanded = !it.isCompletedExpanded) }
+    }
+
     fun loadHomeData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }

@@ -24,6 +24,7 @@ import com.aziz.comicverse.ui.detail.ComicDetailScreen
 import com.aziz.comicverse.ui.explore.ExploreScreen
 import com.aziz.comicverse.ui.home.HomeScreen
 import com.aziz.comicverse.ui.library.LibraryScreen
+import com.aziz.comicverse.ui.rankings.RankingsScreen
 import com.aziz.comicverse.ui.reader.ReaderScreen
 import com.aziz.comicverse.ui.settings.SettingsScreen
 
@@ -50,19 +51,39 @@ fun ComicVerseNavGraph(
                     tonalElevation = 4.dp
                 ) {
                     bottomNavItems.forEach { screen ->
-                        val isSelected = currentRoute == screen.route
+                        val isSelected = when (screen) {
+                            Screen.Explore -> currentRoute?.startsWith("explore") == true
+                            else -> currentRoute == screen.route
+                        }
                         val icon = if (isSelected) screen.selectedIcon else screen.unselectedIcon
 
                         NavigationBarItem(
                             selected = isSelected,
                             onClick = {
-                                if (currentRoute != screen.route) {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
+                                if (screen == Screen.Home) {
+                                    if (currentRoute != Screen.Home.route) {
+                                        navController.navigate(Screen.Home.route) {
+                                            popUpTo(Screen.Home.route) {
+                                                inclusive = false
+                                            }
+                                            launchSingleTop = true
                                         }
-                                        launchSingleTop = true
-                                        restoreState = true
+                                    }
+                                } else {
+                                    val targetRoute = if (screen == Screen.Explore) Screen.Explore.createRoute(null) else screen.route
+                                    val isAlreadyOnScreen = if (screen == Screen.Explore) {
+                                        currentRoute?.startsWith("explore") == true
+                                    } else {
+                                        currentRoute == targetRoute
+                                    }
+                                    if (!isAlreadyOnScreen) {
+                                        navController.navigate(targetRoute) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
                                     }
                                 }
                             },
@@ -107,6 +128,9 @@ fun ComicVerseNavGraph(
                     },
                     onNavigateToExplore = { genre ->
                         navController.navigate(Screen.Explore.createRoute(genre))
+                    },
+                    onNavigateToRankings = {
+                        navController.navigate(Screen.Rankings.route)
                     }
                 )
             }
@@ -126,7 +150,15 @@ fun ComicVerseNavGraph(
                     onNavigateToDetail = { comicId ->
                         navController.navigate(Screen.Detail.createRoute(comicId))
                     },
-                    initialGenre = genre
+                    initialGenre = genre,
+                    onNavigateBack = {
+                        if (!navController.popBackStack()) {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Home.route) { inclusive = false }
+                                launchSingleTop = true
+                            }
+                        }
+                    }
                 )
             }
 
@@ -143,6 +175,15 @@ fun ComicVerseNavGraph(
 
             composable(Screen.Settings.route) {
                 SettingsScreen()
+            }
+
+            composable(Screen.Rankings.route) {
+                RankingsScreen(
+                    onNavigateBack = { navController.popBackStack() },
+                    onNavigateToDetail = { comicId ->
+                        navController.navigate(Screen.Detail.createRoute(comicId))
+                    }
+                )
             }
 
             composable(

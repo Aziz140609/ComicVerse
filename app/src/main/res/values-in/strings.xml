@@ -30,6 +30,9 @@
     <string name="badge_new">NEW</string>
     <string name="view_rankings">Lihat Peringkat ></string>
     <string name="view_schedule">Lihat Jadwal ></string>
+    <string name="rankings_title">Peringkat Manga</string>
+    <string name="rankings_all_time">All Time</string>
+    <string name="rankings_weekly">Weekly</string>
 
     <string name="explore_title">Explore</string>
     <string name="explore_subtitle">Cari berdasarkan judul, tema, atau genre</string>

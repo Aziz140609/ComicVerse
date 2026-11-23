@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
@@ -40,6 +41,14 @@ class UserPreferencesRepository(
         when (preferences[languageKey]) {
             LanguageMode.ENGLISH.name -> LanguageMode.ENGLISH
             else -> LanguageMode.INDONESIAN
+        }
+    }
+
+    suspend fun getLanguageMode(): LanguageMode {
+        return try {
+            languageMode.first()
+        } catch (e: Exception) {
+            LanguageMode.INDONESIAN
         }
     }
 

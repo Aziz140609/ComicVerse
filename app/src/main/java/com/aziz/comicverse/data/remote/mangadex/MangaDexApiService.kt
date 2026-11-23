@@ -16,6 +16,15 @@ interface MangaDexApiService {
     ): MangaDexListResponse
 
     @GET("manga")
+    suspend fun getWeeklyTrendingManga(
+        @Query("limit") limit: Int = 20,
+        @Query("includes[]") includes: List<String> = listOf("cover_art", "author"),
+        @Query("order[rating]") order: String = "desc",
+        @Query("contentRating[]") rating: List<String> = listOf("safe", "suggestive"),
+        @Query("hasAvailableChapters") hasChapters: String = "true"
+    ): MangaDexListResponse
+
+    @GET("manga")
     suspend fun getLatestManga(
         @Query("limit") limit: Int = 20,
         @Query("includes[]") includes: List<String> = listOf("cover_art", "author"),

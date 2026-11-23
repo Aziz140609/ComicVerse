@@ -13,6 +13,8 @@ import com.aziz.comicverse.domain.model.ComicChapter
 import com.aziz.comicverse.domain.model.ComicPage
 import com.aziz.comicverse.domain.model.ReadingProgress
 import com.aziz.comicverse.domain.repository.ComicRepository
+import com.aziz.comicverse.preferences.LanguageMode
+import com.aziz.comicverse.preferences.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -70,12 +72,35 @@ class ComicRepositoryImpl(
 
     override suspend fun getCompletedManga(): Result<List<Comic>> = withContext(Dispatchers.IO) {
         try {
-            val response = mangaDexApi.getCompletedManga(limit = 12)
+            val response = mangaDexApi.getCompletedManga(limit = 18)
             val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
             Result.success(apiComics.ifEmpty { LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) } })
         } catch (e: Exception) {
             val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
             Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
+        }
+    }
+
+    override suspend fun getRankedManga(period: String): Result<List<Comic>> = withContext(Dispatchers.IO) {
+        try {
+            val response = if (period.equals("weekly", ignoreCase = true)) {
+                mangaDexApi.getWeeklyTrendingManga(limit = 25)
+            } else {
+                mangaDexApi.getPopularManga(limit = 25)
+            }
+            val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
+            if (apiComics.isNotEmpty()) {
+                Result.success(apiComics)
+            } else {
+                Result.success(LegalDemoComicProvider.demoComics)
+            }
+        } catch (e: Exception) {
+            val fallback = if (period.equals("weekly", ignoreCase = true)) {
+                LegalDemoComicProvider.demoComics.sortedByDescending { it.rating ?: 0.0 }
+            } else {
+                LegalDemoComicProvider.demoComics
+            }
+            Result.success(fallback)
         }
     }
 
@@ -160,13 +185,29 @@ class ComicRepositoryImpl(
             } ?: emptyList()
 
             if (chapters.isNotEmpty()) {
-                // Group by chapter number to avoid duplicate translations, prioritizing Indonesian [ID] then English [EN]
+                // Determine user's preferred language from preferences
+                val preferredLang = try {
+                    UserPreferencesRepository(ComicVerseApp.instance).getLanguageMode()
+                } catch (e: Exception) {
+                    LanguageMode.INDONESIAN
+                }
+                val isEnglishPreferred = preferredLang == LanguageMode.ENGLISH
+
+                // Group by chapter number to avoid duplicate translations.
+                // Focus on preferred language first; fallback to the alternate language if missing!
                 val distinctChapters = chapters.groupBy { it.chapterNumber }
                     .map { (_, group) ->
-                        group.find { it.title.startsWith("[ID]") }
-                            ?: group.find { it.title.startsWith("[EN]") }
-                            ?: group.maxByOrNull { it.pageCount }
-                            ?: group.first()
+                        if (isEnglishPreferred) {
+                            group.find { it.title.startsWith("[EN]") }
+                                ?: group.find { it.title.startsWith("[ID]") }
+                                ?: group.maxByOrNull { it.pageCount }
+                                ?: group.first()
+                        } else {
+                            group.find { it.title.startsWith("[ID]") }
+                                ?: group.find { it.title.startsWith("[EN]") }
+                                ?: group.maxByOrNull { it.pageCount }
+                                ?: group.first()
+                        }
                     }
                     .sortedBy { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
                 return@withContext Result.success(distinctChapters)

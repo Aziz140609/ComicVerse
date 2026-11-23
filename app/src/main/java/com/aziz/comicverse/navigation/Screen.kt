@@ -50,6 +50,11 @@ sealed class Screen(
         unselectedIcon = Icons.Outlined.Settings
     )
 
+    data object Rankings : Screen(
+        route = "rankings",
+        title = "Peringkat Manga"
+    )
+
     data object Detail : Screen(
         route = "comic_detail/{comicId}"
     ) {

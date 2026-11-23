@@ -54,6 +54,7 @@ import com.aziz.comicverse.ui.components.TerakhirDibacaCard
 fun HomeScreen(
     onNavigateToDetail: (String) -> Unit,
     onNavigateToExplore: (String?) -> Unit,
+    onNavigateToRankings: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -140,21 +141,19 @@ fun HomeScreen(
                     }
                 }
 
-                // 4. "New Update" Section Header
+                // 4. "New Update" Section Header (Schedule removed)
                 item {
                     Spacer(modifier = Modifier.height(18.dp))
                     SectionTitleHeader(
-                        title = stringResource(R.string.new_update_manga),
-                        actionText = stringResource(R.string.view_schedule),
-                        onActionClick = { onNavigateToExplore(null) }
+                        title = stringResource(R.string.new_update_manga)
                     )
                 }
 
-                // New Update 3-column Grid
+                // New Update 3x3 Grid (9 items by default, expands to all)
                 val visibleNewUpdates = if (uiState.isNewUpdateExpanded) {
                     uiState.newUpdateComics
                 } else {
-                    uiState.newUpdateComics.take(6)
+                    uiState.newUpdateComics.take(9)
                 }
 
                 items(visibleNewUpdates.chunked(3)) { rowComics ->
@@ -178,8 +177,8 @@ fun HomeScreen(
                     }
                 }
 
-                // "Show More" Button for New Update
-                if (uiState.newUpdateComics.size > 6) {
+                // "Show More" Button for New Update (triggers if more than 9 items)
+                if (uiState.newUpdateComics.size > 9) {
                     item {
                         Box(
                             modifier = Modifier
@@ -224,7 +223,7 @@ fun HomeScreen(
                         SectionTitleHeader(
                             title = stringResource(R.string.hot_manga),
                             actionText = stringResource(R.string.view_rankings),
-                            onActionClick = { onNavigateToExplore(null) }
+                            onActionClick = onNavigateToRankings
                         )
                         LazyRow(
                             contentPadding = PaddingValues(horizontal = 16.dp),
@@ -252,7 +251,13 @@ fun HomeScreen(
                         )
                     }
 
-                    items(uiState.completedComics.chunked(3)) { rowComics ->
+                    val visibleCompleted = if (uiState.isCompletedExpanded) {
+                        uiState.completedComics
+                    } else {
+                        uiState.completedComics.take(6)
+                    }
+
+                    items(visibleCompleted.chunked(3)) { rowComics ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -268,6 +273,45 @@ fun HomeScreen(
                             }
                             repeat(3 - rowComics.size) {
                                 Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+
+                    // "Show More" Button for Completed Manga
+                    if (uiState.completedComics.size > 6) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                OutlinedButton(
+                                    onClick = { viewModel.toggleCompletedExpanded() },
+                                    shape = RoundedCornerShape(20.dp),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        contentColor = MaterialTheme.colorScheme.primary
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(42.dp)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = if (uiState.isCompletedExpanded) stringResource(R.string.show_less) else stringResource(R.string.show_more),
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 13.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Icon(
+                                            imageVector = if (uiState.isCompletedExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
