@@ -1,13 +1,19 @@
 package com.aziz.comicverse.ui.splash
 
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,10 +21,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,30 +38,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aziz.comicverse.R
-import com.aziz.comicverse.ui.components.SakuraBloomIndicator
-import com.aziz.comicverse.ui.components.SakuraFallingBackdrop
 import kotlinx.coroutines.delay
+
+/**
+ * Data class representing a petal or blossom along the diagonal wave stream.
+ */
+private data class SakuraWaveElement(
+    val drawableId: Int,
+    val xRatio: Float,
+    val yRatio: Float,
+    val sizeDp: Dp,
+    val alpha: Float,
+    val rotationDeg: Float
+)
 
 /**
  * Japanese Aesthetic Splash Screen for ComicVerse.
  *
- * Features:
- * - Washi paper background with drifting sakura petals
- * - Circular Mount Fuji & Rising Sun emblem with crimson rim
- * - Bold Crimson typography "ComicVerse"
- * - Authentic Japanese Hanko (red seal stamp) and Kanji subtitle
- * - Poetic blooming sakura indicator
+ * Design:
+ * - Washi paper background.
+ * - Diagonal sakura flower wave streaming from Top-Right to Bottom-Left corner.
+ * - Stylized Pink ComicVerse Manga Typography with speed swoosh and sakura blossom.
+ * - Traditional Japanese Hanko seal stamp (漫画) & Kanji subtitle.
+ * - Clean, distraction-free (no loading animation in splash).
  */
 @Composable
 fun SplashScreen(
@@ -71,14 +86,13 @@ fun SplashScreen(
     )
 
     val scaleAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0.82f,
+        targetValue = if (startAnimation) 1f else 0.85f,
         animationSpec = tween(durationMillis = 1200, easing = FastOutSlowInEasing),
         label = "SplashScale"
     )
 
     LaunchedEffect(Unit) {
         startAnimation = true
-        // Allow user to admire the Japanese aesthetic before entering Home
         delay(2200)
         onSplashFinished()
     }
@@ -89,10 +103,9 @@ fun SplashScreen(
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        // Background: Falling Sakura Petals Backdrop
-        SakuraFallingBackdrop(
-            modifier = Modifier.fillMaxSize(),
-            topOffset = 20.dp
+        // Diagonal Sakura Stream from Top-Right to Bottom-Left
+        SakuraDiagonalWaveStream(
+            modifier = Modifier.fillMaxSize()
         )
 
         // Center Branding Content
@@ -110,7 +123,7 @@ fun SplashScreen(
                 contentDescription = "ComicVerse",
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth(0.82f)
+                    .fillMaxWidth(0.84f)
                     .aspectRatio(875f / 469f)
             )
 
@@ -158,11 +171,6 @@ fun SplashScreen(
                 letterSpacing = 0.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-
-            Spacer(modifier = Modifier.height(42.dp))
-
-            // Animated Blooming Sakura Life Cycle
-            SakuraBloomIndicator(size = 54.dp)
         }
 
         // Bottom Editorial Footer
@@ -187,6 +195,82 @@ fun SplashScreen(
                 letterSpacing = 1.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
+        }
+    }
+}
+
+/**
+ * Renders a cinematic diagonal stream / wave of sakura blossoms and drifting petals
+ * flowing from the Top-Right corner to the Bottom-Left corner.
+ */
+@Composable
+private fun SakuraDiagonalWaveStream(
+    modifier: Modifier = Modifier
+) {
+    // Subtle breeze drift animation
+    val infiniteTransition = rememberInfiniteTransition(label = "SakuraWaveBreeze")
+    val breezeOffset by infiniteTransition.animateFloat(
+        initialValue = -5f,
+        targetValue = 5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 2800, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "BreezeOffset"
+    )
+
+    val waveElements = remember {
+        listOf(
+            // 1. Top-Right Corner (Titik Masuk Gelombang)
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.94f, 0.03f, 40.dp, 0.85f, 130f),
+            SakuraWaveElement(R.drawable.ic_sakura_petals_clean, 0.86f, 0.07f, 50.dp, 0.78f, 140f),
+            SakuraWaveElement(R.drawable.ic_sakura_petal_curved, 0.92f, 0.11f, 22.dp, 0.72f, 125f),
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.80f, 0.14f, 36.dp, 0.80f, 135f),
+
+            // 2. Aliran Menengah Atas
+            SakuraWaveElement(R.drawable.ic_sakura_petal_pair, 0.74f, 0.20f, 26.dp, 0.72f, 145f),
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.68f, 0.26f, 34.dp, 0.75f, 120f),
+            SakuraWaveElement(R.drawable.ic_sakura_petal_falling, 0.62f, 0.32f, 20.dp, 0.68f, 140f),
+
+            // 3. Aliran Tengah (Menyilang di sekitar area judul)
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.58f, 0.38f, 32.dp, 0.70f, 130f),
+            SakuraWaveElement(R.drawable.ic_sakura_petals_clean, 0.50f, 0.44f, 52.dp, 0.68f, 135f),
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.44f, 0.50f, 34.dp, 0.72f, 140f),
+            SakuraWaveElement(R.drawable.ic_sakura_petal_curved, 0.40f, 0.56f, 22.dp, 0.68f, 125f),
+
+            // 4. Aliran Menengah Bawah
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.34f, 0.62f, 34.dp, 0.74f, 135f),
+            SakuraWaveElement(R.drawable.ic_sakura_petal_pair, 0.28f, 0.68f, 26.dp, 0.70f, 145f),
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.24f, 0.74f, 36.dp, 0.76f, 130f),
+            SakuraWaveElement(R.drawable.ic_sakura_petal_curved, 0.18f, 0.80f, 22.dp, 0.72f, 140f),
+
+            // 5. Pojok Kiri Bawah (Titik Keluar Gelombang)
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.14f, 0.85f, 38.dp, 0.80f, 125f),
+            SakuraWaveElement(R.drawable.ic_sakura_petals_clean, 0.08f, 0.90f, 50.dp, 0.76f, 140f),
+            SakuraWaveElement(R.drawable.ic_sakura_flower_clean, 0.03f, 0.94f, 40.dp, 0.82f, 135f),
+            SakuraWaveElement(R.drawable.ic_sakura_petal_falling, 0.02f, 0.88f, 20.dp, 0.70f, 130f)
+        )
+    }
+
+    BoxWithConstraints(modifier = modifier) {
+        val screenWidth = maxWidth
+        val screenHeight = maxHeight
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            waveElements.forEachIndexed { index, item ->
+                val xPos = screenWidth * item.xRatio + (breezeOffset * (if (index % 2 == 0) 1f else -1f)).dp
+                val yPos = screenHeight * item.yRatio + (breezeOffset * 0.5f).dp
+
+                Image(
+                    painter = painterResource(item.drawableId),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .offset(x = xPos, y = yPos)
+                        .size(item.sizeDp)
+                        .rotate(item.rotationDeg + breezeOffset * 0.8f)
+                        .alpha(item.alpha)
+                )
+            }
         }
     }
 }
