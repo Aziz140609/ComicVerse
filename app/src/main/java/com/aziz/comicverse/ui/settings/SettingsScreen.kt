@@ -1,8 +1,10 @@
 package com.aziz.comicverse.ui.settings
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -34,8 +36,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,20 +57,52 @@ fun SettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Column(
+        modifier = modifier.fillMaxSize()
     ) {
-        // Header
-        item {
-            Column(modifier = Modifier.padding(bottom = 8.dp)) {
-                Text(
-                    text = stringResource(R.string.settings_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+        // Header with Japanese Sakura Branch & Soft Pink Opacity Transition
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color(0xFFFFB6C1).copy(alpha = 0.50f),
+                            Color(0xFFFFC0CB).copy(alpha = 0.25f),
+                            Color(0xFFFFD1DC).copy(alpha = 0.08f),
+                            Color.Transparent
+                        )
+                    )
                 )
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_sakura_branch_lush),
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .size(118.dp)
+                    .alpha(0.82f)
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_sakura_flower),
+                        contentDescription = null,
+                        tint = Color(0xFF8B1E32),
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = stringResource(R.string.settings_title),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
                 Text(
                     text = stringResource(R.string.settings_subtitle),
                     style = MaterialTheme.typography.bodySmall,
@@ -73,7 +111,12 @@ fun SettingsScreen(
             }
         }
 
-        // Theme Appearance Section
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Theme Appearance Section
         item {
             SettingCard(
                 title = stringResource(R.string.theme_title),
@@ -174,6 +217,7 @@ fun SettingsScreen(
             }
         }
     }
+}
 }
 
 @Composable
