@@ -40,16 +40,15 @@ fun ComicLoadingIndicator(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary,
-                strokeWidth = 3.dp,
-                modifier = Modifier.size(36.dp)
-            )
+            // Poetic Sakura Lifecycle Loading Animation: Biji -> Mekar -> Layu/Gugur -> Biji
+            SakuraBloomIndicator(size = 76.dp)
+
             if (!message.isNullOrBlank()) {
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
