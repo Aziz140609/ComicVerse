@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">ComicVerse</string>
+    <string name="nav_home">Beranda</string>
+    <string name="nav_explore">Jelajah</string>
+    <string name="nav_library">Koleksi</string>
+    <string name="nav_settings">Pengaturan</string>
+
+    <string name="home_subtitle">Temukan komik favorit dan baca secara vertikal</string>
+    <string name="search_placeholder">Cari komik, manga, atau author…</string>
+    <string name="editor_choice">Pilihan Editor</string>
+    <string name="editor_choice_sub">Karya pilihan minggu ini</string>
+    <string name="continue_reading">Lanjutkan Membaca</string>
+    <string name="continue_reading_sub">Mulai dari halaman terakhir</string>
+    <string name="popular_comics">Komik Populer</string>
+    <string name="popular_comics_sub">Paling banyak diikuti pembaca</string>
+    <string name="see_all">Lihat Semua</string>
+    <string name="explore_genres">Jelajahi Genre</string>
+    <string name="explore_genres_sub">Koleksi berdasarkan kategori</string>
+
+    <string name="explore_title">Explore</string>
+    <string name="explore_subtitle">Cari berdasarkan judul, tema, atau genre</string>
+
+    <string name="tab_favorites">Favorit</string>
+    <string name="tab_history">Riwayat Baca</string>
+    <string name="library_subtitle">Koleksi favorit dan riwayat membaca tersimpan di perangkat Anda</string>
+    <string name="empty_favorites_title">Belum Ada Komik Favorit</string>
+    <string name="empty_favorites_desc">Tandai komik favorit Anda di halaman detail dengan tombol bookmark agar tersimpan di sini.</string>
+    <string name="empty_history_title">Belum Ada Riwayat Baca</string>
+    <string name="empty_history_desc">Mulai membaca bab komik mana pun untuk melihat progress baca Anda di sini.</string>
+
+    <string name="detail_title">Detail Komik</string>
+    <string name="start_reading">Mulai Membaca</string>
+    <string name="synopsis">Sinopsis</string>
+    <string name="read_more">Baca Selengkapnya</string>
+    <string name="read_less">Tutup</string>
+    <string name="chapter_list">Daftar Chapter</string>
+    <string name="select_chapter">Pilih chapter untuk mulai membaca</string>
+
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_subtitle">Atur tema tampilan, bahasa, dan informasi aplikasi</string>
+    <string name="theme_title">Tema Tampilan</string>
+    <string name="theme_system">Mengikuti Sistem</string>
+    <string name="theme_light">Mode Terang</string>
+    <string name="theme_dark">Mode Gelap</string>
+    <string name="language_title">Bahasa Aplikasi</string>
+    <string name="language_id">Bahasa Indonesia</string>
+    <string name="language_en">English</string>
+    <string name="about_title">Tentang ComicVerse</string>
+    <string name="about_desc">Digital Comic Library berbasis Jetpack Compose untuk pemenuhan tugas Pemrograman Mobile. Menampilkan nuansa desain Japanese editorial dan vertical reading.</string>
+    <string name="about_author">Pengembang: Aziz Jujun (com.aziz.comicverse)</string>
+    <string name="content_source_title">Sumber Konten &amp; Lisensi</string>
+    <string name="content_source_desc">Katalog metadata komik diambil dari API publik. Konten komik vertical reader menggunakan materi legal berlisensi Creative Commons (CC-BY 4.0) seperti Pepper &amp; Carrot karya David Revoy.</string>
+</resources>
