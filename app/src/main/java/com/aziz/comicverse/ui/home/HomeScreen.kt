@@ -3,6 +3,7 @@ package com.aziz.comicverse.ui.home
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -81,22 +82,23 @@ fun HomeScreen(
                     .background(MaterialTheme.colorScheme.background),
                 contentPadding = PaddingValues(bottom = 36.dp)
             ) {
-                // 1. Japanese Atmosphere Header with Mount Fuji & Sakura Silhouette
+                // 1. Japanese Atmosphere Header with Mount Fuji & Sakura Artwork
                 item {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(175.dp)
+                            .height(215.dp)
                     ) {
-                        // Mount Fuji, Sun & Sakura Branch Vector Illustration
+                        // High resolution Japanese artwork: Mount Fuji across tranquil lake, rising sun & sakura blossoms
                         Image(
-                            painter = painterResource(R.drawable.ic_fuji_sakura_header),
-                            contentDescription = "Mount Fuji and Sakura Blossom Silhouette",
-                            contentScale = ContentScale.FillBounds,
+                            painter = painterResource(R.drawable.bg_japanese_art_fuji),
+                            contentDescription = "Mount Fuji and Sakura Artwork",
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
                         )
 
-                        // Smooth transition scrim gradient
+                        // Smooth transition scrim gradient dissolving into washi background
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -104,10 +106,11 @@ fun HomeScreen(
                                     Brush.verticalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
+                                            MaterialTheme.colorScheme.background.copy(alpha = 0.25f),
+                                            MaterialTheme.colorScheme.background.copy(alpha = 0.85f),
                                             MaterialTheme.colorScheme.background
                                         ),
-                                        startY = 50f
+                                        startY = 60f
                                     )
                                 )
                         )
@@ -116,16 +119,27 @@ fun HomeScreen(
                         Column(
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(horizontal = 16.dp, vertical = 6.dp)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
+                            // Editorial Tag matching reference aesthetic
+                            Text(
+                                text = "MANGA WORLD • 漫画の世界",
+                                fontSize = 10.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = 2.sp,
+                                color = Color(0xFF8B1E32)
+                            )
+
+                            Spacer(modifier = Modifier.height(3.dp))
+
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Red Japanese Seal / Hanko Badge (漫画)
+                                // Deep Crimson Japanese Seal / Hanko Badge (漫画)
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(4.dp))
-                                        .background(Color(0xFFC62828))
+                                        .background(Color(0xFF8B1E32))
                                         .padding(horizontal = 6.dp, vertical = 2.dp)
                                 ) {
                                     Text(
@@ -140,28 +154,29 @@ fun HomeScreen(
                                     text = "ComicVerse",
                                     style = MaterialTheme.typography.headlineLarge,
                                     fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = Color(0xFF8B1E32)
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = "コミック",
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFFD81B60).copy(alpha = 0.9f)
+                                    color = Color(0xFF6B585E)
                                 )
                             }
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_sakura_flower),
-                                    contentDescription = null,
-                                    tint = Color(0xFFFF80AB),
-                                    modifier = Modifier.size(13.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .width(3.dp)
+                                        .height(14.dp)
+                                        .background(Color(0xFF8B1E32), RoundedCornerShape(1.dp))
                                 )
-                                Spacer(modifier = Modifier.width(4.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = stringResource(R.string.home_subtitle),
                                     style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -400,13 +415,13 @@ private fun SectionTitleHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                painter = painterResource(R.drawable.ic_sakura_flower),
-                contentDescription = null,
-                tint = Color(0xFFFF80AB),
-                modifier = Modifier.size(17.dp)
+            Box(
+                modifier = Modifier
+                    .width(3.dp)
+                    .height(18.dp)
+                    .background(Color(0xFF8B1E32), RoundedCornerShape(2.dp))
             )
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
@@ -419,15 +434,16 @@ private fun SectionTitleHeader(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(Color(0xFFFCE4EC))
+                    .background(Color(0xFFF0E7DE))
+                    .border(1.dp, Color(0xFFE2D6CB), RoundedCornerShape(16.dp))
                     .clickable(onClick = onActionClick)
-                    .padding(horizontal = 11.dp, vertical = 5.dp)
+                    .padding(horizontal = 12.dp, vertical = 5.dp)
             ) {
                 Text(
                     text = actionText,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFC2185B)
+                    color = Color(0xFF8B1E32)
                 )
             }
         }

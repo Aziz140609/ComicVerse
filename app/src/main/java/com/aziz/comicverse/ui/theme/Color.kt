@@ -4,12 +4,12 @@ import androidx.compose.ui.graphics.Color
 
 // Japanese Editorial Color Palette
 // Light Theme
-val LightBackground = Color(0xFFF8F4EC)
+val LightBackground = Color(0xFFF9F5EE)
 val LightSurface = Color(0xFFFFFFFF)
-val LightPrimary = Color(0xFFB84C59)
-val LightSakura = Color(0xFFE9BFC5)
-val LightText = Color(0xFF29252A)
-val LightMuted = Color(0xFF8C7773)
+val LightPrimary = Color(0xFF8B1E32)
+val LightSakura = Color(0xFFDCAAB0)
+val LightText = Color(0xFF22171B)
+val LightMuted = Color(0xFF6B585E)
 
 // Dark Theme
 val DarkBackground = Color(0xFF181619)

@@ -74,7 +74,7 @@ fun LibraryScreen(
                     Icon(
                         painter = painterResource(R.drawable.ic_sakura_flower),
                         contentDescription = null,
-                        tint = Color(0xFFFF80AB),
+                        tint = Color(0xFF8B1E32),
                         modifier = Modifier.size(16.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))

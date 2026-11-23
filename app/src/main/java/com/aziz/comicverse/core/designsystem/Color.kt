@@ -4,17 +4,17 @@ import androidx.compose.ui.graphics.Color
 
 // Japanese Editorial Color Palette
 object ComicColorTokens {
-    // Light Mode (Authentic Japanese Aesthetics: Washi, Sakura Pink, Torii Crimson, Sumi Ink)
-    val LightBackground = Color(0xFFFAF7F2)
-    val LightSurface = Color(0xFFFFFFFF)
-    val LightSurfaceVariant = Color(0xFFF7EFF1)
-    val LightPrimary = Color(0xFFC62828) // Torii Crimson / Japanese Vermilion
+    // Light Mode (Authentic Japanese Aesthetics: Washi Ivory, Deep Crimson Wine, Sumi Ink, Dusty Sakura Mauve)
+    val LightBackground = Color(0xFFF9F5EE) // Warm authentic Washi rice paper
+    val LightSurface = Color(0xFFFFFFFF) // Porcelain white
+    val LightSurfaceVariant = Color(0xFFF3ECE4) // Warm linen washi
+    val LightPrimary = Color(0xFF8B1E32) // Japanese Crimson Wine / Dark Cherry (Regal, mature, non-neon)
     val LightOnPrimary = Color(0xFFFFFFFF)
-    val LightSakura = Color(0xFFF8BBD0) // Soft Cherry Blossom
-    val LightSakuraDeep = Color(0xFFD81B60) // Deep Sakura Accent
-    val LightTextPrimary = Color(0xFF2C2426) // Sumi Charcoal
-    val LightTextSecondary = Color(0xFF7D6B71) // Japanese Slate
-    val LightBorder = Color(0xFFEFE4DC) // Washi Border
+    val LightSakura = Color(0xFFDCAAB0) // Muted Dusty Rose / Sakura Mauve (Natural, subtle)
+    val LightSakuraDeep = Color(0xFFA82E44) // Deep Sakura Cherry
+    val LightTextPrimary = Color(0xFF22171B) // Sumi Charcoal Ink
+    val LightTextSecondary = Color(0xFF6B585E) // Japanese Slate Gray
+    val LightBorder = Color(0xFFEADBCE) // Delicate Washi Paper Border
 
     // Dark Mode
     val DarkBackground = Color(0xFF181619)

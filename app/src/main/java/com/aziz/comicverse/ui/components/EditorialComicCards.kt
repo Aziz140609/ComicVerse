@@ -1,6 +1,8 @@
 package com.aziz.comicverse.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -75,6 +77,7 @@ fun NewUpdateComicCard(
                 .fillMaxWidth()
                 .aspectRatio(0.72f)
                 .clip(RoundedCornerShape(12.dp))
+                .border(1.dp, Color(0xFFEADBCE), RoundedCornerShape(12.dp))
                 .background(Color(0xFF222026))
         ) {
             AsyncImage(
@@ -87,12 +90,12 @@ fun NewUpdateComicCard(
                 contentScale = ContentScale.Crop
             )
 
-            // Top-left: Blue "New" badge
+            // Top-left: Japanese Hanko Vermilion "New" badge
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(6.dp)
-                    .background(Color(0xFF1E88E5), RoundedCornerShape(6.dp))
+                    .background(Color(0xFF8B1E32), RoundedCornerShape(5.dp))
                     .padding(horizontal = 7.dp, vertical = 3.dp)
             ) {
                 Text(
@@ -223,6 +226,7 @@ fun HotMangaCard(
                 .fillMaxWidth()
                 .aspectRatio(0.70f)
                 .clip(RoundedCornerShape(12.dp))
+                .border(1.dp, Color(0xFFEADBCE), RoundedCornerShape(12.dp))
                 .background(Color(0xFF222026))
         ) {
             AsyncImage(
@@ -363,6 +367,7 @@ fun CompletedMangaCard(
                 .fillMaxWidth()
                 .aspectRatio(0.72f)
                 .clip(RoundedCornerShape(12.dp))
+                .border(1.dp, Color(0xFFEADBCE), RoundedCornerShape(12.dp))
                 .background(Color(0xFF222026))
         ) {
             AsyncImage(
@@ -486,7 +491,8 @@ fun TerakhirDibacaCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        border = BorderStroke(1.dp, Color(0xFFEADBCE)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
