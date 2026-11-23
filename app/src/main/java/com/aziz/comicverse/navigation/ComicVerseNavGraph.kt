@@ -31,6 +31,7 @@ import com.aziz.comicverse.ui.library.LibraryScreen
 import com.aziz.comicverse.ui.rankings.RankingsScreen
 import com.aziz.comicverse.ui.reader.ReaderScreen
 import com.aziz.comicverse.ui.settings.SettingsScreen
+import com.aziz.comicverse.ui.splash.SplashScreen
 
 @Composable
 fun ComicVerseNavGraph(
@@ -128,16 +129,30 @@ fun ComicVerseNavGraph(
         ) {
             val isReaderScreen = currentRoute?.startsWith("reader") == true
             val isHomeScreen = currentRoute == Screen.Home.route
-            if (!isReaderScreen && !isHomeScreen) {
+            val isSplashScreen = currentRoute == Screen.Splash.route
+            if (!isReaderScreen && !isHomeScreen && !isSplashScreen) {
                 SakuraFallingBackdrop(modifier = Modifier.fillMaxSize())
             }
 
             NavHost(
                 navController = navController,
-                startDestination = Screen.Home.route,
+                startDestination = Screen.Splash.route,
                 modifier = Modifier.fillMaxSize()
             ) {
-            composable(Screen.Home.route) {
+                composable(Screen.Splash.route) {
+                    SplashScreen(
+                        onSplashFinished = {
+                            navController.navigate(Screen.Home.route) {
+                                popUpTo(Screen.Splash.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                }
+
+                composable(Screen.Home.route) {
                 HomeScreen(
                     onNavigateToDetail = { comicId ->
                         navController.navigate(Screen.Detail.createRoute(comicId))

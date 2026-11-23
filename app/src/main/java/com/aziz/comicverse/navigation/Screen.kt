@@ -17,6 +17,10 @@ sealed class Screen(
     val selectedIcon: ImageVector? = null,
     val unselectedIcon: ImageVector? = null
 ) {
+    data object Splash : Screen(
+        route = "splash"
+    )
+
     data object Home : Screen(
         route = "home",
         title = "Home",
