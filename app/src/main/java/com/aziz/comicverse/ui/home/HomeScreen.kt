@@ -87,13 +87,14 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(185.dp)
+                            .height(210.dp)
                     ) {
-                        // Original Japanese vector artwork: Mount Fuji silhouette, soft rising sun & sakura blossoms
+                        // High-resolution authentic Japanese artwork: Mount Fuji across tranquil lake, rising sun & sakura blossoms
                         Image(
-                            painter = painterResource(R.drawable.ic_fuji_sakura_header),
-                            contentDescription = "Mount Fuji and Sakura Silhouette",
-                            contentScale = ContentScale.FillBounds,
+                            painter = painterResource(R.drawable.bg_japanese_fuji_sakura),
+                            contentDescription = "Mount Fuji and Sakura Artwork",
+                            contentScale = ContentScale.Crop,
+                            alignment = Alignment.Center,
                             modifier = Modifier.fillMaxSize()
                         )
 
@@ -106,10 +107,10 @@ fun HomeScreen(
                                         colors = listOf(
                                             Color.Transparent,
                                             MaterialTheme.colorScheme.background.copy(alpha = 0.2f),
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0.75f),
+                                            MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
                                             MaterialTheme.colorScheme.background
                                         ),
-                                        startY = 40f
+                                        startY = 60f
                                     )
                                 )
                         )
