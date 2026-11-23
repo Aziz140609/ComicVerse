@@ -4,51 +4,51 @@
     android:viewportWidth="120"
     android:viewportHeight="120">
 
-    <!-- Branch Silhouette from Top Right Corner -->
+    <!-- Branch Silhouette from Top Right Corner (Woody Brown) -->
     <path
         android:pathData="M 125,-5 C 105,15 85,25 65,35 C 50,42 38,55 25,70 C 23,72 26,75 28,73 C 40,58 52,47 67,40 C 86,31 106,20 125,2 Z"
-        android:fillColor="#805D4037" />
+        android:fillColor="#8A4A3228" />
 
     <path
         android:pathData="M 85,25 C 75,38 60,45 45,48 C 43,48 43,51 46,51 C 61,48 76,41 86,27 Z"
-        android:fillColor="#705D4037" />
+        android:fillColor="#7A4A3228" />
 
-    <!-- Sakura Flowers -->
+    <!-- Sakura Flowers (Natural White-Blush & Deep Maroon Center) -->
     <group android:translateX="25" android:translateY="70">
-        <path android:pathData="M0,0 C -6,-15 6,-15 0,0" android:fillColor="#E0FF80AB" />
-        <path android:pathData="M0,0 C 14,-7 17,5 0,0" android:fillColor="#D0FF4081" />
-        <path android:pathData="M0,0 C 11,11 -1,16 0,0" android:fillColor="#E0FF80AB" />
-        <path android:pathData="M0,0 C -10,11 -15,0 0,0" android:fillColor="#D5F8BBD0" />
-        <path android:pathData="M0,0 C -15,-5 -8,-14 0,0" android:fillColor="#E5FF80AB" />
-        <path android:pathData="M0,0 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0" android:fillColor="#C2185B" />
+        <path android:pathData="M0,0 C -6,-15 6,-15 0,0" android:fillColor="#EFE8D3D6" />
+        <path android:pathData="M0,0 C 14,-7 17,5 0,0" android:fillColor="#E5D8ABB0" />
+        <path android:pathData="M0,0 C 11,11 -1,16 0,0" android:fillColor="#EFE8D3D6" />
+        <path android:pathData="M0,0 C -10,11 -15,0 0,0" android:fillColor="#E0EDDBDE" />
+        <path android:pathData="M0,0 C -15,-5 -8,-14 0,0" android:fillColor="#EFE0BFC3" />
+        <path android:pathData="M0,0 m -2.5,0 a 2.5,2.5 0 1,0 5,0 a 2.5,2.5 0 1,0 -5,0" android:fillColor="#8B1E32" />
     </group>
 
     <group android:translateX="65" android:translateY="35">
-        <path android:pathData="M0,0 C -5,-12 5,-12 0,0" android:fillColor="#D5FF80AB" />
-        <path android:pathData="M0,0 C 11,-6 14,4 0,0" android:fillColor="#C5FF4081" />
-        <path android:pathData="M0,0 C 9,9 -1,13 0,0" android:fillColor="#D0FF80AB" />
-        <path android:pathData="M0,0 C -8,9 -12,0 0,0" android:fillColor="#C0F8BBD0" />
-        <path android:pathData="M0,0 C -12,-4 -7,-11 0,0" android:fillColor="#D5FF80AB" />
-        <path android:pathData="M0,0 m -2,0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0" android:fillColor="#C2185B" />
+        <path android:pathData="M0,0 C -5,-12 5,-12 0,0" android:fillColor="#EFE8D3D6" />
+        <path android:pathData="M0,0 C 11,-6 14,4 0,0" android:fillColor="#E5D8ABB0" />
+        <path android:pathData="M0,0 C 9,9 -1,13 0,0" android:fillColor="#EFE8D3D6" />
+        <path android:pathData="M0,0 C -8,9 -12,0 0,0" android:fillColor="#E0EDDBDE" />
+        <path android:pathData="M0,0 C -12,-4 -7,-11 0,0" android:fillColor="#EFE0BFC3" />
+        <path android:pathData="M0,0 m -2,0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0" android:fillColor="#8B1E32" />
     </group>
 
     <group android:translateX="100" android:translateY="12">
-        <path android:pathData="M0,0 C -4,-10 4,-10 0,0" android:fillColor="#D0FF80AB" />
-        <path android:pathData="M0,0 C 9,-5 12,3 0,0" android:fillColor="#C0FF4081" />
-        <path android:pathData="M0,0 C 7,8 -1,11 0,0" android:fillColor="#D0F8BBD0" />
-        <path android:pathData="M0,0 C -7,8 -10,0 0,0" android:fillColor="#C0FF80AB" />
-        <path android:pathData="M0,0 C -10,-3 -6,-9 0,0" android:fillColor="#D0FF80AB" />
-        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#AD1457" />
+        <path android:pathData="M0,0 C -4,-10 4,-10 0,0" android:fillColor="#EFE8D3D6" />
+        <path android:pathData="M0,0 C 9,-5 12,3 0,0" android:fillColor="#E5D8ABB0" />
+        <path android:pathData="M0,0 C 7,8 -1,11 0,0" android:fillColor="#E0EDDBDE" />
+        <path android:pathData="M0,0 C -7,8 -10,0 0,0" android:fillColor="#EFE0BFC3" />
+        <path android:pathData="M0,0 C -10,-3 -6,-9 0,0" android:fillColor="#EFE8D3D6" />
+        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#73192B" />
     </group>
 
-    <!-- Falling Petals -->
+    <!-- Falling Petals (Dusty Mauve Petals) -->
     <path
         android:pathData="M 12,95 C 9,89 4,92 6,98 C 8,104 15,102 18,99 C 20,97 16,95 12,95 Z"
-        android:fillColor="#B5FF80AB" />
+        android:fillColor="#B8D0A5AA" />
     <path
         android:pathData="M 45,75 C 48,70 54,72 55,77 C 56,82 50,85 47,83 C 44,81 45,78 45,75 Z"
-        android:fillColor="#A5FF4081" />
+        android:fillColor="#A5C48A90" />
     <path
         android:pathData="M 80,55 C 83,50 88,52 89,56 C 90,61 85,64 82,62 C 80,60 81,57 80,55 Z"
-        android:fillColor="#A0F8BBD0" />
+        android:fillColor="#98DAB5BA" />
 </vector>

@@ -87,14 +87,13 @@ fun HomeScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(215.dp)
+                            .height(185.dp)
                     ) {
-                        // High resolution Japanese artwork: Mount Fuji across tranquil lake, rising sun & sakura blossoms
+                        // Original Japanese vector artwork: Mount Fuji silhouette, soft rising sun & sakura blossoms
                         Image(
-                            painter = painterResource(R.drawable.bg_japanese_art_fuji),
-                            contentDescription = "Mount Fuji and Sakura Artwork",
-                            contentScale = ContentScale.Crop,
-                            alignment = Alignment.Center,
+                            painter = painterResource(R.drawable.ic_fuji_sakura_header),
+                            contentDescription = "Mount Fuji and Sakura Silhouette",
+                            contentScale = ContentScale.FillBounds,
                             modifier = Modifier.fillMaxSize()
                         )
 
@@ -106,11 +105,11 @@ fun HomeScreen(
                                     Brush.verticalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0.25f),
-                                            MaterialTheme.colorScheme.background.copy(alpha = 0.85f),
+                                            MaterialTheme.colorScheme.background.copy(alpha = 0.2f),
+                                            MaterialTheme.colorScheme.background.copy(alpha = 0.75f),
                                             MaterialTheme.colorScheme.background
                                         ),
-                                        startY = 60f
+                                        startY = 40f
                                     )
                                 )
                         )

@@ -4,13 +4,13 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- Japanese Sakura 5-petal Blossom Icon -->
+    <!-- Japanese Sakura 5-petal Blossom Icon (Sophisticated Dusty Rose & Crimson Center) -->
     <group android:translateX="12" android:translateY="12">
-        <path android:pathData="M0,0 C -3,-9 3,-9 0,0" android:fillColor="#FF80AB" />
-        <path android:pathData="M0,0 C 8,-4 10,3 0,0" android:fillColor="#FF4081" />
-        <path android:pathData="M0,0 C 6,7 -1,9 0,0" android:fillColor="#FF80AB" />
-        <path android:pathData="M0,0 C -6,7 -9,0 0,0" android:fillColor="#F8BBD0" />
-        <path android:pathData="M0,0 C -9,-3 -4,-8 0,0" android:fillColor="#FF80AB" />
-        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#C2185B" />
+        <path android:pathData="M0,0 C -3,-9 3,-9 0,0" android:fillColor="#E8D3D6" />
+        <path android:pathData="M0,0 C 8,-4 10,3 0,0" android:fillColor="#D8ABB0" />
+        <path android:pathData="M0,0 C 6,7 -1,9 0,0" android:fillColor="#E8D3D6" />
+        <path android:pathData="M0,0 C -6,7 -9,0 0,0" android:fillColor="#EDDBDE" />
+        <path android:pathData="M0,0 C -9,-3 -4,-8 0,0" android:fillColor="#E0BFC3" />
+        <path android:pathData="M0,0 m -1.5,0 a 1.5,1.5 0 1,0 3,0 a 1.5,1.5 0 1,0 -3,0" android:fillColor="#8B1E32" />
     </group>
 </vector>
