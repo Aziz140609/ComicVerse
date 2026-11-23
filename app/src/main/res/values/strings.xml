@@ -17,6 +17,20 @@
     <string name="explore_genres">Explore Genres</string>
     <string name="explore_genres_sub">Browse by category</string>
 
+    <string name="new_update_manga">New Update</string>
+    <string name="new_update_sub">Recently released chapters</string>
+    <string name="hot_manga">Hot Manga</string>
+    <string name="hot_manga_sub">Top ranked by readers</string>
+    <string name="completed_manga">Completed Manga</string>
+    <string name="completed_manga_sub">Finished stories ready to binge</string>
+    <string name="last_read">Continue Reading</string>
+    <string name="last_read_sub">Resume from your last page</string>
+    <string name="show_more">Show More</string>
+    <string name="show_less">Show Less</string>
+    <string name="badge_new">NEW</string>
+    <string name="view_rankings">Rankings ></string>
+    <string name="view_schedule">Schedule ></string>
+
     <string name="explore_title">Explore</string>
     <string name="explore_subtitle">Browse by title, theme, or category</string>
 

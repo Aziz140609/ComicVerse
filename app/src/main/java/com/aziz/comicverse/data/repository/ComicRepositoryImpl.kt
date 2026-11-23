@@ -58,6 +58,27 @@ class ComicRepositoryImpl(
         }
     }
 
+    override suspend fun getLatestManga(): Result<List<Comic>> = withContext(Dispatchers.IO) {
+        try {
+            val response = mangaDexApi.getLatestManga(limit = 18)
+            val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
+            Result.success(apiComics.ifEmpty { LegalDemoComicProvider.demoComics })
+        } catch (e: Exception) {
+            Result.success(LegalDemoComicProvider.demoComics)
+        }
+    }
+
+    override suspend fun getCompletedManga(): Result<List<Comic>> = withContext(Dispatchers.IO) {
+        try {
+            val response = mangaDexApi.getCompletedManga(limit = 12)
+            val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
+            Result.success(apiComics.ifEmpty { LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) } })
+        } catch (e: Exception) {
+            val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
+            Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
+        }
+    }
+
     override suspend fun searchComics(query: String, category: String?): Result<List<Comic>> = withContext(Dispatchers.IO) {
         try {
             if (query.isBlank() && category.isNullOrBlank()) {

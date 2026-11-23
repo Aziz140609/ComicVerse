@@ -10,6 +10,8 @@ interface ComicRepository {
     // Remote & Catalog
     suspend fun getTrendingComics(): Result<List<Comic>>
     suspend fun getPopularComics(): Result<List<Comic>>
+    suspend fun getLatestManga(): Result<List<Comic>>
+    suspend fun getCompletedManga(): Result<List<Comic>>
     suspend fun searchComics(query: String, category: String? = null): Result<List<Comic>>
     suspend fun getComicDetail(id: String): Result<Comic>
     suspend fun getComicChapters(comicId: String): Result<List<ComicChapter>>

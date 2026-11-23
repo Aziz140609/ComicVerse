@@ -1,11 +1,19 @@
 package com.aziz.comicverse.ui.home
 
 import com.aziz.comicverse.domain.model.Comic
+import com.aziz.comicverse.domain.model.ReadingProgress
+
+data class ContinueReadingItem(
+    val comic: Comic,
+    val progress: ReadingProgress
+)
 
 data class HomeUiState(
-    val featuredComics: List<Comic> = emptyList(),
-    val popularComics: List<Comic> = emptyList(),
-    val continueReading: List<Comic> = emptyList(),
+    val continueReading: List<ContinueReadingItem> = emptyList(),
+    val newUpdateComics: List<Comic> = emptyList(),
+    val isNewUpdateExpanded: Boolean = false,
+    val hotComics: List<Comic> = emptyList(),
+    val completedComics: List<Comic> = emptyList(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null
 )

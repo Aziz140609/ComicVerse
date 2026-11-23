@@ -17,6 +17,20 @@
     <string name="explore_genres">Jelajahi Genre</string>
     <string name="explore_genres_sub">Koleksi berdasarkan kategori</string>
 
+    <string name="new_update_manga">New Update</string>
+    <string name="new_update_sub">Manga rilis dan chapter terbaru</string>
+    <string name="hot_manga">Hot Manga</string>
+    <string name="hot_manga_sub">Paling populer dan ramai dibaca</string>
+    <string name="completed_manga">Completed Manga</string>
+    <string name="completed_manga_sub">Koleksi manga yang sudah tamat</string>
+    <string name="last_read">Terakhir Di baca</string>
+    <string name="last_read_sub">Lanjutkan membaca dari halaman terakhir</string>
+    <string name="show_more">Show More</string>
+    <string name="show_less">Show Less</string>
+    <string name="badge_new">NEW</string>
+    <string name="view_rankings">Lihat Peringkat ></string>
+    <string name="view_schedule">Lihat Jadwal ></string>
+
     <string name="explore_title">Explore</string>
     <string name="explore_subtitle">Cari berdasarkan judul, tema, atau genre</string>
 

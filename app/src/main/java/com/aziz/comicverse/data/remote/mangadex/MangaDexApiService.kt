@@ -16,6 +16,25 @@ interface MangaDexApiService {
     ): MangaDexListResponse
 
     @GET("manga")
+    suspend fun getLatestManga(
+        @Query("limit") limit: Int = 20,
+        @Query("includes[]") includes: List<String> = listOf("cover_art", "author"),
+        @Query("order[latestUploadedChapter]") order: String = "desc",
+        @Query("contentRating[]") rating: List<String> = listOf("safe", "suggestive"),
+        @Query("hasAvailableChapters") hasChapters: String = "true"
+    ): MangaDexListResponse
+
+    @GET("manga")
+    suspend fun getCompletedManga(
+        @Query("limit") limit: Int = 15,
+        @Query("includes[]") includes: List<String> = listOf("cover_art", "author"),
+        @Query("status[]") status: List<String> = listOf("completed"),
+        @Query("order[followedCount]") order: String = "desc",
+        @Query("contentRating[]") rating: List<String> = listOf("safe", "suggestive"),
+        @Query("hasAvailableChapters") hasChapters: String = "true"
+    ): MangaDexListResponse
+
+    @GET("manga")
     suspend fun searchManga(
         @Query("title") title: String,
         @Query("limit") limit: Int = 20,

@@ -26,10 +26,11 @@ class HomeViewModel(
         viewModelScope.launch {
             repository.getReadingHistory().collect { history ->
                 if (history.isNotEmpty()) {
-                    val comics = history.mapNotNull { progress ->
-                        repository.getComicDetail(progress.comicId).getOrNull()
-                    }.distinctBy { it.id }
-                    _uiState.update { it.copy(continueReading = comics) }
+                    val items = history.mapNotNull { progress ->
+                        val comic = repository.getComicDetail(progress.comicId).getOrNull()
+                        if (comic != null) ContinueReadingItem(comic, progress) else null
+                    }.distinctBy { it.comic.id }
+                    _uiState.update { it.copy(continueReading = items) }
                 } else {
                     _uiState.update { it.copy(continueReading = emptyList()) }
                 }
@@ -37,21 +38,28 @@ class HomeViewModel(
         }
     }
 
+    fun toggleNewUpdateExpanded() {
+        _uiState.update { it.copy(isNewUpdateExpanded = !it.isNewUpdateExpanded) }
+    }
+
     fun loadHomeData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            val trendingResult = repository.getTrendingComics()
-            val popularResult = repository.getPopularComics()
+            val latestResult = repository.getLatestManga()
+            val hotResult = repository.getPopularComics()
+            val completedResult = repository.getCompletedManga()
 
-            if (trendingResult.isSuccess || popularResult.isSuccess) {
-                val trending = trendingResult.getOrDefault(emptyList())
-                val popular = popularResult.getOrDefault(emptyList())
+            if (latestResult.isSuccess || hotResult.isSuccess || completedResult.isSuccess) {
+                val latest = latestResult.getOrDefault(emptyList())
+                val hot = hotResult.getOrDefault(emptyList())
+                val completed = completedResult.getOrDefault(emptyList())
 
                 _uiState.update {
                     it.copy(
-                        featuredComics = trending.take(5),
-                        popularComics = popular.ifEmpty { trending },
+                        newUpdateComics = latest,
+                        hotComics = hot,
+                        completedComics = completed,
                         isLoading = false,
                         errorMessage = null
                     )

@@ -1,5 +1,6 @@
 package com.aziz.comicverse.ui.home
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,39 +18,37 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aziz.comicverse.R
-import com.aziz.comicverse.domain.model.Comic
-import com.aziz.comicverse.ui.components.ComicCard
 import com.aziz.comicverse.ui.components.ComicErrorState
 import com.aziz.comicverse.ui.components.ComicLoadingIndicator
-import com.aziz.comicverse.ui.components.ComicSectionHeader
-import com.aziz.comicverse.ui.components.HorizontalComicCard
+import com.aziz.comicverse.ui.components.CompletedMangaCard
+import com.aziz.comicverse.ui.components.HotMangaCard
+import com.aziz.comicverse.ui.components.NewUpdateComicCard
 import com.aziz.comicverse.ui.components.SearchInputField
-import com.aziz.comicverse.ui.components.StatusBadge
+import com.aziz.comicverse.ui.components.TerakhirDibacaCard
 
 @Composable
 fun HomeScreen(
@@ -62,9 +61,9 @@ fun HomeScreen(
 
     when {
         uiState.isLoading -> {
-            ComicLoadingIndicator(message = "Memuat rekomendasi komik...")
+            ComicLoadingIndicator(message = "Memuat katalog manga...")
         }
-        uiState.errorMessage != null && uiState.popularComics.isEmpty() -> {
+        uiState.errorMessage != null && uiState.newUpdateComics.isEmpty() && uiState.hotComics.isEmpty() -> {
             ComicErrorState(
                 message = uiState.errorMessage ?: "Terjadi kesalahan.",
                 onRetry = { viewModel.loadHomeData() }
@@ -75,9 +74,9 @@ fun HomeScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
-                contentPadding = PaddingValues(bottom = 32.dp)
+                contentPadding = PaddingValues(bottom = 36.dp)
             ) {
-                // Editorial Header
+                // 1. Editorial Header
                 item {
                     Column(
                         modifier = Modifier
@@ -108,7 +107,7 @@ fun HomeScreen(
                     }
                 }
 
-                // Search Bar Trigger
+                // 2. Search Bar Trigger
                 item {
                     SearchInputField(
                         query = "",
@@ -120,67 +119,121 @@ fun HomeScreen(
                     )
                 }
 
-                // Featured Banner (Editorial Highlight)
-                if (uiState.featuredComics.isNotEmpty()) {
+                // 3. "Terakhir Di baca" (Continue Reading directly under Search Bar)
+                if (uiState.continueReading.isNotEmpty()) {
                     item {
-                        ComicSectionHeader(
-                            title = stringResource(R.string.editor_choice),
-                            subtitle = stringResource(R.string.editor_choice_sub)
+                        Spacer(modifier = Modifier.height(14.dp))
+                        SectionTitleHeader(
+                            title = stringResource(R.string.last_read),
+                            actionText = stringResource(R.string.see_all),
+                            onActionClick = { onNavigateToExplore(null) }
                         )
-                        FeaturedCarousel(
-                            comics = uiState.featuredComics,
-                            onComicClick = onNavigateToDetail
+                    }
+
+                    items(uiState.continueReading.take(2)) { item ->
+                        TerakhirDibacaCard(
+                            comic = item.comic,
+                            progress = item.progress,
+                            onContinueClick = { onNavigateToDetail(item.comic.id) },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                         )
                     }
                 }
 
-                // Continue Reading (if any demo/history available)
-                if (uiState.continueReading.isNotEmpty()) {
+                // 4. "New Update" Section Header
+                item {
+                    Spacer(modifier = Modifier.height(18.dp))
+                    SectionTitleHeader(
+                        title = stringResource(R.string.new_update_manga),
+                        actionText = stringResource(R.string.view_schedule),
+                        onActionClick = { onNavigateToExplore(null) }
+                    )
+                }
+
+                // New Update 3-column Grid
+                val visibleNewUpdates = if (uiState.isNewUpdateExpanded) {
+                    uiState.newUpdateComics
+                } else {
+                    uiState.newUpdateComics.take(6)
+                }
+
+                items(visibleNewUpdates.chunked(3)) { rowComics ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 6.dp),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        rowComics.forEach { comic ->
+                            NewUpdateComicCard(
+                                comic = comic,
+                                onClick = { onNavigateToDetail(comic.id) },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        // Fill empty cells if last row has fewer than 3 items
+                        repeat(3 - rowComics.size) {
+                            Spacer(modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+
+                // "Show More" Button for New Update
+                if (uiState.newUpdateComics.size > 6) {
                     item {
-                        ComicSectionHeader(
-                            title = stringResource(R.string.continue_reading),
-                            subtitle = stringResource(R.string.continue_reading_sub),
-                            actionLabel = stringResource(R.string.see_all),
-                            onActionClick = { onNavigateToExplore(null) }
-                        )
-                        Column(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            uiState.continueReading.take(2).forEach { comic ->
-                                HorizontalComicCard(
-                                    title = comic.title,
-                                    coverUrl = comic.coverUrl,
-                                    subtitle = "${comic.author} • ${comic.status}",
-                                    progressPercent = 45,
-                                    onClick = { onNavigateToDetail(comic.id) }
-                                )
+                            OutlinedButton(
+                                onClick = { viewModel.toggleNewUpdateExpanded() },
+                                shape = RoundedCornerShape(20.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(42.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = if (uiState.isNewUpdateExpanded) stringResource(R.string.show_less) else stringResource(R.string.show_more),
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 13.sp
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Icon(
+                                        imageVector = if (uiState.isNewUpdateExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                         }
                     }
                 }
 
-                // Popular Comics Row
-                if (uiState.popularComics.isNotEmpty()) {
+                // 5. "Hot Manga" Section (Horizontal Scroll with Ranks #1, #2, #3...)
+                if (uiState.hotComics.isNotEmpty()) {
                     item {
-                        ComicSectionHeader(
-                            title = stringResource(R.string.popular_comics),
-                            subtitle = stringResource(R.string.popular_comics_sub),
-                            actionLabel = stringResource(R.string.see_all),
+                        Spacer(modifier = Modifier.height(18.dp))
+                        SectionTitleHeader(
+                            title = stringResource(R.string.hot_manga),
+                            actionText = stringResource(R.string.view_rankings),
                             onActionClick = { onNavigateToExplore(null) }
                         )
                         LazyRow(
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            items(uiState.popularComics) { comic ->
-                                ComicCard(
-                                    title = comic.title,
-                                    coverUrl = comic.coverUrl,
-                                    author = comic.author,
-                                    genre = comic.genres.firstOrNull(),
-                                    rating = comic.rating,
-                                    modifier = Modifier.width(140.dp),
+                            itemsIndexed(uiState.hotComics) { index, comic ->
+                                HotMangaCard(
+                                    comic = comic,
+                                    rank = index + 1,
                                     onClick = { onNavigateToDetail(comic.id) }
                                 )
                             }
@@ -188,45 +241,33 @@ fun HomeScreen(
                     }
                 }
 
-                // Quick Genre Discovery
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ComicSectionHeader(
-                        title = stringResource(R.string.explore_genres),
-                        subtitle = stringResource(R.string.explore_genres_sub)
-                    )
-                    val genres = listOf("Action", "Fantasy", "Comedy", "Sci-Fi", "Historical", "Drama")
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(genres) { genre ->
-                            Card(
-                                modifier = Modifier
-                                    .clip(MaterialTheme.shapes.small)
-                                    .clickable { onNavigateToExplore(genre) },
-                                shape = MaterialTheme.shapes.small,
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                // 6. "Completed Manga" Section (Manga yang sudah selesai)
+                if (uiState.completedComics.isNotEmpty()) {
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
+                        SectionTitleHeader(
+                            title = stringResource(R.string.completed_manga),
+                            actionText = stringResource(R.string.see_all),
+                            onActionClick = { onNavigateToExplore(null) }
+                        )
+                    }
+
+                    items(uiState.completedComics.chunked(3)) { rowComics ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 6.dp),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            rowComics.forEach { comic ->
+                                CompletedMangaCard(
+                                    comic = comic,
+                                    onClick = { onNavigateToDetail(comic.id) },
+                                    modifier = Modifier.weight(1f)
                                 )
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.AutoAwesome,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = genre,
-                                        style = MaterialTheme.typography.labelMedium,
-                                        fontWeight = FontWeight.SemiBold
-                                    )
-                                }
+                            }
+                            repeat(3 - rowComics.size) {
+                                Spacer(modifier = Modifier.weight(1f))
                             }
                         }
                     }
@@ -236,77 +277,44 @@ fun HomeScreen(
     }
 }
 
+/**
+ * Clean Section Header matching user's anime/manga app design
+ */
 @Composable
-private fun FeaturedCarousel(
-    comics: List<Comic>,
-    onComicClick: (String) -> Unit,
+private fun SectionTitleHeader(
+    title: String,
+    actionText: String? = null,
+    onActionClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    LazyRow(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        items(comics) { comic ->
-            Card(
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        if (actionText != null && onActionClick != null) {
+            Box(
                 modifier = Modifier
-                    .width(280.dp)
-                    .height(160.dp)
-                    .clip(MaterialTheme.shapes.large)
-                    .clickable { onComicClick(comic.id) },
-                shape = MaterialTheme.shapes.large,
-                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                    .clickable(onClick = onActionClick)
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(comic.coverUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = comic.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-
-                    // Gradient Overlay for text contrast
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color.Transparent,
-                                        Color.Black.copy(alpha = 0.85f)
-                                    ),
-                                    startY = 60f
-                                )
-                            )
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(14.dp)
-                    ) {
-                        StatusBadge(status = comic.status)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = comic.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = comic.description,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.White.copy(alpha = 0.85f),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
+                Text(
+                    text = actionText,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
         }
     }
