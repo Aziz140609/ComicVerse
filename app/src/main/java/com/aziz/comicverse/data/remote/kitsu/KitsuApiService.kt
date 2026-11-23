@@ -17,6 +17,19 @@ interface KitsuApiService {
     ): KitsuMangaListResponse
 
     @GET("api/edge/manga")
+    suspend fun getLatestManga(
+        @Query("sort") sort: String = "-updatedAt",
+        @Query("page[limit]") limit: Int = 20
+    ): KitsuMangaListResponse
+
+    @GET("api/edge/manga")
+    suspend fun getCompletedManga(
+        @Query("filter[status]") status: String = "finished",
+        @Query("sort") sort: String = "-userCount",
+        @Query("page[limit]") limit: Int = 20
+    ): KitsuMangaListResponse
+
+    @GET("api/edge/manga")
     suspend fun searchManga(
         @Query("filter[text]") query: String,
         @Query("filter[categories]") category: String? = null,

@@ -14,37 +14,52 @@ object NetworkClient {
     private const val MANGADEX_BASE_URL = "https://api.mangadex.org/"
     private const val KITSU_BASE_URL = "https://kitsu.io/"
 
-    val okHttpClient: OkHttpClient by lazy {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BASIC
+    private val headerInterceptor = Interceptor { chain ->
+        val original = chain.request()
+        val requestBuilder = original.newBuilder()
+            .header("User-Agent", "ComicVerse/1.0 (Android; Mobile Programming Project)")
+
+        val host = original.url.host
+        if (host.contains("mangadex.network") || host.contains("mangadex.org")) {
+            requestBuilder.header("Referer", "https://mangadex.org/")
         }
+        chain.proceed(requestBuilder.build())
+    }
 
-        val headerInterceptor = Interceptor { chain ->
-            val original = chain.request()
-            val requestBuilder = original.newBuilder()
-                .header("User-Agent", "ComicVerse/1.0 (Android; Mobile Programming Project)")
+    private val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BASIC
+    }
 
-            val host = original.url.host
-            if (host.contains("mangadex.network") || host.contains("mangadex.org")) {
-                requestBuilder.header("Referer", "https://mangadex.org/")
-            }
-            chain.proceed(requestBuilder.build())
-        }
-
+    // Fast-fail client for MangaDex since it is blocked by Indonesian ISPs (Trust Positif / Internet Baik)
+    val mangaDexClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .dns(MangaDexDns())
             .addInterceptor(headerInterceptor)
-            .addInterceptor(logging)
+            .addInterceptor(loggingInterceptor)
             .connectionPool(okhttp3.ConnectionPool(10, 5, TimeUnit.MINUTES))
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(4, TimeUnit.SECONDS)
             .build()
     }
+
+    // Stable, unblocked client for Kitsu API and Image loading
+    val kitsuClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .addInterceptor(headerInterceptor)
+            .addInterceptor(loggingInterceptor)
+            .connectionPool(okhttp3.ConnectionPool(10, 5, TimeUnit.MINUTES))
+            .connectTimeout(8, TimeUnit.SECONDS)
+            .readTimeout(8, TimeUnit.SECONDS)
+            .build()
+    }
+
+    // Default client for Coil image loading and general requests
+    val okHttpClient: OkHttpClient get() = kitsuClient
 
     val mangaDexApi: MangaDexApiService by lazy {
         Retrofit.Builder()
             .baseUrl(MANGADEX_BASE_URL)
-            .client(okHttpClient)
+            .client(mangaDexClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(MangaDexApiService::class.java)
@@ -53,7 +68,7 @@ object NetworkClient {
     val kitsuApi: KitsuApiService by lazy {
         Retrofit.Builder()
             .baseUrl(KITSU_BASE_URL)
-            .client(okHttpClient)
+            .client(kitsuClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(KitsuApiService::class.java)

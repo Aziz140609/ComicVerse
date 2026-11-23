@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.aziz.comicverse.data.repository.ComicRepositoryImpl
 import com.aziz.comicverse.domain.repository.ComicRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,8 +38,11 @@ class ComicDetailViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            val comicResult = repository.getComicDetail(comicId)
-            val chaptersResult = repository.getComicChapters(comicId)
+            val comicDeferred = async(Dispatchers.IO) { repository.getComicDetail(comicId) }
+            val chaptersDeferred = async(Dispatchers.IO) { repository.getComicChapters(comicId) }
+
+            val comicResult = comicDeferred.await()
+            val chaptersResult = chaptersDeferred.await()
 
             if (comicResult.isSuccess) {
                 _uiState.update {

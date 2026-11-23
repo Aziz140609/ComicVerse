@@ -66,7 +66,13 @@ class ComicRepositoryImpl(
             val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
             Result.success(apiComics.ifEmpty { LegalDemoComicProvider.demoComics })
         } catch (e: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
+            try {
+                val kitsuResp = NetworkClient.kitsuApi.getLatestManga(limit = 18)
+                val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+                Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
+            } catch (ignored: Exception) {
+                Result.success(LegalDemoComicProvider.demoComics)
+            }
         }
     }
 
@@ -76,8 +82,14 @@ class ComicRepositoryImpl(
             val apiComics = response.data?.map { ComicMapper.mapMangaDexItemToComic(it) } ?: emptyList()
             Result.success(apiComics.ifEmpty { LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) } })
         } catch (e: Exception) {
-            val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
-            Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
+            try {
+                val kitsuResp = NetworkClient.kitsuApi.getCompletedManga(limit = 18)
+                val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+                Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
+            } catch (ignored: Exception) {
+                val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
+                Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
+            }
         }
     }
 
@@ -95,25 +107,35 @@ class ComicRepositoryImpl(
                 Result.success(LegalDemoComicProvider.demoComics)
             }
         } catch (e: Exception) {
-            val fallback = if (period.equals("weekly", ignoreCase = true)) {
-                LegalDemoComicProvider.demoComics.sortedByDescending { it.rating ?: 0.0 }
-            } else {
-                LegalDemoComicProvider.demoComics
+            try {
+                val kitsuResp = if (period.equals("weekly", ignoreCase = true)) {
+                    NetworkClient.kitsuApi.getTrendingManga()
+                } else {
+                    NetworkClient.kitsuApi.getPopularManga(limit = 25)
+                }
+                val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+                Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
+            } catch (ignored: Exception) {
+                val fallback = if (period.equals("weekly", ignoreCase = true)) {
+                    LegalDemoComicProvider.demoComics.sortedByDescending { it.rating ?: 0.0 }
+                } else {
+                    LegalDemoComicProvider.demoComics
+                }
+                Result.success(fallback)
             }
-            Result.success(fallback)
         }
     }
 
     override suspend fun searchComics(query: String, category: String?): Result<List<Comic>> = withContext(Dispatchers.IO) {
+        val localMatches = LegalDemoComicProvider.demoComics.filter { comic ->
+            comic.title.contains(query, ignoreCase = true) ||
+            comic.description.contains(query, ignoreCase = true) ||
+            comic.genres.any { it.contains(query, ignoreCase = true) }
+        }
+
         try {
             if (query.isBlank() && category.isNullOrBlank()) {
                 return@withContext getPopularComics()
-            }
-
-            val localMatches = LegalDemoComicProvider.demoComics.filter { comic ->
-                comic.title.contains(query, ignoreCase = true) ||
-                comic.description.contains(query, ignoreCase = true) ||
-                comic.genres.any { it.contains(query, ignoreCase = true) }
             }
 
             val searchTerm = query.ifBlank { category ?: "manga" }
@@ -123,11 +145,15 @@ class ComicRepositoryImpl(
             val combined = (localMatches + apiComics).distinctBy { it.id }
             Result.success(combined)
         } catch (e: Exception) {
-            val fallbackMatches = LegalDemoComicProvider.demoComics.filter { comic ->
-                comic.title.contains(query, ignoreCase = true) ||
-                comic.genres.any { it.contains(query, ignoreCase = true) }
+            val searchTerm = query.ifBlank { category ?: "manga" }
+            try {
+                val kitsuResp = NetworkClient.kitsuApi.searchManga(query = searchTerm, limit = 20)
+                val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
+                val combined = (localMatches + kitsuComics).distinctBy { it.id }
+                Result.success(combined.ifEmpty { localMatches })
+            } catch (ignored: Exception) {
+                Result.success(localMatches)
             }
-            Result.success(fallbackMatches)
         }
     }
 

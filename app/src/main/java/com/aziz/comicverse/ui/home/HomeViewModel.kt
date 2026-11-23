@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.aziz.comicverse.data.repository.ComicRepositoryImpl
 import com.aziz.comicverse.domain.repository.ComicRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,9 +52,13 @@ class HomeViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            val latestResult = repository.getLatestManga()
-            val hotResult = repository.getPopularComics()
-            val completedResult = repository.getCompletedManga()
+            val latestDeferred = async(Dispatchers.IO) { repository.getLatestManga() }
+            val hotDeferred = async(Dispatchers.IO) { repository.getPopularComics() }
+            val completedDeferred = async(Dispatchers.IO) { repository.getCompletedManga() }
+
+            val latestResult = latestDeferred.await()
+            val hotResult = hotDeferred.await()
+            val completedResult = completedDeferred.await()
 
             if (latestResult.isSuccess || hotResult.isSuccess || completedResult.isSuccess) {
                 val latest = latestResult.getOrDefault(emptyList())
