@@ -68,9 +68,7 @@ fun RankingsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.fillMaxSize()
     ) {
         // Top Bar with Sakura Branch Corner Silhouette
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -118,7 +116,7 @@ fun RankingsScreen(
         )
         TabRow(
             selectedTabIndex = uiState.selectedTab,
-            containerColor = MaterialTheme.colorScheme.surface,
+            containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.primary,
             indicator = { tabPositions ->
                 TabRowDefaults.SecondaryIndicator(

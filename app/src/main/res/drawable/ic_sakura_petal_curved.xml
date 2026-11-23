@@ -1,0 +1,13 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Curved Wind-blown Sakura Petal -->
+    <path
+        android:pathData="M10,2 C4,8 2,14 6,19 C10,24 16,22 20,16 C24,10 20,4 15,2 C13,1 11,1 10,2 Z"
+        android:fillColor="#DBA8B1" />
+    <path
+        android:pathData="M11,5 C6,10 5,14 8,18 C11,21 15,19 18,15 C20,11 17,6 13.5,4.5 C12.5,4 11.5,4.5 11,5 Z"
+        android:fillColor="#F3D5DB" />
+</vector>

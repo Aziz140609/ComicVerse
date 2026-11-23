@@ -52,9 +52,7 @@ fun ReadingHistoryScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.fillMaxSize()
     ) {
         // Top Bar with Sakura Branch Corner Silhouette
         Box(modifier = Modifier.fillMaxWidth()) {

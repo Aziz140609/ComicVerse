@@ -51,9 +51,7 @@ fun LibraryScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.fillMaxSize()
     ) {
         // Editorial Header with Japanese Sakura Branch Corner
         Box(modifier = Modifier.fillMaxWidth()) {

@@ -74,9 +74,7 @@ fun ExploreScreen(
     }
 
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+        modifier = modifier.fillMaxSize()
     ) {
         // Header with Japanese Sakura Branch Corner & Back Navigation support
         Box(modifier = Modifier.fillMaxWidth()) {

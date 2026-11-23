@@ -51,6 +51,7 @@ import com.aziz.comicverse.ui.components.ComicLoadingIndicator
 import com.aziz.comicverse.ui.components.CompletedMangaCard
 import com.aziz.comicverse.ui.components.HotMangaCard
 import com.aziz.comicverse.ui.components.NewUpdateComicCard
+import com.aziz.comicverse.ui.components.SakuraFallingBackdrop
 import com.aziz.comicverse.ui.components.SearchInputField
 import com.aziz.comicverse.ui.components.TerakhirDibacaCard
 
@@ -76,12 +77,21 @@ fun HomeScreen(
             )
         }
         else -> {
-            LazyColumn(
+            Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-                contentPadding = PaddingValues(bottom = 36.dp)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
+                // Falling Sakura Backdrop: dense below artwork, softly drifting into New Update, fading away towards bottom
+                SakuraFallingBackdrop(
+                    modifier = Modifier.fillMaxSize(),
+                    topOffset = 130.dp
+                )
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 36.dp)
+                ) {
                 // 1. Japanese Atmosphere Header with Mount Fuji & Sakura Artwork
                 item {
                     Box(
@@ -395,6 +405,7 @@ fun HomeScreen(
             }
         }
     }
+}
 }
 
 /**

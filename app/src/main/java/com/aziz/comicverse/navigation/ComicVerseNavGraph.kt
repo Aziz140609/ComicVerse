@@ -1,5 +1,7 @@
 package com.aziz.comicverse.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -20,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.aziz.comicverse.ui.components.SakuraFallingBackdrop
 import com.aziz.comicverse.ui.detail.ComicDetailScreen
 import com.aziz.comicverse.ui.explore.ExploreScreen
 import com.aziz.comicverse.ui.history.ReadingHistoryScreen
@@ -117,11 +120,23 @@ fun ComicVerseNavGraph(
             }
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Home.route,
-            modifier = Modifier.padding(innerPadding)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(MaterialTheme.colorScheme.background)
         ) {
+            val isReaderScreen = currentRoute?.startsWith("reader") == true
+            val isHomeScreen = currentRoute == Screen.Home.route
+            if (!isReaderScreen && !isHomeScreen) {
+                SakuraFallingBackdrop(modifier = Modifier.fillMaxSize())
+            }
+
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+                modifier = Modifier.fillMaxSize()
+            ) {
             composable(Screen.Home.route) {
                 HomeScreen(
                     onNavigateToDetail = { comicId ->
@@ -233,6 +248,7 @@ fun ComicVerseNavGraph(
                     onNavigateBack = { navController.popBackStack() }
                 )
             }
+        }
         }
     }
 }
