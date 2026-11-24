@@ -76,6 +76,28 @@ class ExploreViewModel(
         executeSearch(_uiState.value.query, nextGenre)
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            val query = _uiState.value.query
+            val genre = _uiState.value.selectedGenre
+            val activeGenre = if (genre.equals("All", ignoreCase = true)) null else genre
+            val result = repository.searchComics(query = query, category = activeGenre)
+            if (result.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        comics = result.getOrDefault(emptyList()),
+                        isRefreshing = false,
+                        errorMessage = null
+                    )
+                }
+            } else {
+                _uiState.update { it.copy(isRefreshing = false) }
+            }
+            loadGenres()
+        }
+    }
+
     private fun executeSearch(query: String, genre: String?) {
         val activeGenre = if (genre.equals("All", ignoreCase = true)) null else genre
         viewModelScope.launch {

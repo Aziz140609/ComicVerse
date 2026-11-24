@@ -27,12 +27,14 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -58,6 +60,7 @@ import com.aziz.comicverse.domain.model.Comic
 import com.aziz.comicverse.ui.components.ComicErrorState
 import com.aziz.comicverse.ui.components.ComicLoadingIndicator
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RankingsScreen(
     onNavigateBack: () -> Unit,
@@ -138,66 +141,72 @@ fun RankingsScreen(
                 )
             }
             else -> {
-                val comics = uiState.comics
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                PullToRefreshBox(
+                    isRefreshing = uiState.isRefreshing,
+                    onRefresh = { viewModel.refresh() },
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    // 1. #1 Featured Hero Card (Full Width)
-                    if (comics.isNotEmpty()) {
-                        item {
-                            RankOneHeroCard(
-                                comic = comics[0],
-                                onClick = { onNavigateToDetail(comics[0].id) }
-                            )
+                    val comics = uiState.comics
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // 1. #1 Featured Hero Card (Full Width)
+                        if (comics.isNotEmpty()) {
+                            item {
+                                RankOneHeroCard(
+                                    comic = comics[0],
+                                    onClick = { onNavigateToDetail(comics[0].id) }
+                                )
+                            }
                         }
-                    }
 
-                    // 2. #2 and #3 Dual Column Grid Cards
-                    if (comics.size >= 3) {
-                        item {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
+                        // 2. #2 and #3 Dual Column Grid Cards
+                        if (comics.size >= 3) {
+                            item {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    RankTwoThreeCard(
+                                        comic = comics[1],
+                                        rank = 2,
+                                        badgeColor = Color(0xFFB0B0B0),
+                                        onClick = { onNavigateToDetail(comics[1].id) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    RankTwoThreeCard(
+                                        comic = comics[2],
+                                        rank = 3,
+                                        badgeColor = Color(0xFFE5A93C),
+                                        onClick = { onNavigateToDetail(comics[2].id) },
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                            }
+                        } else if (comics.size == 2) {
+                            item {
                                 RankTwoThreeCard(
                                     comic = comics[1],
                                     rank = 2,
                                     badgeColor = Color(0xFFB0B0B0),
                                     onClick = { onNavigateToDetail(comics[1].id) },
-                                    modifier = Modifier.weight(1f)
-                                )
-                                RankTwoThreeCard(
-                                    comic = comics[2],
-                                    rank = 3,
-                                    badgeColor = Color(0xFFE5A93C),
-                                    onClick = { onNavigateToDetail(comics[2].id) },
-                                    modifier = Modifier.weight(1f)
+                                    modifier = Modifier.fillMaxWidth(0.5f)
                                 )
                             }
                         }
-                    } else if (comics.size == 2) {
-                        item {
-                            RankTwoThreeCard(
-                                comic = comics[1],
-                                rank = 2,
-                                badgeColor = Color(0xFFB0B0B0),
-                                onClick = { onNavigateToDetail(comics[1].id) },
-                                modifier = Modifier.fillMaxWidth(0.5f)
-                            )
-                        }
-                    }
 
-                    // 3. #4+ Ranked List Items
-                    if (comics.size > 3) {
-                        itemsIndexed(comics.drop(3)) { index, comic ->
-                            val actualRank = index + 4
-                            RankListItemCard(
-                                comic = comic,
-                                rank = actualRank,
-                                onClick = { onNavigateToDetail(comic.id) }
-                            )
+                        // 3. #4+ Ranked List Items
+                        if (comics.size > 3) {
+                            itemsIndexed(comics.drop(3)) { index, comic ->
+                                val actualRank = index + 4
+                                RankListItemCard(
+                                    comic = comic,
+                                    rank = actualRank,
+                                    onClick = { onNavigateToDetail(comic.id) }
+                                )
+                            }
                         }
                     }
                 }

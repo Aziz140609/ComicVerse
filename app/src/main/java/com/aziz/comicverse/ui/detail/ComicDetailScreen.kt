@@ -43,6 +43,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -142,13 +143,19 @@ fun ComicDetailScreen(
             }
             uiState.comic != null -> {
                 val comic = uiState.comic!!
-                LazyColumn(
+                PullToRefreshBox(
+                    isRefreshing = uiState.isRefreshing,
+                    onRefresh = { viewModel.refresh() },
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
-                        .background(MaterialTheme.colorScheme.background),
-                    contentPadding = PaddingValues(bottom = 32.dp)
                 ) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentPadding = PaddingValues(bottom = 32.dp)
+                    ) {
                     // Header Banner & Poster Section
                     item {
                         Box(
@@ -505,6 +512,7 @@ fun ComicDetailScreen(
             }
         }
     }
+}
 }
 
 @Composable

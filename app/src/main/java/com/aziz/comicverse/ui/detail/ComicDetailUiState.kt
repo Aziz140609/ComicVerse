@@ -10,5 +10,6 @@ data class ComicDetailUiState(
     val isFavorite: Boolean = false,
     val readingProgress: ReadingProgress? = null,
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null
 )

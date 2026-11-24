@@ -13,5 +13,6 @@ data class LibraryUiState(
     val favoriteComics: List<Comic> = emptyList(),
     val readingHistory: List<ReadingProgress> = emptyList(),
     val historyComicsMap: Map<String, Comic> = emptyMap(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false
 )

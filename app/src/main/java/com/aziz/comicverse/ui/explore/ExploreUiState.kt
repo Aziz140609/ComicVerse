@@ -17,5 +17,6 @@ data class ExploreUiState(
     val availableGenres: List<String> = DEFAULT_EXPLORE_GENRES,
     val comics: List<Comic> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null
 )

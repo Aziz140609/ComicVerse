@@ -39,6 +39,14 @@ class LibraryViewModel(
         }
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            kotlinx.coroutines.delay(400)
+            _uiState.update { it.copy(isRefreshing = false) }
+        }
+    }
+
     private fun observeFavorites() {
         viewModelScope.launch {
             repository.getFavoriteComics().collect { favorites ->

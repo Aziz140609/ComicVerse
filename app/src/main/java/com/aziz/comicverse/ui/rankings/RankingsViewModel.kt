@@ -51,4 +51,26 @@ class RankingsViewModel(
             }
         }
     }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+            val period = if (_uiState.value.selectedTab == 0) "all_time" else "weekly"
+            val result = repository.getRankedManga(period)
+
+            if (result.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        comics = result.getOrDefault(emptyList()),
+                        isRefreshing = false,
+                        errorMessage = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(isRefreshing = false)
+                }
+            }
+        }
+    }
 }

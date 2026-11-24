@@ -73,6 +73,33 @@ class ComicDetailViewModel(
         }
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+
+            val comicDeferred = async(Dispatchers.IO) { repository.getComicDetail(comicId) }
+            val chaptersDeferred = async(Dispatchers.IO) { repository.getComicChapters(comicId) }
+
+            val comicResult = comicDeferred.await()
+            val chaptersResult = chaptersDeferred.await()
+
+            if (comicResult.isSuccess) {
+                _uiState.update {
+                    it.copy(
+                        comic = comicResult.getOrNull(),
+                        chapters = chaptersResult.getOrDefault(emptyList()),
+                        isRefreshing = false,
+                        errorMessage = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(isRefreshing = false)
+                }
+            }
+        }
+    }
+
     fun toggleFavorite() {
         viewModelScope.launch {
             val comic = _uiState.value.comic ?: return@launch

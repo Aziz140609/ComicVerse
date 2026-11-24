@@ -48,6 +48,40 @@ class HomeViewModel(
         _uiState.update { it.copy(isCompletedExpanded = !it.isCompletedExpanded) }
     }
 
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
+
+            val latestDeferred = async(Dispatchers.IO) { repository.getLatestManga() }
+            val hotDeferred = async(Dispatchers.IO) { repository.getPopularComics() }
+            val completedDeferred = async(Dispatchers.IO) { repository.getCompletedManga() }
+
+            val latestResult = latestDeferred.await()
+            val hotResult = hotDeferred.await()
+            val completedResult = completedDeferred.await()
+
+            if (latestResult.isSuccess || hotResult.isSuccess || completedResult.isSuccess) {
+                val latest = latestResult.getOrDefault(emptyList())
+                val hot = hotResult.getOrDefault(emptyList())
+                val completed = completedResult.getOrDefault(emptyList())
+
+                _uiState.update {
+                    it.copy(
+                        newUpdateComics = latest,
+                        hotComics = hot,
+                        completedComics = completed,
+                        isRefreshing = false,
+                        errorMessage = null
+                    )
+                }
+            } else {
+                _uiState.update {
+                    it.copy(isRefreshing = false)
+                }
+            }
+        }
+    }
+
     fun loadHomeData() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }

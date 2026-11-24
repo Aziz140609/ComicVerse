@@ -16,5 +16,6 @@ data class HomeUiState(
     val completedComics: List<Comic> = emptyList(),
     val isCompletedExpanded: Boolean = false,
     val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null
 )
