@@ -24,4 +24,7 @@ interface ReadingProgressDao {
 
     @Query("DELETE FROM reading_progress WHERE comicId = :comicId")
     suspend fun deleteProgress(comicId: String): Int
+
+    @Query("DELETE FROM reading_progress WHERE comicId = '37280'")
+    suspend fun purgeBrokenKnyProgress(): Int
 }

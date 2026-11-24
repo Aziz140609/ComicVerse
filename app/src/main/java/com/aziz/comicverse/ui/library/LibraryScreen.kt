@@ -166,6 +166,7 @@ fun LibraryScreen(
                                     author = comic.author,
                                     genre = comic.genres.firstOrNull(),
                                     rating = comic.rating,
+                                    onRemoveClick = { viewModel.removeFavorite(comic.id) },
                                     onClick = { onNavigateToDetail(comic.id) }
                                 )
                             }
@@ -197,6 +198,7 @@ fun LibraryScreen(
                                     coverUrl = cover,
                                     subtitle = "${progress.chapterTitle} • Halaman ${progress.pageIndex}/${progress.totalPages}",
                                     progressPercent = progressPercent,
+                                    onRemoveClick = { viewModel.deleteHistory(progress.comicId) },
                                     onClick = {
                                         onNavigateToReader(progress.comicId, progress.chapterId)
                                     }

@@ -17,6 +17,7 @@ import com.aziz.comicverse.domain.repository.ComicRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ComicRepositoryImpl(
@@ -24,6 +25,22 @@ class ComicRepositoryImpl(
     private val mangaDexApi: MangaDexApiService = NetworkClient.mangaDexApi,
     private val database: ComicDatabase = ComicVerseApp.instance.database
 ) : ComicRepository {
+
+    init {
+        kotlinx.coroutines.CoroutineScope(Dispatchers.IO).launch {
+            try {
+                database.comicDao().purgeBrokenKnyComics()
+                database.readingProgressDao().purgeBrokenKnyProgress()
+                val allComics = database.comicDao().getAllComicsRaw()
+                for (comic in allComics) {
+                    if (comic.id.all { it.isDigit() }) {
+                        database.comicDao().deleteComicById(comic.id)
+                        database.readingProgressDao().deleteProgress(comic.id)
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
 
     private val detailCache = java.util.concurrent.ConcurrentHashMap<String, com.aziz.comicverse.data.remote.sanka.SankaDetailData>()
 
@@ -366,6 +383,12 @@ class ComicRepositoryImpl(
         } else {
             database.comicDao().updateFavorite(comic.id, !current.isFavorite)
         }
+        Unit
+    }
+
+    override suspend fun removeFavorite(comicId: String) = withContext(Dispatchers.IO) {
+        database.comicDao().updateFavorite(comicId, false)
+        database.comicDao().deleteComicById(comicId)
         Unit
     }
 

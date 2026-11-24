@@ -27,6 +27,18 @@ class LibraryViewModel(
         _uiState.update { it.copy(selectedTab = tab) }
     }
 
+    fun removeFavorite(comicId: String) {
+        viewModelScope.launch {
+            repository.removeFavorite(comicId)
+        }
+    }
+
+    fun deleteHistory(comicId: String) {
+        viewModelScope.launch {
+            repository.deleteReadingProgress(comicId)
+        }
+    }
+
     private fun observeFavorites() {
         viewModelScope.launch {
             repository.getFavoriteComics().collect { favorites ->

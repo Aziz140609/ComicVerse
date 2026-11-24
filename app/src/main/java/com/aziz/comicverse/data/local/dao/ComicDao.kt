@@ -24,4 +24,13 @@ interface ComicDao {
 
     @Query("SELECT * FROM comics WHERE id = :comicId LIMIT 1")
     suspend fun getComicById(comicId: String): ComicEntity?
+
+    @Query("SELECT * FROM comics")
+    suspend fun getAllComicsRaw(): List<ComicEntity>
+
+    @Query("DELETE FROM comics WHERE id = :comicId")
+    suspend fun deleteComicById(comicId: String): Int
+
+    @Query("DELETE FROM comics WHERE id = '37280' OR title LIKE '%Kimetsu%' OR title LIKE '%Yaiba%'")
+    suspend fun purgeBrokenKnyComics(): Int
 }

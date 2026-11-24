@@ -132,7 +132,9 @@ fun ComicDetailScreen(
             uiState.errorMessage != null && uiState.comic == null -> {
                 ComicErrorState(
                     message = uiState.errorMessage ?: "Terjadi kesalahan.",
-                    onRetry = { viewModel.loadDetail() }
+                    onRetry = { viewModel.loadDetail() },
+                    actionText = if (uiState.isFavorite) "Hapus dari Library" else null,
+                    onAction = if (uiState.isFavorite) { { viewModel.removeFavorite(onCompleted = onNavigateBack) } } else null
                 )
             }
             uiState.comic != null -> {

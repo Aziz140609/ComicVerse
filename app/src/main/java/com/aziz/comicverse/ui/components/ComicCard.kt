@@ -13,17 +13,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -44,6 +49,7 @@ fun ComicCard(
     author: String? = null,
     genre: String? = null,
     rating: Double? = null,
+    onRemoveClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
     Card(
@@ -80,6 +86,28 @@ fun ComicCard(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
+
+                if (onRemoveClick != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(6.dp)
+                            .size(26.dp)
+                            .background(
+                                color = Color.Black.copy(alpha = 0.65f),
+                                shape = CircleShape
+                            )
+                            .clickable { onRemoveClick() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Hapus",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
 
                 if (rating != null && rating > 0.0) {
                     Box(
@@ -147,6 +175,7 @@ fun HorizontalComicCard(
     subtitle: String,
     modifier: Modifier = Modifier,
     progressPercent: Int? = null,
+    onRemoveClick: (() -> Unit)? = null,
     onClick: () -> Unit
 ) {
     Card(
@@ -224,6 +253,20 @@ fun HorizontalComicCard(
                                 )
                         )
                     }
+                }
+            }
+
+            if (onRemoveClick != null) {
+                IconButton(
+                    onClick = onRemoveClick,
+                    modifier = Modifier.size(36.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteOutline,
+                        contentDescription = "Hapus Riwayat",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }

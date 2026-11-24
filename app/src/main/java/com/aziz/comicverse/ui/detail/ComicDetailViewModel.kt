@@ -80,6 +80,13 @@ class ComicDetailViewModel(
         }
     }
 
+    fun removeFavorite(onCompleted: () -> Unit = {}) {
+        viewModelScope.launch {
+            repository.removeFavorite(comicId)
+            onCompleted()
+        }
+    }
+
     companion object {
         fun provideFactory(comicId: String): ViewModelProvider.Factory =
             object : ViewModelProvider.Factory {

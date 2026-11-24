@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,7 +61,9 @@ fun ComicLoadingIndicator(
 fun ComicErrorState(
     message: String,
     modifier: Modifier = Modifier,
-    onRetry: (() -> Unit)? = null
+    onRetry: (() -> Unit)? = null,
+    actionText: String? = null,
+    onAction: (() -> Unit)? = null
 ) {
     Box(
         modifier = modifier
@@ -95,6 +98,15 @@ fun ComicErrorState(
                     )
                 ) {
                     Text(text = "Coba Lagi")
+                }
+            }
+            if (!actionText.isNullOrBlank() && onAction != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = onAction,
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(text = actionText)
                 }
             }
         }
