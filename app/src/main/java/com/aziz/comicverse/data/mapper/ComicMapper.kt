@@ -3,6 +3,9 @@ package com.aziz.comicverse.data.mapper
 import com.aziz.comicverse.data.remote.kitsu.KitsuMangaItem
 import com.aziz.comicverse.data.remote.mangadex.MangaDexChapterItem
 import com.aziz.comicverse.data.remote.mangadex.MangaDexItem
+import com.aziz.comicverse.data.remote.sanka.SankaChapterItem
+import com.aziz.comicverse.data.remote.sanka.SankaDetailData
+import com.aziz.comicverse.data.remote.sanka.SankaKomikItem
 import com.aziz.comicverse.domain.model.Comic
 import com.aziz.comicverse.domain.model.ComicChapter
 
@@ -106,6 +109,76 @@ object ComicMapper {
             rating = ratingDouble,
             chapterCount = attr?.chapterCount,
             isDemoContent = false
+        )
+    }
+
+    fun mapSankaItemToComic(item: SankaKomikItem): Comic {
+        val slug = item.slug ?: item.title?.replace(" ", "-")?.lowercase() ?: "comic-${System.currentTimeMillis()}"
+        val ratingDouble = item.rating?.toDoubleOrNull() ?: 4.5
+        val comicType = item.type?.replaceFirstChar { it.uppercase() } ?: "Manga"
+        val desc = buildString {
+            append("Komik $comicType Indonesia.")
+            if (!item.chapter.isNullOrBlank()) append(" ${item.chapter}.")
+            if (!item.date.isNullOrBlank()) append(" (${item.date})")
+        }
+
+        return Comic(
+            id = slug,
+            title = item.title ?: "Untitled Comic",
+            description = desc,
+            coverUrl = item.cover ?: "",
+            author = "BacaKomik Indo",
+            genres = listOf(comicType, "Bahasa Indonesia"),
+            status = "Ongoing",
+            rating = ratingDouble,
+            chapterCount = item.chapter?.filter { it.isDigit() }?.toIntOrNull(),
+            isDemoContent = false
+        )
+    }
+
+    fun mapSankaDetailToComic(slug: String, detail: SankaDetailData): Comic {
+        val ratingDouble = detail.rating?.toDoubleOrNull() ?: 4.5
+        val comicType = detail.type?.replaceFirstChar { it.uppercase() } ?: "Manga"
+        val genres = detail.genres?.filter { it.isNotBlank() }?.ifEmpty {
+            listOf(comicType, "Bahasa Indonesia")
+        } ?: listOf(comicType, "Bahasa Indonesia")
+
+        val authorName = listOfNotNull(detail.author, detail.artist)
+            .filter { it.isNotBlank() }
+            .joinToString(", ")
+            .ifBlank { "BacaKomik" }
+
+        val desc = detail.synopsis?.ifBlank { null }
+            ?: "Komik bahasa Indonesia bergenre ${genres.joinToString(", ")}."
+
+        return Comic(
+            id = slug,
+            title = detail.title ?: slug.replace("-", " ").replaceFirstChar { it.uppercase() },
+            description = desc,
+            coverUrl = detail.cover ?: "",
+            author = authorName,
+            genres = genres,
+            status = detail.status?.replaceFirstChar { it.uppercase() } ?: "Ongoing",
+            rating = ratingDouble,
+            chapterCount = detail.chapters?.size,
+            isDemoContent = false
+        )
+    }
+
+    fun mapSankaChapter(item: SankaChapterItem, comicSlug: String): ComicChapter {
+        val slug = item.slug ?: ""
+        val titleText = if (!item.title.isNullOrBlank()) item.title else slug.replace("-", " ")
+        val chNum = Regex("""(?i)chapter\s*(\d+(\.\d+)?)""").find(titleText)?.groupValues?.get(1)
+            ?: Regex("""\d+""").find(titleText)?.value
+            ?: "1"
+
+        return ComicChapter(
+            id = slug,
+            comicId = comicSlug,
+            title = "🇮🇩 $titleText",
+            chapterNumber = chNum,
+            releaseDate = item.date ?: "Terbaru",
+            pageCount = 0
         )
     }
 }

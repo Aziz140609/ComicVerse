@@ -3,6 +3,7 @@ package com.aziz.comicverse.data.remote
 import com.aziz.comicverse.data.remote.kitsu.KitsuApiService
 import com.aziz.comicverse.data.remote.mangadex.MangaDexApiService
 import com.aziz.comicverse.data.remote.mangadex.MangaDexDns
+import com.aziz.comicverse.data.remote.sanka.SankaApiService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit
 object NetworkClient {
     private const val MANGADEX_BASE_URL = "https://api.mangadex.org/"
     private const val KITSU_BASE_URL = "https://kitsu.io/"
+    private const val SANKA_BASE_URL = "https://www.sankavollerei.web.id/"
 
     private val headerInterceptor = Interceptor { chain ->
         val original = chain.request()
@@ -72,5 +74,14 @@ object NetworkClient {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(KitsuApiService::class.java)
+    }
+
+    val sankaApi: SankaApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(SANKA_BASE_URL)
+            .client(kitsuClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(SankaApiService::class.java)
     }
 }
