@@ -14,8 +14,6 @@ import com.aziz.comicverse.domain.model.ComicChapter
 import com.aziz.comicverse.domain.model.ComicPage
 import com.aziz.comicverse.domain.model.ReadingProgress
 import com.aziz.comicverse.domain.repository.ComicRepository
-import com.aziz.comicverse.preferences.LanguageMode
-import com.aziz.comicverse.preferences.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -50,14 +48,7 @@ class ComicRepositoryImpl(
             }
         } catch (_: Exception) {}
 
-        // Fallback to Kitsu
-        try {
-            val kitsuResp = NetworkClient.kitsuApi.getTrendingManga()
-            val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
-            Result.success((LegalDemoComicProvider.demoComics + kitsuComics).distinctBy { it.id })
-        } catch (_: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
-        }
+        Result.success(LegalDemoComicProvider.demoComics)
     }
 
     override suspend fun getPopularComics(): Result<List<Comic>> = withContext(Dispatchers.IO) {
@@ -69,14 +60,7 @@ class ComicRepositoryImpl(
             }
         } catch (_: Exception) {}
 
-        // Fallback to Kitsu
-        try {
-            val kitsuResp = NetworkClient.kitsuApi.getPopularManga(limit = 20)
-            val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
-            Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
-        } catch (_: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
-        }
+        Result.success(LegalDemoComicProvider.demoComics)
     }
 
     override suspend fun getLatestManga(): Result<List<Comic>> = withContext(Dispatchers.IO) {
@@ -88,14 +72,7 @@ class ComicRepositoryImpl(
             }
         } catch (_: Exception) {}
 
-        // Fallback to Kitsu
-        try {
-            val kitsuResp = NetworkClient.kitsuApi.getLatestManga(limit = 18)
-            val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
-            Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
-        } catch (_: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
-        }
+        Result.success(LegalDemoComicProvider.demoComics)
     }
 
     override suspend fun getCompletedManga(): Result<List<Comic>> = withContext(Dispatchers.IO) {
@@ -107,15 +84,8 @@ class ComicRepositoryImpl(
             }
         } catch (_: Exception) {}
 
-        // Fallback to Kitsu
-        try {
-            val kitsuResp = NetworkClient.kitsuApi.getCompletedManga(limit = 18)
-            val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
-            Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
-        } catch (_: Exception) {
-            val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
-            Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
-        }
+        val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
+        Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
     }
 
     override suspend fun getRankedManga(period: String): Result<List<Comic>> = withContext(Dispatchers.IO) {
@@ -131,18 +101,7 @@ class ComicRepositoryImpl(
             }
         } catch (_: Exception) {}
 
-        // Fallback to Kitsu
-        try {
-            val kitsuResp = if (period.equals("weekly", ignoreCase = true)) {
-                NetworkClient.kitsuApi.getTrendingManga()
-            } else {
-                NetworkClient.kitsuApi.getPopularManga(limit = 25)
-            }
-            val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
-            Result.success(kitsuComics.ifEmpty { LegalDemoComicProvider.demoComics })
-        } catch (_: Exception) {
-            Result.success(LegalDemoComicProvider.demoComics)
-        }
+        Result.success(LegalDemoComicProvider.demoComics)
     }
 
     override suspend fun searchComics(query: String, category: String?): Result<List<Comic>> = withContext(Dispatchers.IO) {
@@ -158,7 +117,7 @@ class ComicRepositoryImpl(
 
         val searchTerm = query.ifBlank { category ?: "manga" }
 
-        // Primary: Sanka Indo comics search
+        // Sanka Indo comics search
         try {
             val sankaResp = sankaApi.searchComics(searchTerm)
             val sankaComics = sankaResp.komikList?.map { ComicMapper.mapSankaItemToComic(it) } ?: emptyList()
@@ -168,15 +127,7 @@ class ComicRepositoryImpl(
             }
         } catch (_: Exception) {}
 
-        // Fallback: Kitsu search
-        try {
-            val kitsuResp = NetworkClient.kitsuApi.searchManga(query = searchTerm, limit = 20)
-            val kitsuComics = kitsuResp.data?.map { ComicMapper.mapKitsuItemToComic(it) } ?: emptyList()
-            val combined = (localMatches + kitsuComics).distinctBy { it.id }
-            Result.success(combined.ifEmpty { localMatches })
-        } catch (_: Exception) {
-            Result.success(localMatches)
-        }
+        Result.success(localMatches)
     }
 
     override suspend fun getComicDetail(id: String): Result<Comic> = withContext(Dispatchers.IO) {
@@ -185,26 +136,11 @@ class ComicRepositoryImpl(
             return@withContext Result.success(demoComic)
         }
 
-        // 1. Try Sanka Detail (slug-based Indonesian comics)
+        // Try Sanka Detail (slug-based Indonesian comics)
         val sankaDetail = fetchSankaDetail(id)
         if (sankaDetail != null) {
             return@withContext Result.success(ComicMapper.mapSankaDetailToComic(id, sankaDetail))
         }
-
-        // 2. Try Kitsu by ID
-        try {
-            val kitsu = NetworkClient.kitsuApi.getMangaById(id)
-            kitsu.data?.let { return@withContext Result.success(ComicMapper.mapKitsuItemToComic(it)) }
-        } catch (_: Exception) {}
-
-        // 3. Try MangaDex
-        try {
-            val response = mangaDexApi.getMangaById(id)
-            val item = response.data
-            if (item != null) {
-                return@withContext Result.success(ComicMapper.mapMangaDexItemToComic(item))
-            }
-        } catch (_: Exception) {}
 
         Result.failure(Exception("Komik tidak ditemukan"))
     }
@@ -223,39 +159,6 @@ class ComicRepositoryImpl(
             return@withContext Result.success(mappedChapters)
         }
 
-        // 2. Fallback: MangaDex feed if UUID or title match
-        try {
-            var targetMangaId = comicId
-            val isUuid = comicId.matches(Regex("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"))
-            if (!isUuid) {
-                val detail = getComicDetail(comicId).getOrNull()
-                val query = detail?.title ?: comicId
-                val searchResp = mangaDexApi.searchManga(title = query, limit = 5)
-                val match = searchResp.data?.firstOrNull()
-                if (match != null) {
-                    targetMangaId = match.id
-                }
-            }
-
-            val feed = mangaDexApi.getMangaFeed(mangaId = targetMangaId, limit = 100)
-            val chapters = feed.data?.filter {
-                (it.attributes?.pages ?: 0) > 0 && it.attributes?.externalUrl.isNullOrBlank()
-            }?.map {
-                ComicMapper.mapMangaDexChapter(it, comicId)
-            } ?: emptyList()
-
-            if (chapters.isNotEmpty()) {
-                val distinctChapters = chapters.groupBy { it.chapterNumber }
-                    .map { (_, group) ->
-                        group.find { it.title.startsWith("[ID]") }
-                            ?: group.find { it.title.startsWith("[EN]") }
-                            ?: group.first()
-                    }
-                    .sortedBy { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
-                return@withContext Result.success(distinctChapters)
-            }
-        } catch (_: Exception) {}
-
         Result.failure(Exception("Daftar chapter belum tersedia untuk komik ini."))
     }
 
@@ -267,7 +170,7 @@ class ComicRepositoryImpl(
             }
         }
 
-        // 1. Primary: Sanka chapter detail (returns full image array from Indonesian comic servers!)
+        // Sanka chapter detail (returns full image array from Indonesian comic servers!)
         try {
             val sankaChapter = sankaApi.getChapterDetail(chapterId)
             val images = sankaChapter.images
@@ -281,28 +184,6 @@ class ComicRepositoryImpl(
                 return@withContext Result.success(pages)
             }
         } catch (_: Exception) {}
-
-        // 2. Fallback: MangaDex At-Home server
-        try {
-            val atHome = mangaDexApi.getAtHomeServer(chapterId)
-            val baseUrl = atHome.baseUrl
-            val hash = atHome.chapter?.hash
-            val useDataSaver = !atHome.chapter?.dataSaver.isNullOrEmpty()
-            val filenames = if (useDataSaver) atHome.chapter?.dataSaver ?: emptyList() else atHome.chapter?.data ?: emptyList()
-            val pathFolder = if (useDataSaver) "data-saver" else "data"
-
-            if (!baseUrl.isNullOrBlank() && !hash.isNullOrBlank() && filenames.isNotEmpty()) {
-                val realPages = filenames.mapIndexed { idx, filename ->
-                    ComicPage(
-                        index = idx + 1,
-                        imageUrl = "$baseUrl/$pathFolder/$hash/$filename"
-                    )
-                }
-                return@withContext Result.success(realPages)
-            }
-        } catch (e: Exception) {
-            return@withContext Result.failure(Exception("Gagal memuat halaman: ${e.localizedMessage ?: "Koneksi terputus"}"))
-        }
 
         Result.failure(Exception("Halaman untuk chapter ini tidak ditemukan."))
     }

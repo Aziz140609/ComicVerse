@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +40,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.aziz.comicverse.R
+import com.aziz.comicverse.data.remote.NetworkClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 /**
  * Japanese Aesthetic Splash Screen for ComicVerse.
@@ -54,6 +60,7 @@ fun SplashScreen(
     modifier: Modifier = Modifier
 ) {
     var startAnimation by remember { mutableStateOf(false) }
+    var connectionStatus by remember { mutableStateOf<String?>(null) }
 
     val alphaAnim by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
@@ -69,8 +76,28 @@ fun SplashScreen(
 
     LaunchedEffect(Unit) {
         startAnimation = true
-        delay(1600)
-        onSplashFinished()
+        val minDelay = async { delay(1200) }
+
+        while (true) {
+            val isSuccess = withContext(Dispatchers.IO) {
+                try {
+                    val resp = NetworkClient.sankaApi.getPopularComics()
+                    resp.success == true && !resp.komikList.isNullOrEmpty()
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            if (isSuccess) {
+                minDelay.await()
+                onSplashFinished()
+                break
+            } else {
+                // If unable to load, remain stuck on the splash screen
+                connectionStatus = "Menghubungkan ke server komik..."
+                delay(3000)
+            }
+        }
     }
 
     Box(
@@ -142,6 +169,26 @@ fun SplashScreen(
                 letterSpacing = 0.5.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+
+            if (connectionStatus != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(14.dp),
+                        strokeWidth = 2.dp,
+                        color = Color(0xFF8B1E32)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = connectionStatus ?: "",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
 
         // Bottom Editorial Footer
