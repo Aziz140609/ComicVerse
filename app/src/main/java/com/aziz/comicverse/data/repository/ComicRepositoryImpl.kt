@@ -136,10 +136,53 @@ class ComicRepositoryImpl(
             return@withContext Result.success(demoComic)
         }
 
-        // Try Sanka Detail (slug-based Indonesian comics)
+        // 1. Try Sanka Detail directly by ID/slug
         val sankaDetail = fetchSankaDetail(id)
         if (sankaDetail != null) {
             return@withContext Result.success(ComicMapper.mapSankaDetailToComic(id, sankaDetail))
+        }
+
+        // 2. Try normalized slug if ID contains spaces, uppercase or special chars
+        val normalizedSlug = id.trim().lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-')
+        if (normalizedSlug.isNotBlank() && normalizedSlug != id) {
+            val normalizedDetail = fetchSankaDetail(normalizedSlug)
+            if (normalizedDetail != null) {
+                return@withContext Result.success(ComicMapper.mapSankaDetailToComic(id, normalizedDetail))
+            }
+        }
+
+        // 3. Check Room Database! (For comics favorited/saved in Library with old IDs)
+        val roomEntity = database.comicDao().getComicById(id)
+        if (roomEntity != null) {
+            // Try to find Sanka slug by searching the saved comic's title (e.g. Kimetsu no Yaiba)
+            val cleanTitle = roomEntity.title.replace(Regex("(?i)\\[.*?\\]|\\(.*?\\)"), "").trim()
+            if (cleanTitle.isNotBlank()) {
+                try {
+                    val searchResp = sankaApi.searchComics(cleanTitle)
+                    val matchSlug = searchResp.komikList?.firstOrNull()?.slug
+                    if (!matchSlug.isNullOrBlank()) {
+                        val resolvedDetail = fetchSankaDetail(matchSlug)
+                        if (resolvedDetail != null) {
+                            return@withContext Result.success(ComicMapper.mapSankaDetailToComic(matchSlug, resolvedDetail))
+                        }
+                    }
+                } catch (_: Exception) {}
+            }
+
+            // Return saved comic from Room database as guaranteed offline fallback!
+            val fallbackComic = Comic(
+                id = roomEntity.id,
+                title = roomEntity.title,
+                description = roomEntity.description,
+                coverUrl = roomEntity.coverUrl,
+                author = roomEntity.author,
+                genres = roomEntity.genres.split(",").map { it.trim() }.filter { it.isNotEmpty() },
+                status = roomEntity.status,
+                rating = roomEntity.rating,
+                chapterCount = 1,
+                isDemoContent = roomEntity.isDemoContent
+            )
+            return@withContext Result.success(fallbackComic)
         }
 
         Result.failure(Exception("Komik tidak ditemukan"))
@@ -151,8 +194,32 @@ class ComicRepositoryImpl(
             return@withContext Result.success(demoChapters)
         }
 
-        // 1. Primary: Sanka detail has complete Indonesian chapters!
-        val sankaDetail = fetchSankaDetail(comicId)
+        // 1. Primary: Sanka detail by comicId directly
+        var sankaDetail = fetchSankaDetail(comicId)
+
+        // 2. Try normalized slug
+        if (sankaDetail == null) {
+            val normalized = comicId.trim().lowercase().replace(Regex("[^a-z0-9]+"), "-").trim('-')
+            if (normalized.isNotBlank() && normalized != comicId) {
+                sankaDetail = fetchSankaDetail(normalized)
+            }
+        }
+
+        // 3. If comic was saved in Room with old ID, search Sanka by title
+        if (sankaDetail == null) {
+            val roomEntity = database.comicDao().getComicById(comicId)
+            val cleanTitle = roomEntity?.title?.replace(Regex("(?i)\\[.*?\\]|\\(.*?\\)"), "")?.trim()
+            if (!cleanTitle.isNullOrBlank()) {
+                try {
+                    val searchResp = sankaApi.searchComics(cleanTitle)
+                    val matchSlug = searchResp.komikList?.firstOrNull()?.slug
+                    if (!matchSlug.isNullOrBlank()) {
+                        sankaDetail = fetchSankaDetail(matchSlug)
+                    }
+                } catch (_: Exception) {}
+            }
+        }
+
         val sankaChapters = sankaDetail?.chapters
         if (!sankaChapters.isNullOrEmpty()) {
             val mappedChapters = sankaChapters.map { ComicMapper.mapSankaChapter(it, comicId) }
