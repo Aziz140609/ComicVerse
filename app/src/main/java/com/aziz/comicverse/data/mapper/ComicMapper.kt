@@ -139,7 +139,7 @@ object ComicMapper {
     fun mapSankaDetailToComic(slug: String, detail: SankaDetailData): Comic {
         val ratingDouble = detail.rating?.toDoubleOrNull() ?: 4.5
         val comicType = detail.type?.replaceFirstChar { it.uppercase() } ?: "Manga"
-        val genres = detail.genres?.filter { it.isNotBlank() }?.ifEmpty {
+        val genres = detail.genres?.mapNotNull { it.title }?.filter { it.isNotBlank() }?.ifEmpty {
             listOf(comicType, "Bahasa Indonesia")
         } ?: listOf(comicType, "Bahasa Indonesia")
 
@@ -167,7 +167,17 @@ object ComicMapper {
 
     fun mapSankaChapter(item: SankaChapterItem, comicSlug: String): ComicChapter {
         val slug = item.slug ?: ""
-        val titleText = if (!item.title.isNullOrBlank()) item.title else slug.replace("-", " ")
+        val rawTitle = item.title?.trim()
+        val titleText = if (!rawTitle.isNullOrBlank()) {
+            rawTitle
+        } else {
+            val chMatch = Regex("""(?i)chapter[- ]*(\d+.*)""").find(slug)
+            if (chMatch != null) {
+                "Chapter ${chMatch.groupValues[1].replace("-", " ").trim()}"
+            } else {
+                slug.replace("-", " ").replaceFirstChar { it.uppercase() }
+            }
+        }
         val chNum = Regex("""(?i)chapter\s*(\d+(\.\d+)?)""").find(titleText)?.groupValues?.get(1)
             ?: Regex("""\d+""").find(titleText)?.value
             ?: "1"

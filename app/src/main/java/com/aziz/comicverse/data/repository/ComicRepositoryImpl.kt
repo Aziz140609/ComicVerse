@@ -27,6 +27,19 @@ class ComicRepositoryImpl(
     private val database: ComicDatabase = ComicVerseApp.instance.database
 ) : ComicRepository {
 
+    private val detailCache = java.util.concurrent.ConcurrentHashMap<String, com.aziz.comicverse.data.remote.sanka.SankaDetailData>()
+
+    private suspend fun fetchSankaDetail(id: String): com.aziz.comicverse.data.remote.sanka.SankaDetailData? {
+        detailCache[id]?.let { return it }
+        return try {
+            val resp = sankaApi.getComicDetail(id)
+            resp.detail?.also { detailCache[id] = it }
+        } catch (e: Exception) {
+            android.util.Log.e("ComicRepository", "Failed to fetch Sanka detail for $id: ${e.message}", e)
+            null
+        }
+    }
+
     override suspend fun getTrendingComics(): Result<List<Comic>> = withContext(Dispatchers.IO) {
         try {
             val response = sankaApi.getTopComics()
@@ -173,13 +186,10 @@ class ComicRepositoryImpl(
         }
 
         // 1. Try Sanka Detail (slug-based Indonesian comics)
-        try {
-            val sankaResp = sankaApi.getComicDetail(id)
-            val detail = sankaResp.detail
-            if (detail != null) {
-                return@withContext Result.success(ComicMapper.mapSankaDetailToComic(id, detail))
-            }
-        } catch (_: Exception) {}
+        val sankaDetail = fetchSankaDetail(id)
+        if (sankaDetail != null) {
+            return@withContext Result.success(ComicMapper.mapSankaDetailToComic(id, sankaDetail))
+        }
 
         // 2. Try Kitsu by ID
         try {
@@ -206,14 +216,12 @@ class ComicRepositoryImpl(
         }
 
         // 1. Primary: Sanka detail has complete Indonesian chapters!
-        try {
-            val sankaResp = sankaApi.getComicDetail(comicId)
-            val chapters = sankaResp.detail?.chapters
-            if (!chapters.isNullOrEmpty()) {
-                val mappedChapters = chapters.map { ComicMapper.mapSankaChapter(it, comicId) }
-                return@withContext Result.success(mappedChapters)
-            }
-        } catch (_: Exception) {}
+        val sankaDetail = fetchSankaDetail(comicId)
+        val sankaChapters = sankaDetail?.chapters
+        if (!sankaChapters.isNullOrEmpty()) {
+            val mappedChapters = sankaChapters.map { ComicMapper.mapSankaChapter(it, comicId) }
+            return@withContext Result.success(mappedChapters)
+        }
 
         // 2. Fallback: MangaDex feed if UUID or title match
         try {

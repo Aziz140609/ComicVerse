@@ -39,8 +39,13 @@ data class SankaDetailData(
     @SerializedName("series") val series: String? = null,
     @SerializedName("reader") val reader: String? = null,
     @SerializedName("synopsis") val synopsis: String? = null,
-    @SerializedName("genres") val genres: List<String>? = null,
+    @SerializedName("genres") val genres: List<SankaGenreItem>? = null,
     @SerializedName("chapters") val chapters: List<SankaChapterItem>? = null
+)
+
+data class SankaGenreItem(
+    @SerializedName("title") val title: String? = null,
+    @SerializedName("slug") val slug: String? = null
 )
 
 data class SankaChapterItem(
