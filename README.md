@@ -1,270 +1,168 @@
-# ComicVerse — Digital Comic Library 🌸📚
+# 🌸 ComicVerse (コミック) — Modern Digital Comic & Webtoon Reader for Android
 
-> **Aplikasi Android Modern untuk Menemukan, Mengelola, dan Membaca Komik Digital.**  
-> Dibangun menggunakan **Kotlin**, **Jetpack Compose**, dan arsitektur **MVVM + Repository**.  
-> Project tugas individu mata pelajaran **Pemrograman Mobile**.
+<p align="center">
+  <img src="docs/screenshots/01_home.jpg" width="220" alt="ComicVerse Home Screen" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/screenshots/03_detail.jpg" width="220" alt="Comic Details" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="docs/screenshots/04_reader.jpg" width="220" alt="Vertical Reader" />
+</p>
 
----
+<p align="center">
+  <b>ComicVerse</b> adalah aplikasi pembaca komik digital dan webtoon berbasis <b>Android</b> yang dibangun secara native menggunakan <b>Jetpack Compose</b> dengan estetika desain <i>Japanese Editorial & Sakura Wabi-Sabi</i>. Dirancang khusus untuk memberikan pengalaman membaca komik berbahasa Indonesia yang cepat, lancar, dan nyaman di perangkat mobile.
+</p>
 
-## 📱 Ringkasan Project
-
-| Informasi | Detail |
-|---|---|
-| **Nama Aplikasi** | ComicVerse |
-| **Kategori** | Digital Comic Library / Reader |
-| **Platform** | Android (Min SDK 24 / Android 7.0+, Target SDK 36) |
-| **Bahasa Pemrograman** | Kotlin 2.2.10 |
-| **UI Framework** | Jetpack Compose (Material 3) |
-| **Arsitektur** | MVVM + Repository Pattern |
-| **Package Name** | `com.aziz.comicverse` |
-| **Pengembang** | Aziz Jujun |
-| **Batas Waktu Pengumpulan** | 26 November 2026 |
-| **Link Form Pengumpulan** | [https://s.id/asesmengasalmobileXII26](https://s.id/asesmengasalmobileXII26) |
-
----
-
-## 🎯 Pemenuhan Rubrik Penilaian Asesmen
-
-Aplikasi ComicVerse dirancang dan diuji secara menyeluruh untuk memenuhi 100% kriteria tugas Pemrograman Mobile:
-
-| No | Kriteria Penilaian | Bobot | Skor | Implementasi di ComicVerse |
-|---|---|---|---|---|
-| 1 | **Desain Dashboard** | 30% | 100 | Dashboard bernuansa *Japanese Editorial* dengan banner Gunung Fuji & Sakura, section New Update, Hot Manga, Completed Manga, Continue Reading, dan Jelajah Genre. |
-| 2 | **Desain Card (RecyclerView/LazyList)** | 25% | 100 | Data dibungkus dalam `Card` (`ComicCard`, `HorizontalComicCard`, `TerakhirDibacaCard`) dengan elevasi, rasio cover konsisten, badge status, dan dibungkus di dalam `LazyColumn`, `LazyRow`, dan `LazyVerticalGrid`. |
-| 3 | **Multi Bahasa** | 15% | 100 | Mendukung **Bahasa Indonesia** (`res/values-in`) dan **Bahasa Inggris** (`res/values`). Pengguna dapat mengganti bahasa secara *real-time* di Pengaturan aplikasi tanpa perlu restart. |
-| 4 | **Presentasi & Kualitas Teknis** | 30% | 100 | Arsitektur modern (MVVM + Repository), kode bersih, dukungan **Mode Terang (Not Night) & Mode Gelap (Night)**, responsif penuh saat **layar dirotasi** (tetap bisa di-scroll), dan pengujian unit test 100% lulus. |
-| | **Total Nilai Project** | **100%** | **100** | **Sangat Baik (A+)** |
+<p align="center">
+  <img src="https://img.shields.io/badge/Kotlin-2.0.21-purple.svg?style=flat-square&logo=kotlin" />
+  <img src="https://img.shields.io/badge/Jetpack_Compose-Material_3-blue.svg?style=flat-square&logo=android" />
+  <img src="https://img.shields.io/badge/Architecture-MVVM_%2B_Clean-green.svg?style=flat-square" />
+  <img src="https://img.shields.io/badge/Database-Room_2.6.1-orange.svg?style=flat-square&logo=sqlite" />
+  <img src="https://img.shields.io/badge/API-Sanka_Vollerei_Comic_API-red.svg?style=flat-square" />
+  <img src="https://img.shields.io/badge/Min_SDK-26_(Android_8.0)-lightgrey.svg?style=flat-square" />
+</p>
 
 ---
 
-## 📋 Checklist Kesesuaian Langkah Kerja (Poin 1 – 8)
+## 📸 Antarmuka Aplikasi (Screenshots)
 
-- [x] **1. Project Mandiri/Individu:** Dikerjakan mandiri oleh Aziz Jujun.
-- [x] **2. Toolkit UI Jetpack Compose:** 100% UI dibangun dengan Jetpack Compose (Material 3).
-- [x] **3. Desain Dashboard Menarik + External Library:** Memadukan estetika Jepang modern dengan library Coil (Image Loading), Retrofit + OkHttp (Networking), Room (Local Database), dan Navigation Compose.
-- [x] **4. a) Menampilkan Data dari API:** Mengambil data katalog manga resmi dari MangaDex API dan Kitsu API dengan mekanisme *fast-fail* dan *smart fallback*.
-- [x] **4. b) Multi Bahasa:** Pilihan bahasa dinamis Indonesia dan Inggris via DataStore Preferences.
-- [x] **5. Data dalam Bentuk Card dibungkus RecyclerView:** Kartu-kartu komik (`Card`) ditata dalam komponen Compose setara RecyclerView (`LazyColumn`, `LazyRow`, `LazyVerticalGrid`).
-- [x] **6. Mode Not Night (Terang) dan Night (Gelap):** Tersedia tema Light Mode (kertas washi tradisional) dan Dark Mode (arang arsitektur Jepang).
-- [x] **7. Rotasi Layar (Landscape & Portrait Scrollable):** Layar tetap rapi, tidak terpotong, dan dapat di-scroll lancar saat orientasi perangkat diputar.
-- [x] **8. Presentasi & Pengumpulan:** Dokumentasi lengkap, README siap, dan link pengumpulan tersedia.
+| Beranda (Home) | Eksplorasi (Explore) | Detail Komik |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/01_home.jpg" width="240" /> | <img src="docs/screenshots/02_explore.jpg" width="240" /> | <img src="docs/screenshots/03_detail.jpg" width="240" /> |
+| *Kartu Lanjut Membaca, Progress Bar, & Komik Terbaru* | *Filter 35+ Genre, Pencarian Instan, & Grid Katalog* | *Header Backdrop Blur, Urutan Chapter (Ch. 1 / Terbaru)* |
 
----
-
-## 🎨 Design System — Japanese Editorial
-
-ComicVerse mengusung gaya desain **Japanese editorial** dengan sentuhan nuansa kertas tradisional (*washi*), warna merah tua (*crimson*), dan aksen bunga sakura (*sakura pink*).
-
-### Palet Warna
-- **Light Mode:**
-  - Background (Kertas): `#F8F4EC`
-  - Primary (Crimson): `#B84C59`
-  - Sakura (Aksen): `#E9BFC5`
-  - Surface: `#FFFFFF`
-  - Text Primary: `#29252A`
-  - Text Secondary / Muted: `#8C7773`
-- **Dark Mode:**
-  - Background (Arang): `#181619`
-  - Surface: `#242125`
-  - Primary (Dusty Rose): `#D4737F`
-  - Sakura (Aksen Gelap): `#8A5964`
-  - Text Primary: `#F5F0EB`
-  - Text Secondary: `#A69390`
+| Mode Pembaca (Reader) | Koleksi (Library) | Pengaturan (Settings) |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/04_reader.jpg" width="240" /> | <img src="docs/screenshots/05_library.jpg" width="240" /> | <img src="docs/screenshots/06_settings.jpg" width="240" /> |
+| *Vertical Continuous Webtoon Scroll & Indikator Halaman* | *Daftar Favorit dengan Tombol Hapus (✕) & Riwayat Baca* | *Tema Gelap / Terang Sakura & Pilihan Bahasa ID / EN* |
 
 ---
 
-## 🚀 Fitur Utama
+## ✨ Fitur Unggulan
 
-### 1. 🏠 Home (Beranda)
-- Identitas brand ComicVerse dengan kanji komik (`コミック`).
-- Search bar interaktif yang terhubung langsung ke halaman Explore.
-- **Pilihan Editor (Featured Carousel):** Banner horizontal dengan overlay gradasi elegan.
-- **Lanjutkan Membaca (Continue Reading):** Kartu horizontal menampilkan progres membaca terakhir.
-- **Komik Populer:** Daftar kartu komik dengan informasi rating dan genre.
-- **Jelajahi Genre:** Kategori cepat (Action, Fantasy, Comedy, Sci-Fi, dll.).
+### 1. 🔄 Sistem Reload Mirip Google Chrome Mobile (Pull-to-Refresh)
+- Tersedia pada seluruh halaman utama (**Home, Explore, Detail Komik, Rankings, dan Library**).
+- Pengguna cukup menggeser layar ke bawah (*swipe down*), indikator refresh bundar melayang (*floating progress circle*) akan muncul di bagian atas layar mirip seperti Google Chrome mobile dan memuat ulang data terbaru secara instan.
 
-### 2. 🔍 Explore (Pencarian & Filter)
-- Pencarian judul komik dengan mekanisme *debounce*.
-- Filter chip kategori genre interaktif.
-- Grid komik adaptif (`LazyVerticalGrid` dengan `GridCells.Adaptive`) yang otomatis menyesuaikan 2 kolom pada portrait dan hingga 5 kolom pada landscape.
-- Penanganan loading indicator, error state dengan tombol coba lagi, serta empty state jika komik tidak ditemukan.
+### 2. 📖 Smart Continue Reading & Pelacak Progres Baca
+- Jika pengguna telah mulai membaca suatu komik, tombol di detail komik berubah otomatis menjadi **"Lanjut Membaca"**.
+- Di halaman utama (Home), muncul kartu **Continue Reading** yang mencantumkan:
+  - Nomor Chapter yang sedang dibaca.
+  - Posisi halaman aktif dan total halaman (contoh: *Halaman 7 / 14*).
+  - Persentase penyelesaian chapter dalam bentuk teks persentase (*50%*) dan **Linear Progress Bar**.
 
-### 3. 📖 Comic Detail (Detail Komik)
-- Hero header dengan efek backdrop blur dan cover komik beresolusi tinggi.
-- Judul, author, rating, genre chips, dan status (Ongoing / Completed).
-- Tombol aksi cepat **"Mulai Membaca"** untuk langsung membuka chapter pertama.
-- Sinopsis yang dapat dibuka-tutup (*read more / show less*).
-- Tombol bookmark favorit yang otomatis tersinkronisasi dengan Room Database.
-- Daftar chapter lengkap dengan judul, tanggal rilis, dan indikator navigasi.
+### 3. 🔍 Eksplorasi Luas & Filter 35+ Genre
+- Mendukung lebih dari 35 pilihan genre (Action, Romance, Isekai, Fantasy, Slice of Life, Sci-Fi, Shounen, Seinen, Supernatural, Comedy, Drama, Mystery, Horror, Martial Arts, dsb).
+- Pencarian judul atau pengarang secara responsif (*live search filtering*).
+- Menampilkan katalog khusus **Manga Tamat (Completed Manga)** dengan koleksi lengkap terverifikasi.
 
-### 4. 📜 Vertical Reader (Pembaca Komik Vertikal)
-- Membaca komik dengan scrolling vertikal mulus ala Webtoon.
-- Gambar otomatis menyesuaikan lebar layar (`ContentScale.FillWidth`).
-- Layout responsif: pada orientasi landscape/tablet, lebar halaman dibatasi secara proporsional agar nyaman dibaca.
-- Mode imersif: tap pada halaman untuk menampilkan/menyembunyikan bar navigasi atas dan bawah.
-- Indikator halaman aktif (contoh: *Halaman 3 / 6*).
-- Tombol navigasi Chapter Sebelumnya & Chapter Berikutnya.
-- Otomatis mencatat riwayat dan persentase progress membaca ke database lokal.
+### 4. 📑 Detail Komik Lengkap & Pengurutan Chapter
+- Header poster beresolusi tinggi dengan efek *dynamic blurred backdrop* di latar belakang.
+- Penyesuaian urutan daftar chapter:
+  - **Ch. 1 di Atas (Awal → Terbaru)**: Memudahkan pembaca baru mulai dari awal cerita tanpa harus *scroll* ke bawah.
+  - **Terbaru di Atas (Terbaru → Awal)**: Memudahkan pembaca setia langsung melihat rilisan chapter teranyar.
+- Ringkasan sinopsis komik dengan opsi *Baca Selengkapnya*.
 
-### 5. 📚 Library (Koleksi & Riwayat)
-- **Tab Favorit:** Menampilkan seluruh komik yang di-bookmark pengguna secara offline dari Room Database.
-- **Tab Riwayat Baca:** Menampilkan daftar komik yang sedang/telah dibaca lengkap dengan progres persentase bar dan tombol lanjut membaca.
+### 5. 📱 Seamless Webtoon Vertical Reader
+- Membaca komik secara vertikal bebas jeda (*continuous vertical scroll*).
+- Indikator halaman mengambang di bawah (*Floating Page Counter* e.g. "Halaman 1 / 15").
+- Dukungan *zoom/pan* halus serta pengelolaan memori gambar dengan caching Coil.
 
-### 6. ⚙️ Settings (Pengaturan)
-- **Tema Tampilan:** Pilihan Mengikuti Sistem (*System Default*), Mode Terang (*Light Mode*), atau Mode Gelap (*Dark Mode*).
-- **Bahasa Aplikasi:** Pilihan Bahasa Indonesia atau English.
-- **Informasi Aplikasi:** Detail versi, pengembang, dan institusi.
-- **Transparansi Sumber Konten:** Penjelasan mengenai metadata API dan lisensi konten komik.
+### 6. 📚 Manajemen Koleksi Lokal (Library)
+- Simpan komik favorit dengan satu ketukan ikon bookmark.
+- Fitur penghapusan komik dari favorit langsung dari halaman Library menggunakan tombol badge `✕` yang intuitif.
+- Tab **Riwayat Baca** yang mencatat komik-komik yang baru saja dibaca secara offline menggunakan database Room.
+
+### 7. 🎨 Japanese Editorial Design & Personalisasi
+- Nuansa tema terinspirasi dari estetika kertas washi dan kelopak bunga sakura Jepang (*Soft Rose, Cream Papyrus, & Deep Crimson*).
+- Pilihan **Light Mode**, **Dark Mode (Latar arang gelap)**, atau **System Default**.
+- Pilihan Bahasa Antarmuka: **Bahasa Indonesia (ID)** & **English (EN)**.
 
 ---
 
-## ⚖️ Penjelasan Sumber Konten (Mixed Strategy)
+## 🌐 Sumber Data & API Architecture
 
-Aplikasi ComicVerse menggunakan strategi konten komprehensif (**Live MangaDex + Mixed Content**):
-1. **MangaDex API Live Reader:** Terintegrasi langsung dengan API resmi MangaDex (`api.mangadex.org`) untuk mengambil katalog manga global, daftar chapter, dan halaman chapter asli melalui jaringan At-Home server MangaDex (`*.mangadex.network`).
-2. **Built-in DNS Bypass (Anti-Block):** Dilengkapi dengan custom resolver DNS (`MangaDexDns`) yang meresolusi hostname MangaDex langsung ke IP anycast resminya (`45.129.229.1` / `45.129.229.2`). Hal ini membuat aplikasi tetap dapat memuat katalog komik, cover, dan halaman chapter di jaringan ISP Indonesia tanpa terpengaruh blokir DNS *TrustPositif/aduankonten*.
-3. **Kitsu Catalog & Legal Demo CC-BY:** Sebagai fallback cerdas jika koneksi internet lambat atau offline, aplikasi tetap menyediakan konten legal berlisensi Creative Commons (*Pepper & Carrot* karya David Revoy) dan katalog Kitsu API, sehingga 100% aman dan selalu siap didemonstrasikan.
+Aplikasi ComicVerse menggunakan integrasi API Komik Berbahasa Indonesia yang andal dan tidak terkena blokir internet positif/DNS:
+
+### 1. Sanka Vollerei Comic API (BacaKomik ID)
+- **Base Endpoint:** `https://www.sankavollerei.web.id/`
+- **Tipe Komik:** Manga, Manhwa, Manhua dengan terjemahan Bahasa Indonesia.
+- **Daftar Endpoint Utama:**
+  - `GET /comic/popular` & `GET /comic/recommended` — Mengambil rilisan populer dan komik mingguan.
+  - `GET /comic/newest` — Mengambil pembaruan chapter komik terbaru (*New Update*).
+  - `GET /comic/completed` — Menampilkan komik yang telah tamat (*Completed Manga*).
+  - `GET /comic/search?q={query}` — Pencarian komik berdasarkan kata kunci judul.
+  - `GET /comic/genres` & `GET /comic/genres/{genre}` — Mengambil daftar dan filter komik berdasarkan genre.
+  - `GET /comic/detail/{endpoint}` — Detail komik lengkap, sinopsis, skor, status, dan daftar chapter.
+  - `GET /comic/chapter/{endpoint}` — Daftar URL gambar panel komik untuk mode pembaca (*Reader*).
+
+### 2. Legal Creative Commons Offline Fallback
+- Ketika perangkat pengguna kehilangan koneksi internet atau server sedang mengalami pemeliharaan, aplikasi memiliki sistem cadangan otomatis (**LegalDemoComicProvider**).
+- Fallback menggunakan komik open-source berlisensi *Creative Commons Attribution 4.0* (*Pepper & Carrot* oleh David Revoy), sehingga aplikasi tetap dapat dijelajahi dan dibaca tanpa mengalami *force close* atau layar kosong.
 
 ---
 
-## 🛠️ Teknologi & Dependensi
+## 🏛️ Arsitektur & Teknologi
 
-- **UI:** Jetpack Compose (BOM 2026.02.01), Material 3, Material Icons Extended
-- **Navigasi:** Jetpack Navigation Compose (`2.8.5`)
-- **Arsitektur:** Android Architecture Components (ViewModel, StateFlow)
-- **Database Lokal:** AndroidX Room Database (`2.7.2`) dengan KSP (`2.2.10-2.0.2`)
-- **Preferensi:** AndroidX DataStore Preferences (`1.1.2`)
-- **Jaringan & Parsing:** Retrofit 2 (`2.11.0`), OkHttp Logging Interceptor (`4.12.0`), Gson
-- **Pemuatan Gambar:** Coil Compose (`2.7.0`)
-- **Asinkron:** Kotlin Coroutines (`1.10.1`)
-- **Pengujian:** JUnit 4
+ComicVerse dibangun dengan standar pengembangan Android modern:
 
----
-
-## 📁 Struktur Folder Project
-
-```text
-com.aziz.comicverse/
-├── ComicVerseApp.kt                # Application class & Room Database provider
-├── MainActivity.kt                 # Single Activity entry point & theme/locale injector
-├── navigation/
-│   ├── Screen.kt                   # Definisi route & navigasi bottom bar
-│   └── ComicVerseNavGraph.kt       # NavHost & Scaffold bottom navigation
-├── core/
-│   ├── designsystem/
-│   │   ├── Color.kt                # Design tokens warna Japanese editorial
-│   │   └── Shape.kt                # Shape & corner radius tokens
-│   └── util/
-│       └── LocaleHelper.kt         # Helper injeksi konfigurasi bahasa/locale
+```
+app/
 ├── data/
-│   ├── local/
-│   │   ├── ComicDatabase.kt        # Room database singleton
-│   │   ├── dao/
-│   │   │   ├── ComicDao.kt         # DAO favorit komik
-│   │   │   └── ReadingProgressDao.kt # DAO progress baca
-│   │   └── entity/
-│   │       ├── ComicEntity.kt      # Tabel komik favorit
-│   │       └── ReadingProgressEntity.kt # Tabel riwayat baca
-│   ├── remote/
-│   │   ├── NetworkClient.kt        # Konfigurasi Retrofit & OkHttpClient
-│   │   ├── LegalDemoComicProvider.kt # Provider komik legal berlisensi CC-BY
-│   │   └── kitsu/
-│   │       ├── KitsuApiService.kt  # Retrofit API interface
-│   │       └── KitsuMangaResponse.kt # DTO model respons JSON
-│   ├── mapper/
-│   │   └── ComicMapper.kt          # Mapper DTO ke domain entity
-│   └── repository/
-│       └── ComicRepositoryImpl.kt  # Implementasi repositori gabungan API + Room
-├── domain/
-│   ├── model/
-│   │   ├── Comic.kt                # Entity domain komik
-│   │   ├── ComicChapter.kt         # Entity chapter
-│   │   ├── ComicPage.kt            # Entity halaman reader
-│   │   └── ReadingProgress.kt      # Entity progres baca
-│   └── repository/
-│       └── ComicRepository.kt      # Kontrak interface repositori
-├── preferences/
-│   └── UserPreferencesRepository.kt # DataStore preferensi tema & bahasa
-└── ui/
-    ├── components/
-    │   ├── ComicCard.kt            # Kartu komik vertikal & horizontal
-    │   ├── ComicSectionHeader.kt   # Header section editorial
-    │   ├── GenreChip.kt            # Chip genre & badge status
-    │   ├── SearchInputField.kt     # Input pencarian elegan
-    │   └── StateComponents.kt      # Loading, Error, dan Empty states
-    ├── home/
-    │   ├── HomeScreen.kt           # Tampilan beranda
-    │   ├── HomeViewModel.kt        # ViewModel beranda
-    │   └── HomeUiState.kt          # UI state beranda
-    ├── explore/
-    │   ├── ExploreScreen.kt        # Tampilan pencarian & filter
-    │   ├── ExploreViewModel.kt     # ViewModel eksplorasi
-    │   └── ExploreUiState.kt       # UI state eksplorasi
-    ├── detail/
-    │   ├── ComicDetailScreen.kt    # Tampilan detail komik & daftar bab
-    │   ├── ComicDetailViewModel.kt # ViewModel detail komik
-    │   └── ComicDetailUiState.kt   # UI state detail komik
-    ├── reader/
-    │   ├── ReaderScreen.kt         # Tampilan pembaca komik vertikal
-    │   ├── ReaderViewModel.kt      # ViewModel reader
-    │   └── ReaderUiState.kt        # UI state reader
-    ├── library/
-    │   ├── LibraryScreen.kt        # Tampilan koleksi favorit & riwayat
-    │   ├── LibraryViewModel.kt     # ViewModel library
-    │   └── LibraryUiState.kt       # UI state library
-    ├── settings/
-    │   ├── SettingsScreen.kt       # Tampilan pengaturan tema & bahasa
-    │   ├── SettingsViewModel.kt    # ViewModel pengaturan
-    │   └── SettingsUiState.kt      # UI state pengaturan
-    └── theme/
-        ├── Color.kt                # Warna tema Material 3
-        ├── Theme.kt                # Composable Theme switcher
-        └── Type.kt                 # Typografi Material 3
+│   ├── local/              # Room Database, DAO (ComicDao, HistoryDao), Entities
+│   ├── model/              # Domain Model & DTOs (SankaComicDto, ChapterImageDto, dll)
+│   ├── remote/             # Retrofit API Service, OkHttp Client, LegalDemoComicProvider
+│   └── repository/         # ComicRepositoryImpl (Single Source of Truth)
+├── ui/
+│   ├── components/         # Reusable UI (ComicCard, PullToRefreshWrapper, JapaneseHeader)
+│   ├── detail/             # DetailScreen, DetailViewModel
+│   ├── explore/            # ExploreScreen, ExploreViewModel
+│   ├── home/               # HomeScreen, HomeViewModel
+│   ├── library/            # LibraryScreen, LibraryViewModel
+│   ├── reader/             # ReaderScreen, ReaderViewModel
+│   ├── settings/           # SettingsScreen, SettingsViewModel
+│   └── theme/              # Color, Type, Shape, Theme (Sakura Editorial Theme)
+└── utils/                  # Network monitor, String helpers, Image sanitizers
 ```
 
----
-
-## ⚡ Panduan Menjalankan Project
-
-### 1. Prasyarat
-- Android Studio Ladybug / Meerkat atau yang lebih baru.
-- JDK 17 / JDK 21+.
-- Android SDK Platform 36 (Minimum SDK 24).
-
-### 2. Kompilasi & Build
-Jalankan perintah berikut di terminal project:
-
-```bash
-# Menjalankan seluruh pengujian unit test
-./gradlew testDebugUnitTest
-
-# Membuat file APK debug
-./gradlew assembleDebug
-```
-File APK yang dihasilkan akan berada di: `app/build/outputs/apk/debug/app-debug.apk`.
+### Tech Stack:
+- **Language:** Kotlin 2.0.21
+- **UI Framework:** Jetpack Compose & Material 3
+- **Design Pattern:** MVVM (Model-View-ViewModel) + Repository Pattern
+- **Reactive Streams:** Kotlin Coroutines & StateFlow / SharedFlow
+- **Networking:** Retrofit 2.11.0, OkHttp 4.12.0, Gson Converter
+- **Local Persistence:** Room Database 2.6.1 & Android DataStore Preferences
+- **Image Loading:** Coil 2.7.0 (dengan disk cache, memory cache, dan custom OkHttp header)
+- **Navigation:** Navigation Compose 2.8.3
 
 ---
 
-## ✅ Checklist Penyelesaian Project (17 / 17)
+## 🚀 Panduan Instalasi & Menjalankan Proyek
 
-- [x] Project Android berhasil dibuat dan dijalankan
-- [x] Seluruh halaman utama selesai (Home, Explore, Detail, Reader, Library, Settings)
-- [x] API catalog berhasil diintegrasikan
-- [x] Comic cards tampil dengan benar (vertikal dan horizontal)
-- [x] Comic Detail berfungsi lengkap dengan sinopsis dan daftar chapter
-- [x] Vertical Reader berfungsi mulus dengan gesture sembunyikan kontrol
-- [x] Konten demo legal (CC-BY 4.0) tersedia dan berfungsi
-- [x] Favorites tersimpan di Room Database secara persisten
-- [x] Reading progress tersimpan secara lokal dan otomatis tercatat di riwayat
-- [x] Bahasa Indonesia dan Inggris berfungsi dinamis
-- [x] Light Mode dan Dark Mode berfungsi dengan palet Japanese Editorial
-- [x] Rotasi layar sudah diuji dan responsif di seluruh layar
-- [x] Loading, error (dengan tombol retry), dan empty states tersedia
-- [x] README lengkap dan terdokumentasi
-- [x] Seluruh suite unit test lulus tanpa error
-- [x] Seluruh commit Git dibuat berurutan sesuai roadmap
-- [x] Siap untuk presentasi dan pengumpulan tugas
+### Prasyarat:
+1. **Android Studio:** Android Studio Koala / Ladybug atau versi lebih baru.
+2. **JDK:** Java Development Kit versi 17 atau 21.
+3. **Android Device / Emulator:** Minimal Android 8.0 (API Level 26) ke atas.
+
+### Langkah-langkah:
+1. Clone repositori ini ke komputer lokal Anda:
+   ```bash
+   git clone https://github.com/Aziz140609/ComicVerse.git
+   cd ComicVerse
+   ```
+2. Buka proyek melalui Android Studio (`File` -> `Open` -> Pilih folder `ComicVerse`).
+3. Tunggu hingga proses **Gradle Sync** selesai mengunduh dependensi.
+4. Buat file APK debug melalui terminal atau menu Android Studio:
+   ```bash
+   ./gradlew assembleDebug
+   ```
+5. Pasang ke perangkat fisik atau emulator Android:
+   ```bash
+   ./gradlew installDebug
+   ```
 
 ---
 
-*ComicVerse — Dibuat dengan penuh dedikasi untuk tugas Pemrograman Mobile.*
+## 📄 Lisensi & Hak Cipta
+- Hak cipta konten komik dan karya manga merupakan milik masing-masing penerbit, mangaka, dan tim scanlation terkait.
+- Fallback komik bersumber dari *Pepper & Carrot* karya David Revoy dengan lisensi [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+- Kode sumber aplikasi ComicVerse dikembangkan di bawah lisensi terbuka [MIT License](LICENSE).
