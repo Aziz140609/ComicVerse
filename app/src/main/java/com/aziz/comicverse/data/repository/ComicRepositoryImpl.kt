@@ -27,13 +27,68 @@ class ComicRepositoryImpl(
 
     private val detailCache = java.util.concurrent.ConcurrentHashMap<String, com.aziz.comicverse.data.remote.sanka.SankaDetailData>()
 
+    private suspend fun resolveLegacyIdToSlug(id: String): String? {
+        val roomEntity = database.comicDao().getComicById(id) ?: return null
+        val fullTitle = roomEntity.title
+        val candidates = listOf(fullTitle) + fullTitle
+            .replace(':', '|')
+            .replace('-', '|')
+            .replace('(', '|')
+            .replace(')', '|')
+            .split('|')
+            .map { it.trim() }
+            .filter { it.length >= 3 }
+
+        for (candidate in candidates) {
+            try {
+                val searchResp = sankaApi.searchComics(candidate)
+                val list = searchResp.komikList ?: continue
+                if (list.isNotEmpty()) {
+                    val match = list.find {
+                        it.title?.contains(candidate, ignoreCase = true) == true ||
+                        candidate.contains(it.title ?: "", ignoreCase = true) ||
+                        it.slug?.contains(candidate.replace(" ", "-"), ignoreCase = true) == true
+                    } ?: list.first()
+
+                    val targetSlug = match.slug
+                    if (!targetSlug.isNullOrBlank()) {
+                        database.comicDao().insertOrUpdate(roomEntity.copy(id = targetSlug))
+                        return targetSlug
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+        return null
+    }
+
     private suspend fun fetchSankaDetail(id: String): com.aziz.comicverse.data.remote.sanka.SankaDetailData? {
         detailCache[id]?.let { return it }
+
+        // If ID is numeric (like "37280" from Kitsu) or UUID, resolve to slug instead of calling detail API directly
+        val isLegacyId = id.all { it.isDigit() } || (id.length >= 30 && id.contains("-"))
+        val actualSlug = if (isLegacyId) {
+            resolveLegacyIdToSlug(id) ?: id
+        } else {
+            id
+        }
+
+        // If still purely numeric after resolution, avoid sending GET request that triggers HTTP 500
+        if (actualSlug.all { it.isDigit() }) {
+            return null
+        }
+
+        detailCache[actualSlug]?.let { return it }
+
         return try {
-            val resp = sankaApi.getComicDetail(id)
-            resp.detail?.also { detailCache[id] = it }
+            val resp = sankaApi.getComicDetail(actualSlug)
+            resp.detail?.also {
+                detailCache[actualSlug] = it
+                if (actualSlug != id) {
+                    detailCache[id] = it
+                }
+            }
         } catch (e: Exception) {
-            android.util.Log.e("ComicRepository", "Failed to fetch Sanka detail for $id: ${e.message}", e)
+            android.util.Log.e("ComicRepository", "Failed to fetch Sanka detail for $actualSlug: ${e.message}")
             null
         }
     }
