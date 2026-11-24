@@ -48,6 +48,12 @@ data class SankaGenreItem(
     @SerializedName("slug") val slug: String? = null
 )
 
+data class SankaGenresResponse(
+    @SerializedName("creator") val creator: String? = null,
+    @SerializedName("success") val success: Boolean? = null,
+    @SerializedName("genres") val genres: List<SankaGenreItem>? = null
+)
+
 data class SankaChapterItem(
     @SerializedName("title") val title: String? = null,
     @SerializedName("slug") val slug: String? = null,

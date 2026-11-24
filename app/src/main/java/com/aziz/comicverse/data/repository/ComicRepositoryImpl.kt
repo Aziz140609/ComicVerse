@@ -215,6 +215,37 @@ class ComicRepositoryImpl(
         Result.success(localMatches)
     }
 
+    override suspend fun getGenres(): List<String> = withContext(Dispatchers.IO) {
+        val defaultList = listOf(
+            "Action", "Adventure", "Comedy", "Crime", "Demons", "Drama", "Ecchi",
+            "Fantasy", "Game", "Harem", "Historical", "Horror", "Isekai", "Josei",
+            "Magic", "Martial Arts", "Mature", "Mecha", "Military", "Mystery",
+            "Psychological", "Reincarnation", "Romance", "School Life", "Sci-Fi",
+            "Seinen", "Shoujo", "Shounen", "Slice of Life", "Sports", "Superhero",
+            "Supernatural", "Thriller", "Tragedy", "Wuxia"
+        )
+        try {
+            val response = sankaApi.getGenres()
+            val apiGenres = response.genres
+                ?.mapNotNull { it.title?.trim() }
+                ?.filter { title ->
+                    title.length in 3..25 &&
+                    !title.equals("Actio", ignoreCase = true) &&
+                    !title.contains(".")
+                }
+                ?.map { it.split(" ").joinToString(" ") { word -> word.replaceFirstChar { c -> c.uppercase() } } }
+                ?.distinct()
+                ?: emptyList()
+
+            if (apiGenres.isNotEmpty()) {
+                val combined = (defaultList + apiGenres).distinct()
+                return@withContext combined
+            }
+        } catch (_: Exception) {}
+
+        defaultList
+    }
+
     override suspend fun getComicDetail(id: String): Result<Comic> = withContext(Dispatchers.IO) {
         val demoComic = LegalDemoComicProvider.demoComics.find { it.id == id }
         if (demoComic != null) {

@@ -46,18 +46,6 @@ import com.aziz.comicverse.ui.components.ComicLoadingIndicator
 import com.aziz.comicverse.ui.components.GenreChip
 import com.aziz.comicverse.ui.components.SearchInputField
 
-private val AVAILABLE_GENRES = listOf(
-    "All",
-    "Action",
-    "Fantasy",
-    "Comedy",
-    "Sci-Fi",
-    "Historical",
-    "Adventure",
-    "Drama",
-    "Mystery"
-)
-
 @Composable
 fun ExploreScreen(
     onNavigateToDetail: (String) -> Unit,
@@ -160,7 +148,7 @@ fun ExploreScreen(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(AVAILABLE_GENRES) { genre ->
+            items(uiState.availableGenres) { genre ->
                 val isSelected = if (genre == "All") {
                     uiState.selectedGenre == null
                 } else {

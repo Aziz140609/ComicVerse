@@ -23,6 +23,19 @@ class ExploreViewModel(
 
     init {
         loadInitialComics()
+        loadGenres()
+    }
+
+    private fun loadGenres() {
+        viewModelScope.launch {
+            try {
+                val genres = repository.getGenres()
+                if (genres.isNotEmpty()) {
+                    val fullList = listOf("All") + genres.filter { !it.equals("All", ignoreCase = true) }
+                    _uiState.update { it.copy(availableGenres = fullList) }
+                }
+            } catch (_: Exception) {}
+        }
     }
 
     fun loadInitialComics() {

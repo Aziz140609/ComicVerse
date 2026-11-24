@@ -14,6 +14,7 @@ interface ComicRepository {
     suspend fun getCompletedManga(): Result<List<Comic>>
     suspend fun getRankedManga(period: String = "all_time"): Result<List<Comic>>
     suspend fun searchComics(query: String, category: String? = null): Result<List<Comic>>
+    suspend fun getGenres(): List<String>
     suspend fun getComicDetail(id: String): Result<Comic>
     suspend fun getComicChapters(comicId: String): Result<List<ComicChapter>>
     suspend fun getChapterPages(comicId: String, chapterId: String): Result<List<ComicPage>>
