@@ -112,6 +112,19 @@ object ComicMapper {
         )
     }
 
+    fun sanitizeCoverUrl(url: String?): String {
+        if (url.isNullOrBlank()) return ""
+        // Remove WordPress Photon CDN proxy (i0.wp.com, i1.wp.com, etc.) and resize parameters
+        // to retrieve the crisp, original uncompressed high-resolution artwork
+        var clean = url.trim()
+        clean = clean.replace(Regex("""^https?://i[0-3]\.wp\.com/"""), "https://")
+        val queryIdx = clean.indexOf('?')
+        if (queryIdx != -1) {
+            clean = clean.substring(0, queryIdx)
+        }
+        return clean
+    }
+
     fun mapSankaItemToComic(item: SankaKomikItem, defaultGenre: String? = null): Comic {
         val slug = item.slug ?: item.title?.replace(" ", "-")?.lowercase() ?: "comic-${System.currentTimeMillis()}"
         val ratingDouble = item.rating?.toDoubleOrNull() ?: 4.5
@@ -131,7 +144,7 @@ object ComicMapper {
             id = slug,
             title = item.title ?: "Untitled Comic",
             description = desc,
-            coverUrl = item.cover ?: "",
+            coverUrl = sanitizeCoverUrl(item.cover),
             author = "BacaKomik Indo",
             genres = genresList,
             status = "Ongoing",
@@ -160,7 +173,7 @@ object ComicMapper {
             id = slug,
             title = detail.title ?: slug.replace("-", " ").replaceFirstChar { it.uppercase() },
             description = desc,
-            coverUrl = detail.cover ?: "",
+            coverUrl = sanitizeCoverUrl(detail.cover),
             author = authorName,
             genres = genres,
             status = detail.status?.replaceFirstChar { it.uppercase() } ?: "Ongoing",

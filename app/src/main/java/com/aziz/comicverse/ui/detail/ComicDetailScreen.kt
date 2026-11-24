@@ -51,6 +51,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -63,6 +65,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.aziz.comicverse.core.designsystem.ComicColorTokens
+import com.aziz.comicverse.data.mapper.ComicMapper
 import com.aziz.comicverse.domain.model.ComicChapter
 import com.aziz.comicverse.ui.components.ComicErrorState
 import com.aziz.comicverse.ui.components.ComicLoadingIndicator
@@ -156,11 +159,14 @@ fun ComicDetailScreen(
                             // Blurred Backdrop
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(comic.coverUrl)
+                                    .data(ComicMapper.sanitizeCoverUrl(comic.coverUrl))
                                     .crossfade(true)
                                     .build(),
                                 contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .blur(20.dp)
+                                    .alpha(0.55f),
                                 contentScale = ContentScale.Crop
                             )
 
@@ -171,7 +177,8 @@ fun ComicDetailScreen(
                                     .background(
                                         Brush.verticalGradient(
                                             colors = listOf(
-                                                MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                                                MaterialTheme.colorScheme.background.copy(alpha = 0.4f),
+                                                MaterialTheme.colorScheme.background.copy(alpha = 0.85f),
                                                 MaterialTheme.colorScheme.background
                                             )
                                         )
@@ -194,7 +201,7 @@ fun ComicDetailScreen(
                                 ) {
                                     AsyncImage(
                                         model = ImageRequest.Builder(LocalContext.current)
-                                            .data(comic.coverUrl)
+                                            .data(ComicMapper.sanitizeCoverUrl(comic.coverUrl))
                                             .crossfade(true)
                                             .build(),
                                         contentDescription = comic.title,
