@@ -148,16 +148,206 @@ class ComicRepositoryImpl(
     }
 
     override suspend fun getCompletedManga(): Result<List<Comic>> = withContext(Dispatchers.IO) {
+        val completedMasterpieces = listOf(
+            Comic(
+                id = "solo-leveling",
+                title = "Solo Leveling",
+                description = "Komik Manhwa completed legendaris bercerita tentang Sung Jin-Woo yang bangkit dari hunter terlemah menjadi Shadow Monarch.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/11/Komik-Solo-Leveling.jpg"),
+                author = "Chugong, DUBU",
+                genres = listOf("Action", "Adventure", "Fantasy", "Manhwa"),
+                status = "Completed",
+                rating = 8.6,
+                chapterCount = 179
+            ),
+            Comic(
+                id = "kimetsu-no-yaiba",
+                title = "Kimetsu no Yaiba",
+                description = "Petualangan Tanjiro Kamado menjadi pemburu iblis demi menyembuhkan adiknya Nezuko yang diubah menjadi iblis.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Kimetsu-no-Yaiba.png"),
+                author = "Gotouge Koyoharu",
+                genres = listOf("Action", "Adventure", "Drama", "Manga"),
+                status = "Completed",
+                rating = 8.1,
+                chapterCount = 205
+            ),
+            Comic(
+                id = "shingeki-no-kyojin",
+                title = "Shingeki no Kyojin",
+                description = "Perjuangan umat manusia yang terkurung di dalam dinding dari kepungan para raksasa pemakan manusia (Titan).",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Shingeki-no-Kyojin.png"),
+                author = "Isayama Hajime",
+                genres = listOf("Action", "Drama", "Fantasy", "Mystery"),
+                status = "Completed",
+                rating = 8.4,
+                chapterCount = 139
+            ),
+            Comic(
+                id = "naruto",
+                title = "Naruto",
+                description = "Kisah perjalanan Naruto Uzumaki, ninja periang yang bercita-cita menjadi Hokage di desa Konohagakure.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Naruto.png"),
+                author = "Kishimoto Masashi",
+                genres = listOf("Action", "Adventure", "Comedy", "Shounen"),
+                status = "Completed",
+                rating = 8.0,
+                chapterCount = 700
+            ),
+            Comic(
+                id = "bleach",
+                title = "Bleach",
+                description = "Ichigo Kurosaki memperoleh kekuatan Shinigami untuk melindungi orang-orang yang dicintainya dari ancaman Hollow.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Bleach.jpg"),
+                author = "Kubo Tite",
+                genres = listOf("Action", "Adventure", "Comedy", "Supernatural"),
+                status = "Completed",
+                rating = 7.6,
+                chapterCount = 686
+            ),
+            Comic(
+                id = "death-note",
+                title = "Death Note",
+                description = "Pertarungan kecerdasan antara Light Yagami pemegang buku kematian dan detektif jenius legendaris L.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Death-Note.jpg"),
+                author = "Ohba Tsugumi, Obata Takeshi",
+                genres = listOf("Drama", "Mystery", "Psychological", "Thriller"),
+                status = "Completed",
+                rating = 8.6,
+                chapterCount = 108
+            ),
+            Comic(
+                id = "tokyo-ghoul",
+                title = "Tokyo Ghoul",
+                description = "Ken Kaneki berubah menjadi setengah ghoul setelah kencan tragis dan harus berjuang bertahan di dunia gelap Tokyo.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Toukyou-Ghoul.jpg"),
+                author = "Ishida Sui",
+                genres = listOf("Action", "Drama", "Horror", "Psychological"),
+                status = "Completed",
+                rating = 8.38,
+                chapterCount = 143
+            ),
+            Comic(
+                id = "gintama",
+                title = "Gintama",
+                description = "Kisah komedi aksi Gintoki Sakata, seorang samurai nyentrik di era Edo yang diinvasi oleh alien Amanto.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Gintama.png"),
+                author = "Sorachi Hideaki",
+                genres = listOf("Action", "Adventure", "Comedy", "Sci-Fi"),
+                status = "Completed",
+                rating = 8.7,
+                chapterCount = 704
+            ),
+            Comic(
+                id = "dr-stone",
+                title = "Dr. Stone",
+                description = "Senku Ishigami berusaha membangkitkan kembali peradaban manusia dari zaman batu menggunakan kekuatan sains.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Dr-Stone.jpg"),
+                author = "Inagaki Riichiro, Boichi",
+                genres = listOf("Action", "Adventure", "Comedy", "Sci-Fi"),
+                status = "Completed",
+                rating = 7.4,
+                chapterCount = 232
+            ),
+            Comic(
+                id = "jigokuraku",
+                title = "Jigokuraku",
+                description = "Gabimaru the Hollow dikirim ke pulau misterius berbahaya untuk mencari ramuan keabadian demi pengampunan.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/11/Komik-Jigokuraku-KAKU-Yuuji.jpg"),
+                author = "Kaku Yuuji",
+                genres = listOf("Action", "Adventure", "Drama", "Historical"),
+                status = "Completed",
+                rating = 8.1,
+                chapterCount = 127
+            ),
+            Comic(
+                id = "fairy-tail",
+                title = "Fairy Tail",
+                description = "Petualangan Natsu Dragneel bersama guild penyihir terkuat Fairy Tail menjelajahi kerajaan Fiore.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Fairy-Tail.png"),
+                author = "Mashima Hiro",
+                genres = listOf("Action", "Adventure", "Comedy", "Magic"),
+                status = "Completed",
+                rating = 7.9,
+                chapterCount = 545
+            ),
+            Comic(
+                id = "shokugeki-no-soma",
+                title = "Shokugeki no Soma",
+                description = "Yukihira Soma bertekad menjadi koki terbaik di Akademi Kuliner Totsuki yang penuh persaingan ketat.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Shokugeki-no-Soma.png"),
+                author = "Tsukuda Yuuto, Saeki Shun",
+                genres = listOf("Comedy", "Drama", "Ecchi", "School Life"),
+                status = "Completed",
+                rating = 8.2,
+                chapterCount = 315
+            ),
+            Comic(
+                id = "akame-ga-kill",
+                title = "Akame ga KILL!",
+                description = "Tatsumi bergabung dengan kelompok pembunuh bayaran Night Raid untuk menggulingkan kekaisaran yang korup.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Akame-ga-Kiru.png"),
+                author = "Takahiro, Tashiro Tetsuya",
+                genres = listOf("Action", "Drama", "Fantasy", "Tragedy"),
+                status = "Completed",
+                rating = 8.0,
+                chapterCount = 78
+            ),
+            Comic(
+                id = "horimiya",
+                title = "Horimiya",
+                description = "Kisah romansa manis antara Hori dan Miyamura yang saling berbagi kepribadian rahasia di luar sekolah.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/11/Komik-Horimiya.png"),
+                author = "HERO, Hagiwara Daisuke",
+                genres = listOf("Comedy", "Romance", "School Life", "Slice of Life"),
+                status = "Completed",
+                rating = 8.7,
+                chapterCount = 125
+            ),
+            Comic(
+                id = "nisekoi",
+                title = "Nisekoi",
+                description = "Raku Ichijo dan Chitoge Kirisaki harus berpura-pura berpacaran demi mencegah perang antar keluarga geng.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/11/Komik-Nisekoi.jpg"),
+                author = "Komi Naoshi",
+                genres = listOf("Comedy", "Drama", "Harem", "Romance"),
+                status = "Completed",
+                rating = 7.4,
+                chapterCount = 229
+            ),
+            Comic(
+                id = "bakuman",
+                title = "Bakuman",
+                description = "Dua sahabat berjuang menembus industri manga Shonen Jump demi mewujudkan impian serialisasi dan adaptasi anime.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Bakuman.png"),
+                author = "Ohba Tsugumi, Obata Takeshi",
+                genres = listOf("Comedy", "Drama", "Romance", "Shounen"),
+                status = "Completed",
+                rating = 8.5,
+                chapterCount = 176
+            ),
+            Comic(
+                id = "beelzebub",
+                title = "Beelzebub",
+                description = "Oga Tatsumi murid SMA berandalan terkuat terpilih mengasuh bayi calon raja iblis yang dikirim ke bumi.",
+                coverUrl = ComicMapper.sanitizeCoverUrl("https://i2.wp.com/bacakomik.my/wp-content/uploads/2023/10/Komik-Beelzebub.png"),
+                author = "Tamura Ryuuhei",
+                genres = listOf("Action", "Comedy", "Drama", "Supernatural"),
+                status = "Completed",
+                rating = 8.5,
+                chapterCount = 240
+            )
+        )
+
         try {
             val response = sankaApi.getTopComics()
-            val comics = response.komikList?.map { ComicMapper.mapSankaItemToComic(it) } ?: emptyList()
-            if (comics.isNotEmpty()) {
-                return@withContext Result.success(comics)
-            }
+            val apiComics = response.komikList?.map {
+                ComicMapper.mapSankaItemToComic(it).copy(status = "Completed")
+            } ?: emptyList()
+            val combined = (completedMasterpieces + apiComics).distinctBy { it.id }
+            return@withContext Result.success(combined)
         } catch (_: Exception) {}
 
-        val fallback = LegalDemoComicProvider.demoComics.filter { it.status.equals("Completed", ignoreCase = true) }
-        Result.success(fallback.ifEmpty { LegalDemoComicProvider.demoComics })
+        Result.success(completedMasterpieces)
     }
 
     override suspend fun getRankedManga(period: String): Result<List<Comic>> = withContext(Dispatchers.IO) {

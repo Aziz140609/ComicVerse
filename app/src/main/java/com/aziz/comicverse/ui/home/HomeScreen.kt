@@ -388,7 +388,7 @@ fun HomeScreen(
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Text(
-                                            text = if (uiState.isCompletedExpanded) stringResource(R.string.show_less) else stringResource(R.string.show_more),
+                                            text = if (uiState.isCompletedExpanded) stringResource(R.string.show_less) else "${stringResource(R.string.show_more)} (${uiState.completedComics.size})",
                                             fontWeight = FontWeight.Bold,
                                             fontSize = 13.sp
                                         )
