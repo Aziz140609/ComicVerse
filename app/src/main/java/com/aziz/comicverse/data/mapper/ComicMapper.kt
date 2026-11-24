@@ -112,7 +112,7 @@ object ComicMapper {
         )
     }
 
-    fun mapSankaItemToComic(item: SankaKomikItem): Comic {
+    fun mapSankaItemToComic(item: SankaKomikItem, defaultGenre: String? = null): Comic {
         val slug = item.slug ?: item.title?.replace(" ", "-")?.lowercase() ?: "comic-${System.currentTimeMillis()}"
         val ratingDouble = item.rating?.toDoubleOrNull() ?: 4.5
         val comicType = item.type?.replaceFirstChar { it.uppercase() } ?: "Manga"
@@ -122,13 +122,18 @@ object ComicMapper {
             if (!item.date.isNullOrBlank()) append(" (${item.date})")
         }
 
+        val genresList = mutableListOf(comicType, "Bahasa Indonesia")
+        if (!defaultGenre.isNullOrBlank() && !defaultGenre.equals("All", ignoreCase = true)) {
+            genresList.add(defaultGenre.replaceFirstChar { it.uppercase() })
+        }
+
         return Comic(
             id = slug,
             title = item.title ?: "Untitled Comic",
             description = desc,
             coverUrl = item.cover ?: "",
             author = "BacaKomik Indo",
-            genres = listOf(comicType, "Bahasa Indonesia"),
+            genres = genresList,
             status = "Ongoing",
             rating = ratingDouble,
             chapterCount = item.chapter?.filter { it.isDigit() }?.toIntOrNull(),

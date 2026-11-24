@@ -18,6 +18,9 @@ interface SankaApiService {
     @GET("comic/bacakomik/search/{query}")
     suspend fun searchComics(@Path("query") query: String): SankaKomikListResponse
 
+    @GET("comic/bacakomik/genre/{genre}")
+    suspend fun getComicsByGenre(@Path("genre") genre: String): SankaKomikListResponse
+
     @GET("comic/bacakomik/detail/{slug}")
     suspend fun getComicDetail(@Path("slug") slug: String): SankaDetailResponse
 

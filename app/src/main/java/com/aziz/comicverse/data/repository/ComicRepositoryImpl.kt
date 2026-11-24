@@ -160,28 +160,41 @@ class ComicRepositoryImpl(
     }
 
     override suspend fun searchComics(query: String, category: String?): Result<List<Comic>> = withContext(Dispatchers.IO) {
-        val localMatches = LegalDemoComicProvider.demoComics.filter { comic ->
-            comic.title.contains(query, ignoreCase = true) ||
-            comic.description.contains(query, ignoreCase = true) ||
-            comic.genres.any { it.contains(query, ignoreCase = true) }
+        val targetGenre = if (!category.isNullOrBlank() && !category.equals("All", ignoreCase = true)) category else null
+
+        // 1. If query is blank and genre is selected: fetch from Sanka genre endpoint!
+        if (query.isBlank() && targetGenre != null) {
+            val genreSlug = targetGenre.lowercase().replace(" ", "-")
+            try {
+                val genreResp = sankaApi.getComicsByGenre(genreSlug)
+                val comics = genreResp.komikList?.map { ComicMapper.mapSankaItemToComic(it, targetGenre) } ?: emptyList()
+                if (comics.isNotEmpty()) {
+                    return@withContext Result.success(comics)
+                }
+            } catch (_: Exception) {}
         }
 
-        if (query.isBlank() && category.isNullOrBlank()) {
+        // 2. If query is not blank: search by query
+        if (query.isNotBlank()) {
+            try {
+                val sankaResp = sankaApi.searchComics(query.trim())
+                val sankaComics = sankaResp.komikList?.map { ComicMapper.mapSankaItemToComic(it, targetGenre) } ?: emptyList()
+                if (sankaComics.isNotEmpty()) {
+                    return@withContext Result.success(sankaComics)
+                }
+            } catch (_: Exception) {}
+        }
+
+        // 3. If both blank or "All"
+        if (query.isBlank() && targetGenre == null) {
             return@withContext getPopularComics()
         }
 
-        val searchTerm = query.ifBlank { category ?: "manga" }
-
-        // Sanka Indo comics search
-        try {
-            val sankaResp = sankaApi.searchComics(searchTerm)
-            val sankaComics = sankaResp.komikList?.map { ComicMapper.mapSankaItemToComic(it) } ?: emptyList()
-            if (sankaComics.isNotEmpty()) {
-                val combined = (localMatches + sankaComics).distinctBy { it.id }
-                return@withContext Result.success(combined)
-            }
-        } catch (_: Exception) {}
-
+        val localMatches = LegalDemoComicProvider.demoComics.filter { comic ->
+            val matchQuery = query.isBlank() || comic.title.contains(query, ignoreCase = true) || comic.description.contains(query, ignoreCase = true)
+            val matchGenre = targetGenre == null || comic.genres.any { it.contains(targetGenre, ignoreCase = true) }
+            matchQuery && matchGenre
+        }
         Result.success(localMatches)
     }
 
