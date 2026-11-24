@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,11 +27,13 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.SwapVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -76,6 +79,15 @@ fun ComicDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var isDescriptionExpanded by remember { mutableStateOf(false) }
+    var isAscendingOrder by remember { mutableStateOf(true) }
+
+    val sortedChapters = remember(uiState.chapters, isAscendingOrder) {
+        if (isAscendingOrder) {
+            uiState.chapters.sortedBy { it.chapterNumber.toDoubleOrNull() ?: Double.MAX_VALUE }
+        } else {
+            uiState.chapters.sortedByDescending { it.chapterNumber.toDoubleOrNull() ?: 0.0 }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -249,9 +261,10 @@ fun ComicDetailScreen(
                         Box(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
                             Button(
                                 onClick = {
-                                    val firstChapter = uiState.chapters.firstOrNull()
-                                    if (firstChapter != null) {
-                                        onNavigateToReader(comic.id, firstChapter.id)
+                                    val chapterOne = uiState.chapters.minByOrNull { it.chapterNumber.toDoubleOrNull() ?: Double.MAX_VALUE }
+                                        ?: uiState.chapters.firstOrNull()
+                                    if (chapterOne != null) {
+                                        onNavigateToReader(comic.id, chapterOne.id)
                                     }
                                 },
                                 enabled = uiState.chapters.isNotEmpty(),
@@ -270,7 +283,7 @@ fun ComicDetailScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (uiState.chapters.isNotEmpty()) "Mulai Membaca" else "Chapter Tidak Tersedia",
+                                    text = if (uiState.chapters.isNotEmpty()) "Mulai Membaca (Ch. 1)" else "Chapter Tidak Tersedia",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -318,16 +331,50 @@ fun ComicDetailScreen(
                         }
                     }
 
-                    // Chapter List Header
+                    // Chapter List Header with Ascending / Descending Toggle
                     item {
-                        ComicSectionHeader(
-                            title = "Daftar Chapter (${uiState.chapters.size})",
-                            subtitle = "Pilih chapter untuk mulai membaca"
-                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Daftar Chapter (${uiState.chapters.size})",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Text(
+                                    text = if (isAscendingOrder) "Chapter 1 di atas (Awal → Terbaru)" else "Chapter terbaru di atas (Terbaru → 1)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            FilledTonalButton(
+                                onClick = { isAscendingOrder = !isAscendingOrder },
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.SwapVert,
+                                    contentDescription = "Ubah Urutan Chapter",
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = if (isAscendingOrder) "Ch. 1 di Atas" else "Ch. 1 di Bawah",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
                     }
 
                     // Chapter Items
-                    if (uiState.chapters.isEmpty()) {
+                    if (sortedChapters.isEmpty()) {
                         item {
                             Card(
                                 modifier = Modifier
@@ -339,7 +386,7 @@ fun ComicDetailScreen(
                                 )
                             ) {
                                 Text(
-                                    text = "Belum ada chapter gratis yang di-hosting langsung di MangaDex untuk judul ini.",
+                                    text = "Belum ada chapter yang tersedia untuk judul ini.",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(16.dp)
@@ -347,7 +394,7 @@ fun ComicDetailScreen(
                             }
                         }
                     } else {
-                        items(uiState.chapters) { chapter ->
+                        items(sortedChapters, key = { it.id }) { chapter ->
                             ChapterListItem(
                                 chapter = chapter,
                                 onClick = { onNavigateToReader(comic.id, chapter.id) }
