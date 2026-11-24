@@ -23,6 +23,7 @@ interface ComicRepository {
     fun isFavorite(comicId: String): Flow<Boolean>
     suspend fun toggleFavorite(comic: Comic)
     fun getReadingHistory(): Flow<List<ReadingProgress>>
+    fun getReadingProgress(comicId: String): Flow<ReadingProgress?>
     suspend fun saveReadingProgress(progress: ReadingProgress)
     suspend fun deleteReadingProgress(comicId: String)
 }

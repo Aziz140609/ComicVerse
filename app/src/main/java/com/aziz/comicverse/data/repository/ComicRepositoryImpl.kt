@@ -374,6 +374,27 @@ class ComicRepositoryImpl(
         }
     }
 
+    override fun getReadingProgress(comicId: String): Flow<ReadingProgress?> {
+        return database.readingProgressDao().getAllProgress().map { list ->
+            list.find {
+                it.comicId == comicId ||
+                it.comicId.equals(comicId.replace("-", " "), ignoreCase = true) ||
+                it.comicTitle.equals(comicId.replace("-", " "), ignoreCase = true)
+            }?.let {
+                ReadingProgress(
+                    comicId = it.comicId,
+                    chapterId = it.chapterId,
+                    chapterTitle = it.chapterTitle,
+                    pageIndex = it.pageIndex,
+                    totalPages = it.totalPages,
+                    comicTitle = it.comicTitle,
+                    comicCoverUrl = it.comicCoverUrl,
+                    updatedAt = it.updatedAt
+                )
+            }
+        }
+    }
+
     override suspend fun saveReadingProgress(progress: ReadingProgress): Unit = withContext(Dispatchers.IO) {
         val title = if (progress.comicTitle.isNotBlank()) {
             progress.comicTitle

@@ -24,12 +24,21 @@ class ComicDetailViewModel(
     init {
         loadDetail()
         observeFavoriteStatus()
+        observeReadingProgress()
     }
 
     private fun observeFavoriteStatus() {
         viewModelScope.launch {
             repository.isFavorite(comicId).collect { isFav ->
                 _uiState.update { it.copy(isFavorite = isFav) }
+            }
+        }
+    }
+
+    private fun observeReadingProgress() {
+        viewModelScope.launch {
+            repository.getReadingProgress(comicId).collect { progress ->
+                _uiState.update { it.copy(readingProgress = progress) }
             }
         }
     }
